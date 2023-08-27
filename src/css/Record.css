@@ -1,0 +1,26 @@
+#record-textarea {
+  width: 40%;
+  max-width: 100%;
+  height: 10rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  font-size: medium;
+  line-height: 1.4;
+  margin: 2%;
+}
+
+.generate-segments-button{
+  cursor: pointer;
+}
+
+.textarea-div
+{
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

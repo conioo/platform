@@ -1,0 +1,8 @@
+
+.icon-play:before { content: '\e800'; } /* '' */
+.icon-progress-0:before { content: '\e801'; } /* '' */
+.icon-wrench:before { content: '\e802'; } /* '' */
+.icon-pause:before { content: '\e803'; } /* '' */
+.icon-logout:before { content: '\e804'; } /* '' */
+.icon-login:before { content: '\e805'; } /* '' */
+.icon-reply:before { content: '\f112'; } /* '' */
