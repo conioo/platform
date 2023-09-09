@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/platform/static/css/main.7ec58480.css",
-    "main.js": "/platform/static/js/main.816dd20a.js",
+    "main.css": "/platform/static/css/main.6a6050ee.css",
+    "main.js": "/platform/static/js/main.9150a7fd.js",
     "static/media/fontello.eot?86991254": "/platform/static/media/fontello.b880065e51453347ddf4.eot",
     "static/media/fontello.ttf?86991254": "/platform/static/media/fontello.e041f584918d2bca70a9.ttf",
     "static/media/fontello.woff?86991254": "/platform/static/media/fontello.e1cb9fd122f02aec138c.woff",
     "static/media/fontello.woff2?86991254": "/platform/static/media/fontello.8457c97f9092474626e2.woff2",
     "static/media/fontello.svg?86991254": "/platform/static/media/fontello.459fd2b6d706496255b2.svg",
     "index.html": "/platform/index.html",
-    "main.7ec58480.css.map": "/platform/static/css/main.7ec58480.css.map",
-    "main.816dd20a.js.map": "/platform/static/js/main.816dd20a.js.map"
+    "main.6a6050ee.css.map": "/platform/static/css/main.6a6050ee.css.map",
+    "main.9150a7fd.js.map": "/platform/static/js/main.9150a7fd.js.map"
   },
   "entrypoints": [
-    "static/css/main.7ec58480.css",
-    "static/js/main.816dd20a.js"
+    "static/css/main.6a6050ee.css",
+    "static/js/main.9150a7fd.js"
   ]
 }
