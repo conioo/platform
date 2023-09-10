@@ -1,28 +1,34 @@
-import { OctokitInfo } from "./OctokitInfo";
-import { Tokens } from "./Tokens";
+import GoogleSecrets from "../google/GoogleSecrets";
+import Language from "../types/Language";
+import File from "./File";
+import Tokens from "./Tokens";
 
-export class State {
+export default class State {
     isLogin: boolean;
-    isLogging: boolean;
-    octokitInfo: OctokitInfo;
     tokens: Tokens;
     isRecord: boolean;
-    fileNameToView: string | null;
-    fileNameToModify: string | undefined;
+    fileToView: File | undefined;
+    fileToModify: File | undefined;
     oneRegenerateFilenames: boolean;
-    recordDestinationPath: string | null;
+    folderParentId: string | null;
+    currentPath: Array<File>;
+    voices: Array<SpeechSynthesisVoice>;
+    language: Language;
 
     constructor() {
         this.isLogin = false;
-        this.isLogging = false;
         this.isRecord = false;
 
-        this.fileNameToModify = undefined;
-        this.fileNameToView = null;
+        this.fileToModify = undefined;
+        this.fileToView = undefined;
         this.oneRegenerateFilenames = false;
-        this.recordDestinationPath = null;
+        this.folderParentId = null;
 
-        this.octokitInfo = new OctokitInfo("", "");
+        this.language = Language.English;
+
+        this.voices = new Array<SpeechSynthesisVoice>();
+
         this.tokens = new Tokens();
+        this.currentPath = [new File("englishData", GoogleSecrets.DATA_ENGLISH_FOLDER_ID)];
     }
 }

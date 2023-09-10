@@ -1,9 +1,9 @@
-export class File {
-    path: string
-    content: string;
+export default class File {
+    name: string;
+    id: string;
 
-    constructor(path: string, content: string) {
-        this.path = path;
-        this.content = content;
+    constructor(name: string, id: string) {
+        this.name = name;
+        this.id = id;
     }
 }

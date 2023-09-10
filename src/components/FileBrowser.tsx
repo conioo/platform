@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../css/Buttons.css';
 import '../css/FileBrowser.css';
-import { State } from '../models/State';
+import State from '../models/State';
 import Action from '../types/Action';
 import ActionType from '../types/ActionType';
+import { createFolderInGoogleDrive, getListOfFiles, isEmptyFolder, removeFolderFromGoogleDrive } from '../google/GoogleDriveService';
+import File from '../models/File';
+import GoogleSecrets from '../google/GoogleSecrets';
+import '../css/fontello/css/fontello.css';
 
 interface FileBrowserProps {
     dispath: React.Dispatch<Action>;
@@ -14,44 +18,36 @@ interface FileBrowserProps {
 export default function FileBrowser({ dispath, state }: FileBrowserProps) {
     console.log("FileBrowser");
 
-    const [currentPhysicalPath, setCurrentPhysicalPath] = useState<string>("data");
-    const [currentPath, setCurrentPath] = useState<Array<string>>(["data"]);
-    const [folderNames, setFolderNames] = useState<Array<string> | null>(null);
-    const [fileNames, setFileNames] = useState<Array<string> | null>(null);
+    const [folders, setFolders] = useState<Array<File> | null>(null);
+    const [files, setFiles] = useState<Array<File> | null>(null);
 
-    console.log(currentPhysicalPath);
-    console.log(currentPath);
+    const folderDescription = "folder";
 
-    const folderPrefix = "<=folder=>";
-
-    useEffect(() => {
-        if (state.oneRegenerateFilenames) {
-            dispath({ type: ActionType.RegeneratedFilename });
-        }
-    }, [fileNames]);
+    // useEffect(() => {
+    //     if (state.oneRegenerateFilenames) {
+    //         dispath({ type: ActionType.RegeneratedFilename });
+    //     }
+    // }, [fileNames]);
 
     useEffect(() => {
-        console.log("start");
-        updateListOfFilesFromRepo();
-    }, [currentPath]);
+        updateListOfFiles();
+    }, [state.currentPath]);
 
-    if (state.oneRegenerateFilenames) {
-        updateListOfFilesFromRepo();
-    }
+    // if (state.oneRegenerateFilenames) {
+    //     updateListOfFilesFromRepo();
+    // }
 
     let listOfNameFiles: Array<JSX.Element> | undefined;
 
     if (state.isLogin) {
-        listOfNameFiles = fileNames?.map((fileName, index) => {
+        listOfNameFiles = files?.map((file, index) => {
             return (
                 <li key={index} className='row-of-files'>
-                    <div className='filename'>{fileName}</div>
-                    <div className='file-buttons'>
-                        <button className='file-button' key={index} onClick={() => { dispath({ type: ActionType.ViewFile, payload: fileName }) }} >
-                            Otwórz
+                    <div className='filename' key={Math.random()}>{file.name}</div>
+                    <div className='file-buttons' key={Math.random()}>
+                        <button className='icon-reply file-button' key={Math.random()} onClick={() => { dispath({ type: ActionType.ViewFile, payload: file }) }} >
                         </button>
-                        <button className='file-button' key={index + "m"} onClick={() => { dispath({ type: ActionType.ModifyFile, payload: fileName }) }} >
-                            Modyfikuj
+                        <button className='icon-wrench file-button' key={index + "m"} onClick={() => { dispath({ type: ActionType.ModifyFile, payload: file }) }} >
                         </button>
                     </div>
                 </li>
@@ -59,13 +55,12 @@ export default function FileBrowser({ dispath, state }: FileBrowserProps) {
         });
     }
     else {
-        listOfNameFiles = fileNames?.map((fileName, index) => {
+        listOfNameFiles = files?.map((file, index) => {
             return (
                 <li key={index} className='row-of-files'>
-                    <div className='filename'>{fileName}</div>
-                    <div className='file-buttons'>
-                        <button className='file-button' key={index} onClick={() => { dispath({ type: ActionType.ViewFile, payload: fileName }) }} >
-                            Otwórz
+                    <div className='filename'key={Math.random()}>{file.name}</div>
+                    <div className='file-buttons'key={Math.random()}>
+                        <button className='icon-reply file-button' key={Math.random()} onClick={() => { dispath({ type: ActionType.ViewFile, payload: file }) }} >
                         </button>
                     </div>
                 </li>
@@ -76,24 +71,41 @@ export default function FileBrowser({ dispath, state }: FileBrowserProps) {
 
     let listOfNameFolders: Array<JSX.Element> | undefined;
 
-    if (folderNames) {
-        listOfNameFolders = folderNames.map((folderName, index) => {
-            return (
-                <li key={index} className='row-of-folders'>
-                    <div className='filename'>{folderName}</div>
-                    <div className='file-buttons'>
-                        <button className='file-button' key={index} onClick={() => { openFolder(folderName) }} >
-                            Otwórz
-                        </button>
-                    </div>
-                </li>
-            );
-        });
+    if (folders) {
+        if (state.isLogin) {
+            listOfNameFolders = folders.map((folder, index) => {
+                return (
+                    <li key={Math.random()} className='row-of-folders'>
+                        <div className='filename'key={Math.random()}>{folder.name}</div>
+                        <div className='file-buttons'key={Math.random()}>
+                            <button className='icon-reply file-button' key={Math.random()} onClick={() => { openFolder(folder) }} >
+                            </button>
+                            <button className='icon-wrench file-button' key={Math.random()} onClick={() => { removeFolder(folder) }} >
+                            </button>
+                        </div>
+                    </li>
+                );
+            });
+        }
+        else {
+            listOfNameFolders = folders.map((folder, index) => {
+                return (
+                    <li key={Math.random()} className='row-of-folders'>
+                        <div className='filename'key={Math.random()}>{folder.name}</div>
+                        <div className='file-buttons'key={Math.random()}>
+                            <button className='icon-reply file-button' key={Math.random()} onClick={() => { openFolder(folder) }} >
+                            </button>
+                        </div>
+                    </li>
+                );
+            });
+        }
+
     }
 
-    let paths = currentPath.map((segmentPath, index) => {
+    let paths = state.currentPath.map((segmentPath, index) => {
         return (<>
-            <span onClick={() => backFromFolder(currentPath.length - index - 1)} className='current-path-span'>{segmentPath}</span>
+            <span onClick={() => backFromFolder(state.currentPath.length - index - 1)} className='current-path-span' key={Math.random()}>{segmentPath.name}</span>
             <span>/</span>
         </>);
     });
@@ -104,7 +116,7 @@ export default function FileBrowser({ dispath, state }: FileBrowserProps) {
                 <div>
                     {paths}
                 </div>
-                {currentPath.length > 1 && <button onClick={() => backFromFolder(1)} className='return-folder-button'>Powrót</button>}
+                {state.currentPath.length > 1 && <button onClick={() => backFromFolder(1)} className='return-folder-button'>Powrót</button>}
             </section>
 
             <ul className='list-of-files'>
@@ -118,72 +130,58 @@ export default function FileBrowser({ dispath, state }: FileBrowserProps) {
 
             {state.isLogin &&
                 <section className='new-file-section'>
-                    <button className='new-file-button' onClick={() => { dispath({ type: ActionType.GoToRecord, payload: currentPhysicalPath }) }}>Nowy plik</button>
+                    <button className='new-file-button' onClick={() => { dispath({ type: ActionType.GoToRecord, payload: getCurrentFolderId() }) }}>Nowy plik</button>
                     <button className='new-file-button' onClick={() => { createNewFolder() }}>Nowy folder</button>
                 </section>}
         </>
     );
 
-    async function updateListOfFilesFromRepo() {
+    async function updateListOfFiles() {
 
-        try {
-            const response = await state.octokitInfo.octokitReadFree.repos.getContent({
-                owner: state.octokitInfo.owner,
-                repo: state.octokitInfo.publicRepoName,
-                path: currentPhysicalPath,
-                headers: {
-                    'If-None-Match': ''
-                }
-            });
+        let listOfFiles = await getListOfFiles(getCurrentFolderId());
 
-            console.log(response);
-
-            if (!Array.isArray(response.data)) {
-                console.error("The provided path does not point to a directory.");
-                return new Array<string>();
-            }
-
-            const fileNames = response.data.filter((item) => item.type === "dir" && !(item.name.startsWith("<=folder=>"))).map((item) => item.name);
-            const folderNames = response.data.filter((item) => item.name.startsWith("<=folder=>")).map((item) => item.name.substring(folderPrefix.length));
-
-            setFileNames(fileNames)
-            setFolderNames(folderNames)
-        } catch (error: any) {
-
-            if (error.status === 404) {
-                setFileNames(null);
-                setFolderNames(null);
-                return;
-            }
-
-            console.log("Błąd: ", error);
+        if (listOfFiles) {
+            setFiles(listOfFiles.filesArray);
+            setFolders(listOfFiles.foldersArray);
         }
     }
 
-    function createNewFolder() {
+    async function createNewFolder() {
         const folderName = prompt('Wpisz nazwę folderu:');
 
         if (!folderName) {
             return;
         }
 
-        let copyCurrentFolderNames = new Array<string>();
+        await createFolderInGoogleDrive(folderName, getCurrentFolderId());
 
-        if (folderNames) {
-            copyCurrentFolderNames = folderNames.slice();
-        }
-
-        copyCurrentFolderNames.push(folderName);
-
-        setFolderNames(copyCurrentFolderNames);
+        await reloadList();
     }
 
-    function openFolder(folderName: string) {
-        let newCurrentPath = currentPath.slice();
-        newCurrentPath.push(folderName);
-        setCurrentPath(newCurrentPath);
+    function getCurrentFolderId(): string {
+        return state.currentPath[state.currentPath.length - 1].id;
+    }
 
-        setCurrentPhysicalPath(currentPhysicalPath + "/" + folderPrefix + folderName);
+    async function reloadList() {
+        await updateListOfFiles();
+    }
+
+    function openFolder(folder: File) {
+        let newCurrentPath = state.currentPath.slice();
+        newCurrentPath.push(folder);
+
+
+        dispath({ type: ActionType.RefreshCurrentPath, payload: newCurrentPath });
+    }
+
+    async function removeFolder(folder: File) {
+        if (!await isEmptyFolder(folder.id)) {
+            alert("folder nie jest pusty");
+            return;
+        }
+
+        await removeFolderFromGoogleDrive(folder.id);
+        await updateListOfFiles();
     }
 
     function backFromFolder(times: number) {
@@ -191,17 +189,7 @@ export default function FileBrowser({ dispath, state }: FileBrowserProps) {
             return;
         }
 
-        let lengthSegmentToRemove: number = 0;
-
-        for (let i = 1; i <= times; ++i) {
-            lengthSegmentToRemove += currentPath[currentPath.length - i].length + folderPrefix.length + 1;
-        }
-
-        let newCurrentPhysicalPath = currentPhysicalPath.slice(0, -lengthSegmentToRemove);
-
-        setCurrentPhysicalPath(newCurrentPhysicalPath);
-
-        let newCurrentPath = currentPath.slice(0, -times);
-        setCurrentPath(newCurrentPath);
+        let newCurrentPath = state.currentPath.slice(0, -times);
+        dispath({ type: ActionType.RefreshCurrentPath, payload: newCurrentPath });
     }
 }

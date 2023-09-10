@@ -1,8 +1,8 @@
-export default class AudioInfo<THtmlElement> {
+export default class AudioInfo{
     isSpeaking: boolean = false;
-    refToAudio: React.RefObject<THtmlElement>;
+    refToAudio: React.RefObject<HTMLButtonElement>;
 
-    constructor(refToAudio: React.RefObject<THtmlElement>)
+    constructor(refToAudio: React.RefObject<HTMLButtonElement>)
     {
         this.refToAudio = refToAudio;
     }

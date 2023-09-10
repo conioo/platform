@@ -3,30 +3,122 @@ import Record from './Record';
 import View from './View';
 import '../css/Hub.css'
 import { useState, useReducer, useEffect } from 'react';
-import axios from 'axios';
-import { Octokit } from "@octokit/rest";
-import { Buffer } from "buffer";
-import { Tokens } from "../models/Tokens";
-import { State } from '../models/State';
+import State from '../models/State';
 import reducer from '../reducer';
-import LoginPart from './LoginPart';
 import ActionType from '../types/ActionType';
-import ModifyFile from './ModifyFile';
-// import { GoogleLogin } from '../services/GoogleDriveApiService';
+import GapiLogin from '../google/GapiLogin';
+import EasySpeech from 'easy-speech';
+import Language from '../types/Language';
+import Router from './Router';
 
 export default function Hub() {
     console.log("Hub");
-    const [state, dispath] = useReducer(reducer, new State());
-
-    useEffect(() => { if (state.isLogging) { login(); } }, [state.isLogging]);
+    const [state, dispatch] = useReducer(reducer, new State());
 
     let isFileBrowser = false;
+
+    console.log(EasySpeech.detect());
+
+
+    EasySpeech.init({ maxTimeout: 5000, interval: 250 })
+        .then(() => {
+            console.log(EasySpeech.status());
+
+            let voices = EasySpeech.voices();
+            if (voices.length === 0) {
+                console.log("any voices detected");
+                return;
+            }
+
+            let defaultVoice: SpeechSynthesisVoice;
+
+            if (state.language === Language.English) {
+                let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === "Google UK English Male");
+                if (!voice) {
+                    voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "en-GB" || voice.lang === "en_GB" || voice.lang.includes("en")));
+
+                    if (!voice) {
+                        return;
+                    }
+                }
+                defaultVoice = voice;
+            }
+            else {
+                let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === "Google Deutsch");
+                if (!voice) {
+                    voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "de-DE" || voice.lang === "de_DE" || voice.lang.includes("de")));
+
+                    if (!voice) {
+                        return;
+                    }
+                }
+                defaultVoice = voice;
+            }
+
+            EasySpeech.defaults({ voice: defaultVoice });
+            EasySpeech.on({ end: () => { console.log("gowniana sytuacja") } });
+        })
+        .catch(e => console.error(e));
+
+    // if (state.voices.length <= 0) {
+    //     const allVoicesObtained = new Promise(function (resolve, reject) {
+    //         let voices = window.speechSynthesis.getVoices();
+    //         if (voices.length !== 0) {
+    //             resolve(voices);
+    //         } else {
+    //             window.speechSynthesis.addEventListener("voiceschanged", function () {
+    //                 voices = window.speechSynthesis.getVoices();
+    //                 resolve(voices);
+    //             });
+    //         }
+    //     });
+
+    //     allVoicesObtained.then((voices: any) => {
+    //         let usefulVoices = new Array<SpeechSynthesisVoice>();
+
+    //         console.log(voices);
+
+    //         let englishVoice = voices.find((voice: any) => voice.name === "Google UK English Male");
+
+    //         console.log(englishVoice);
+    //         if (!englishVoice) {
+    //             englishVoice = voices.find((voice: any) => (voice.lang === "en-GB" || voice.lang === "de_DE"));
+
+    //             console.log("tutaj");
+    //             console.log(englishVoice);
+
+    //             if (!englishVoice) {
+    //                 return;
+    //             }
+    //         }
+
+    //         usefulVoices.push(englishVoice);
+    //         dispath({ type: ActionType.SetVoices, payload: usefulVoices });
+    //     });
+    // }
+
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <div>Hello world!</div>,
+        },
+        {
+            path: "/bobo",
+            element: <FileBrowser dispath={dispath} state={state}></FileBrowser>
+        }
+    ],
+    {
+        basename: "/platform"
+    });
 
     return (
         <>
             <header>
-                {/* <LoginPart state={state} dispath={dispath} ></LoginPart> */}
-                {/* <button onClick={() => {GoogleLogin()}}></button> */}
+                <div className='login'>
+                    <button className='change-language-button' onClick={() => dispath({ type: ActionType.ChangeLanguage })}>Angielski</button>
+                </div>
+
+                <GapiLogin state={state} dispath={dispath}></GapiLogin>
             </header>
 
             <section className='sections-container'>
@@ -34,73 +126,22 @@ export default function Hub() {
                 </section>
 
                 <section className='main-section'>
-                    {
-                        (state.fileNameToView && <View dispath={dispath} state={state} ></View>) ||
+                    {/* {
+                        (state.fileToView && <View dispath={dispath} state={state} ></View>) ||
                         (state.isRecord && <Record dispath={dispath} state={state}></Record>) ||
-                        (state.fileNameToModify && <ModifyFile dispath={dispath} state={state}></ModifyFile>) ||
+                        (state.fileToModify && <ModifyFile dispath={dispath} state={state}></ModifyFile>) ||
                         (isFileBrowser = true, <FileBrowser dispath={dispath} state={state}></FileBrowser>)
-                    }
+                    } */}
+                    <Router state={state} dispatch: {dispatch} />
+
                 </section>
 
                 <section className='right-section'>
-                    {!isFileBrowser && <button className='return-button' onClick={() => { dispath({ type: ActionType.Return }) }}>Powrót</button> }
+                    {!isFileBrowser && <button className='return-button' onClick={() => { dispath({ type: ActionType.Return }) }}>Powrót</button>}
                 </section>
             </section>
 
             <footer></footer>
         </>
     );
-
-
-    async function login() {
-        console.log("login");
-
-        const partOfToken = "github_pat_11AYN4LWY0Uayj0vvgPDwI_op26AoI3deV8UhcJJ2V9HpKaGf4gzw9vs4dMT69cLtI3CDFNECRqiJ";
-
-        let backPartOfToken = (document.getElementById("login-input") as HTMLInputElement).value;
-
-        if (backPartOfToken.length <= 0) {
-            return;
-        }
-
-        const tokenToCheck = partOfToken + backPartOfToken;
-
-        try {
-            const responseUser = await axios.get('https://api.github.com/user', {
-                headers: {
-                    Authorization: `token ${tokenToCheck}`,
-                },
-            });
-
-            if (responseUser.status !== 200) {
-                alert("nieprawidlowe dane logowania")
-                throw "nieprawidłowe hasło";
-            }
-
-            const path = "Secrets/trans.json";
-
-            const octokit = new Octokit({
-                auth: tokenToCheck,
-                baseUrl: "https://api.github.com",
-            });
-
-            const response = await octokit.repos.getContent({
-                owner: state.octokitInfo.owner,
-                repo: state.octokitInfo.privateRepoName,
-                path,
-            }) as any;
-
-            let fileContent = Buffer.from(response.data.content, "base64").toString();
-
-            let tokensInfo: Tokens = JSON.parse(fileContent);
-
-            tokensInfo.gitPrivate = tokenToCheck;
-
-
-            dispath({ type: ActionType.Login, payload: tokensInfo })
-        }
-        catch (error) {
-            console.error('Błąd zapytania do GitHub API:', error);
-        }
-    }
 }

@@ -1,51 +1,71 @@
 import '../css/View.css';
+import '../css/Colouring.css';
 import '../css/fontello/css/fontello.css';
 import React, { useState, useEffect } from 'react';
-import { Segment } from '../models/Segment';
-import { State } from '../models/State';
+import Segment from '../models/Segment';
+import State from '../models/State';
 import Action from '../types/Action';
 import ActionType from '../types/ActionType';
-import { OpenFile } from '../services/FilesService';
-import AudioControl from './AudioControl';
-import ManagementAudio from '../services/ManagementAudio';
 import AudioPlay from './AudioPlay';
-import ManagementPlay from '../services/ManagementPlay';
+import { getModule } from '../google/GoogleDriveService';
+import Module from '../models/Module';
+import { useEasySpeech, useEasySpeechType } from '../hooks/EasySpeech';
 
 interface ViewProps {
     dispath: React.Dispatch<Action>;
     state: State;
 }
 
-export default function View({ state, dispath }: ViewProps) {
-    console.log("view");
-    const [segmentsData, setSegmentsData] = useState<Array<Segment> | null>(null);
+export default function View({ state, dispath }: ViewProps): JSX.Element {
+    console.log("View");
+    const [module, setModule] = useState<Module | undefined>(undefined);
+    const [audioHub, setAudioHub] = useState<useEasySpeechType>();
+
+    let refToSlider = React.createRef<HTMLInputElement>();
+
+    let easySpeech = useEasySpeech();
 
     useEffect(() => {
-        if (!segmentsData && state.fileNameToView) {
-            const segmentsDataPromise = OpenFile(state, state.fileNameToView);
 
-            segmentsDataPromise.then(segmentsData => {
+        if (!module && state.fileToView) {
+            const modulePromise = getModule(state.fileToView.id);
 
-                if (segmentsData !== undefined) {
-                    setSegmentsData(segmentsData);
+            modulePromise.then(module => {
+                if (module) {
+                    setModule(module);
+                    setAudioHub(easySpeech);
                 }
             });
         }
     });
 
-    let managementAudio = new ManagementPlay();
+    if(!audioHub)
+    {
+        return(<></>);
+    }
 
-    if (segmentsData) {
-        const buttons = segmentsData.map((segment: Segment, index: number) => {
-            const ref = React.createRef<HTMLInputElement>();
+    if (module) {
+        const segments = module.segments.map((segment: Segment, index: number) => {
+
+            let wordPiecies = segment.sentence.split(" ");
+
+            let allWords = wordPiecies.map((word: string, internalIndex: number) => {
+                return getColoredSpan(word, segment.sentenceColors[internalIndex]);
+            })
+
+            let meaningPiecies = segment.translation.split(" ");
+
+            let allMeanings = meaningPiecies.map((meaning: string, internalIndex: number) => {
+                return getColoredSpan(meaning, segment.translationsColors[internalIndex]);
+            })
 
             return (
                 <>
                     <div key={Math.random()} className='audioplay-container'>
-                        <AudioPlay key={Math.random()} text={segment.word} managementAudio={managementAudio}></AudioPlay>
+                        <AudioPlay key={Math.random()} state={state} text={segment.sentence} managementAudio={audioHub}></AudioPlay>
                     </div>
-                    <span key={Math.random()} className="sentence" >{segment.word}</span>
-                    <span key={Math.random()} className="sentence" >{segment.meaning}</span>
+                    <span key={Math.random()} className="sentence" >{allWords}</span>
+                    <span key={Math.random()} className="sentence" >{allMeanings}</span>
                 </>
             );
         });
@@ -53,18 +73,59 @@ export default function View({ state, dispath }: ViewProps) {
         return (
             <>
                 <h2>
-                    {state.fileNameToView}
+                    {state.fileToView?.name}
                 </h2>
 
-                <section className="view-segments">
-                    {buttons}
+                <input type="range" id="fontSlider" className='font-size-slider' ref={refToSlider} onChange={(event) => handleChangeFontSize(event)} min="10" max="55" defaultValue={20} step="1"></input>
+
+                <section id="view-segments">
+                    {segments}
                 </section>
             </>
         );
     }
     else {
-        return null;
+        return (
+            <>
+            </>
+        );
     }
 
+    function handleChangeFontSize(event: React.ChangeEvent<HTMLInputElement>) {
+        if (!refToSlider.current) {
+            return;
+        }
 
+        const viewSegment = document.getElementById('view-segments');
+
+        if (viewSegment) {
+            console.log(event.target.value);
+            viewSegment.style.fontSize = `${event.target.value}px`;
+        }
+    }
+
+    function getSpan(content: string, additionalClassName: string): JSX.Element {
+        return (
+            <span key={Math.random()} className={additionalClassName} >{content + " "}</span>
+        );
+    }
+
+    function getColoredSpan(content: string, colorId: number): JSX.Element | null {
+        switch (colorId) {
+            case 0:
+                return getSpan(content, "black");
+            case 1:
+                return getSpan(content, "orange");
+            case 2:
+                return getSpan(content, "red");
+            case 3:
+                return getSpan(content, "purple");
+            case 4:
+                return getSpan(content, "navy");
+            case 5:
+                return getSpan(content, "green");
+            default:
+                return null;
+        }
+    }
 }

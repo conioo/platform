@@ -1,42 +1,31 @@
 import { useRef } from "react";
-import AudioRefInfo from "../models/AudioInfo";
-import ManagementAudio from "../services/ManagementAudio";
 import '../css/AudioPlay.css';
 import AudioInfo from "../models/AudioInfo";
-import ManagementPlay from "../services/ManagementPlay";
+import State from "../models/State";
+import EasySpeech from 'easy-speech';
+import { useEasySpeechType } from "../hooks/EasySpeech";
 
 interface AudioPlayProps {
+    state: State;
     text: string;
-    managementAudio: ManagementPlay;
+    managementAudio: useEasySpeechType;
 }
 
-export default function AudioPlay({ text, managementAudio }: AudioPlayProps) {
+export default function AudioPlay({ text, managementAudio, state }: AudioPlayProps) {
     console.log("AudioPlay");
 
-    const synth = speechSynthesis;
+    let audioInfo = new AudioInfo(useRef(null));
+    managementAudio.addAudioInfo(audioInfo);
 
-    let voices = synth.getVoices();
+    // utterance.onend = () => {
+    //     managementAudio.ResetAudio(audioInfo);
 
-    let utterance = new SpeechSynthesisUtterance(text);
+    //     //zmienic ikone, isspekain
 
-    let audioInfo = new AudioInfo<HTMLButtonElement>(useRef(null));
-    managementAudio.AddToCollection(audioInfo);
-
-    utterance.onend = () => {
-        managementAudio.ResetAudio(audioInfo);
-
-        if (audioInfo.refToAudio.current?.classList.contains("icon-pause")) {
-            audioInfo.refToAudio.current?.classList.toggle("icon-pause");
-        }
-    };
-
-    const intervalId = setInterval(() => {
-        console.log(voices);
-        if (voices) {
-            utterance.voice = voices[5];
-            clearInterval(intervalId);
-        }
-    }, 100);
+    //     if (audioInfo.refToAudio.current?.classList.contains("icon-pause")) {
+    //         audioInfo.refToAudio.current?.classList.toggle("icon-pause");
+    //     }
+    // };
 
     return (
         <button className='icon-play audio-play' ref={audioInfo.refToAudio} onClick={onPlayHandle}></button>
@@ -45,22 +34,34 @@ export default function AudioPlay({ text, managementAudio }: AudioPlayProps) {
     function onPlayHandle() {
 
         if (audioInfo.isSpeaking) {
-            synth.pause();
+            //synth.pause();
+            EasySpeech.cancel();
             audioInfo.isSpeaking = false;
+          
 
-            if (audioInfo.refToAudio.current?.classList.contains("icon-pause")) {
-                audioInfo.refToAudio.current?.classList.toggle("icon-pause");
-            }
+            audioInfo.refToAudio.current?.classList.remove("icon-pause");
+            // if (audioInfo.refToAudio.current?.classList.contains("icon-pause")) {
+            //     audioInfo.refToAudio.current?.classList.toggle("icon-pause");
+            // }
         }
         else {
-            if (!audioInfo.refToAudio.current?.classList.contains("icon-pause")) {
-                audioInfo.refToAudio.current?.classList.toggle("icon-pause");
-            }
-            managementAudio.ResetAudioControls();
-            synth.cancel();
+            // if (!audioInfo.refToAudio.current?.classList.contains("icon-pause")) {
+            //     audioInfo.refToAudio.current?.classList.toggle("icon-pause");
+            // }
+            audioInfo.refToAudio.current?.classList.add("icon-pause");
+
+            managementAudio.reset();
+            //synth.cancel();
 
             audioInfo.isSpeaking = true;
-            synth.speak(utterance);
+
+
+            //console.log(speechSynthesis.speaking);
+            EasySpeech.speak({ text });
+            //console.log(speechSynthesis.speaking);
+            //EasySpeech.
+
+            //synth.speak(utterance);
         }
     }
 }

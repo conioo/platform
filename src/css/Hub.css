@@ -5,7 +5,7 @@ header {
     white-space: nowrap;
     min-height: 60px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -32,7 +32,7 @@ main{
 
 .main-section{
     /* height: 1500px; */
-    width: 80%;
+    width: 94%;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -46,11 +46,11 @@ main{
 }
 
 .left-section{
-    width: 10%;
+    width: 2%;
 }
 
 .right-section{
-    width: 10%;
+    width: 4%;
     align-items: start;
 }
 
@@ -61,3 +61,7 @@ main{
     height: auto; */
   }
 
+  .change-language-button
+  {
+    cursor: pointer;
+  }

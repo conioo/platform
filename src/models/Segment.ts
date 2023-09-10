@@ -1,11 +1,15 @@
-export class Segment {
-    word: string;
-    meaning: string | null;
-    pathToVoice: string | null;
+export default class Segment {
+    sentence: string;
+    translation: string;
 
-    constructor(word: string, meaning: string | null = null, pathToVoice: string | null = null) {
-        this.word = word;
-        this.meaning = meaning;
-        this.pathToVoice = pathToVoice;
+    sentenceColors: Array<number>;
+    translationsColors: Array<number>;
+
+    constructor(sentence: string, translation: string) {
+        this.sentence = sentence;
+        this.translation = translation;
+
+        this.sentenceColors = new Array<number>();
+        this.translationsColors = new Array<number>();
     }
 }

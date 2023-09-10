@@ -1,4 +1,5 @@
-.view-segments {
+
+#view-segments {
     width: auto;
     max-width: 100%;
     display: grid;
@@ -6,7 +7,8 @@
     /* grid-template-columns: minmax(0, 10%) 45% 45%; */
     grid-template-columns: auto auto auto;
     gap: 1px;
-    margin: 5%;
+    margin: 1%;
+    font-size: 20px;
 }
 
 .audioplay-container {
@@ -17,9 +19,17 @@
 }
 
 .sentence{
-    margin-right: 50px;
-    font-size: 100%;
-    font-weight: 500;
+    width: auto;
+    height: auto;
+    margin-right: 1%;
+    /* font-size: 20px; */
+    transition: font-size 0.3s ease;
+    font-weight: 600;
+}
+
+.font-size-slider{
+    cursor: pointer;
+    width: 10%;
 }
 
 /* .buttonSegment input {

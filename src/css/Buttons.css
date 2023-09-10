@@ -18,6 +18,20 @@
     cursor: pointer;
 }
 
+.rgb-button {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    filter: brightness(0.3);
+}
+
+.rgb-button.selected {
+    filter: brightness(1);
+    border-color: white;
+}
+
+
+
 /* .buttonSegments {
     display: flex;
     flex-direction: row;
@@ -30,6 +44,7 @@
     border: 1px solid #ccc;
     border-radius: 2%;
     padding: 1%;
+    font-weight: 600;
 }
 
 .audio-segment {
@@ -40,4 +55,9 @@
     height: 100%;
     object-fit: contain;
     border: 1px solid #ccc;
+}
+
+.colour-button {
+    cursor: pointer;
+    margin: 10%;
 }

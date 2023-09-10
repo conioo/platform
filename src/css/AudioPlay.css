@@ -1,18 +1,17 @@
 .audio-play {
-  width: 20px;
-  height: 20px;
+  width: 2em;
+  height: 2em;
   text-align: center;
   /* position: relative;
   overflow: hidden; */
   border-radius: 50%;
   cursor: pointer;
   display: block;
-  font-size: 60%;
+  /* font-size: 60%; */
   display: flex;
   justify-content: center;
   align-items: center;
   transition: transform 0.3s;
-
   grid-row-end: auto;
 }
 

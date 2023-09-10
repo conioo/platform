@@ -1,0 +1,39 @@
+.segments-to-colouring {
+    display: grid;
+    /* grid-template-columns: repeat(2, minmax(0, 1fr)); */
+    grid-template-columns: auto auto;
+    gap: 1px;
+    margin: 2%;
+    width: auto;
+}
+
+.part-segment {
+    transition: opacity 0.3s;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.part-segment:hover {
+    opacity: 0.5;
+}
+
+.black{
+    color: black;
+}
+
+.orange{
+    color: orange;
+}
+.red{
+    color: red;
+}
+.green{
+    color: green;
+}
+.navy{
+    color: navy;
+}
+.purple{
+    color: purple;
+}
