@@ -2,29 +2,33 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../css/Buttons.css';
 import '../css/Colouring.css';
 import Segment from '../models/Segment';
-import State from '../models/State';
-import Action from '../types/Action';
-import ActionType from '../types/ActionType';
 import { saveModuleToGoogleDrive } from '../google/GoogleDriveService';
 import Module from '../models/Module';
+import { useNavigate } from 'react-router-dom';
+import { selectCurrentParentFolderId } from '../redux/slices/module';
+import { useAppSelector } from '../redux/hook';
+import { selectLanguage } from '../redux/slices/language';
+import { convertToName } from '../types/Language';
 
 interface ColouringProps {
     module: Module;
-    dispath: React.Dispatch<Action>;
-    state: State;
     backToButtons: () => void;
 }
 
-export default function Colouring({ module, dispath, state, backToButtons }: ColouringProps) {
+export default function Colouring({ module, backToButtons }: ColouringProps) {
     console.log("ColouringProps");
 
     const [isSaving, setIsSaving] = useState(false);
     const [wordColors, setWordColors] = useState<Array<Array<number>>>(new Array<Array<number>>());
     const [meaningColors, setMeaningColors] = useState<Array<Array<number>>>(new Array<Array<number>>());
 
+    let navigate = useNavigate();
+    let folderParentId = useAppSelector(selectCurrentParentFolderId);
+
     if (isSaving === true) {
         saveFile().then(() => {
-            dispath({ type: ActionType.Return });
+            navigate(-1);
+            setIsSaving(false);
         }).catch(exception => console.log(exception));
     }
 
@@ -180,7 +184,6 @@ export default function Colouring({ module, dispath, state, backToButtons }: Col
     });
 
     function handleClickColor(ref: React.RefObject<HTMLButtonElement>, index: number) {
-        console.log("klik");
         arrayRefs.forEach(ref => {
             if (ref.current) {
                 ref.current.classList.remove('selected');
@@ -220,20 +223,17 @@ export default function Colouring({ module, dispath, state, backToButtons }: Col
     async function saveFile() {
         console.log("saving");
 
-        console.log(wordColors);
-        console.log(meaningColors);
-
         let fileName = (document.getElementById("fileName") as HTMLInputElement).value;
 
         if (fileName.length == 0) {
             setIsSaving(false)
             alert("missing filename");
-            throw "missing name";
+            throw Error("missing name");
         }
 
-        if (!state.folderParentId) {
+        if (!folderParentId) {
             setIsSaving(false)
-            throw "missing folder parent id";
+            throw Error("missing folder parent id");
         }
 
         for (let i = 0; i < module.segments.length; ++i) {
@@ -241,8 +241,10 @@ export default function Colouring({ module, dispath, state, backToButtons }: Col
             module.segments[i].translationsColors = meaningColors[i];
         }
 
+        module.name = fileName;
+
         try {
-            await saveModuleToGoogleDrive(fileName, module, state.folderParentId);
+            await saveModuleToGoogleDrive(module, folderParentId);
 
             console.log("saving all correctly");
 

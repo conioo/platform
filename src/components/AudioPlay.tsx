@@ -6,12 +6,11 @@ import EasySpeech from 'easy-speech';
 import { useEasySpeechType } from "../hooks/EasySpeech";
 
 interface AudioPlayProps {
-    state: State;
     text: string;
     managementAudio: useEasySpeechType;
 }
 
-export default function AudioPlay({ text, managementAudio, state }: AudioPlayProps) {
+export default function AudioPlay({ text, managementAudio }: AudioPlayProps) {
     console.log("AudioPlay");
 
     let audioInfo = new AudioInfo(useRef(null));
@@ -37,7 +36,7 @@ export default function AudioPlay({ text, managementAudio, state }: AudioPlayPro
             //synth.pause();
             EasySpeech.cancel();
             audioInfo.isSpeaking = false;
-          
+
 
             audioInfo.refToAudio.current?.classList.remove("icon-pause");
             // if (audioInfo.refToAudio.current?.classList.contains("icon-pause")) {

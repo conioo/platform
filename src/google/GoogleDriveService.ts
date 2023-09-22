@@ -2,6 +2,7 @@ import File from "../models/File";
 import Module from "../models/Module";
 import State from "../models/State";
 import Tokens from "../models/Tokens";
+import Language from "../types/Language";
 import GoogleSecrets from "./GoogleSecrets";
 
 interface FileResponse {
@@ -11,8 +12,10 @@ interface FileResponse {
     mimeType: string;
 }
 
-export async function saveModuleToGoogleDrive(moduleName: string, moduleContent: Module, parentFolderId: string) {
+export async function saveModuleToGoogleDrive(moduleContent: Module, parentFolderId: string) {
     try {
+        let moduleName = moduleContent.name;
+
         const jsonString = JSON.stringify(moduleContent);
         const jsonBlob = new Blob([jsonString], { type: 'application/json' });
 
@@ -73,27 +76,38 @@ export async function createFolderInGoogleDrive(folderName: string, parentFolder
 }
 
 export async function getModule(moduleId: string): Promise<Module> {
-    const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents&key=${GoogleSecrets.API_KEY}&fields=files(name,id)`;
+    console.log("moduly");
+
+    const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents+and+name+=+'module.json'&key=${GoogleSecrets.API_KEY}&fields=files(name,id)`;
 
     try {
-        const fileListResponse = await gapi.client.drive.files.list({
-            q: `'${moduleId}' in parents and name = 'module.json'`,
-            fields: 'files(id,name)',
-            pageSize: 1,
-        });
+        // const fileListResponse = await gapi.client.drive.files.list({
+        //     q: `'${moduleId}' in parents and name = 'module.json'`,
+        //     fields: 'files(id,name)',
+        //     pageSize: 1,
+        // });
+        //const files = fileListResponse.data.files;
 
-        const files = fileListResponse.result.files;
+        const response = await fetch(fileListUrl);
+        const fileListResponse = await response.json();
+        const files = fileListResponse.files;
+
+        console.log(files[0]);
 
         if (!files || !files[0].id) {
             throw new Error('No files in directory');
         }
 
-        const fileResponse = await gapi.client.drive.files.get({
-            fileId: files[0].id,
-            alt: 'media'
-        });
+        const getModuleUrl = `https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media&key=${GoogleSecrets.API_KEY}`;
 
-        const jsonData = JSON.parse(fileResponse.body) as Module;
+        const fileResponse = await fetch(getModuleUrl);
+        const jsonData = await fileResponse.json();
+        console.log(jsonData);
+        // const fileResponse = await gapi.client.drive.files.get({
+        //     fileId: files[0].id,
+        //     alt: 'media'
+        // });
+        // const jsonData = JSON.parse(fileResponse.body) as Module;
 
         return jsonData;
     } catch (error) {
@@ -138,7 +152,7 @@ export async function removeModule(moduleId: string) {
     }
 }
 
-export async function getListOfFiles(folderId: string): Promise<{ filesArray: Array<File>, foldersArray: Array<File> } | undefined> {
+export async function getListOfFiles(folderId: string): Promise<{ files: Array<File>, folders: Array<File> } | undefined> {
 
     try {
         const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${GoogleSecrets.API_KEY}&fields=files(name,description, id, mimeType)`;
@@ -166,11 +180,11 @@ export async function getListOfFiles(folderId: string): Promise<{ filesArray: Ar
             });
         }
 
-        return { filesArray, foldersArray };
+        return { files: filesArray, folders: foldersArray };
 
     } catch (error: any) {
         console.error('Error:', error);
-        return undefined;
+        throw new Error(error);
     }
 }
 
@@ -198,32 +212,30 @@ export async function removeFolderFromGoogleDrive(folderId: string) {
 
 export async function getSecrets(): Promise<Tokens | undefined> {
     try {
-        //194DNS7xdUfc9ZJNvIEyfesfbOBkJycYH
-        let iddd = "1k5syJQKovJyczbPoNxc8f4rBZuzfPZCs";
-        console.log(gapi.client.getToken().access_token);
+        console.log("sekrety");
+        // const headers = {
+        //     Authorization: `Bearer ${gapi.client.getToken().access_token}`,
+        // };
 
-        const headers = {
-            Authorization: `Bearer ${gapi.client.getToken().access_token}`,
-        };
+        // const url = `https://www.googleapis.com/drive/v3/files?q='${GoogleSecrets.DATA_ENGLISH_FOLDER_ID}'+in+parents&key=${GoogleSecrets.API_KEY}&fields=files(name,description, id, mimeType)`;
 
-        const apiEndpoint = `https://www.googleapis.com/drive/v3/files/${GoogleSecrets.SECRET_FILE_ID}?alt=media&key=${GoogleSecrets.API_KEY}`;
+        // let ress = await fetch(url, { headers });
+        // let gg = await ress.json();
+        // console.log(gg);
 
-        let rrdr = await fetch(apiEndpoint, { headers });
-        console.log(rrdr);
+        // const params = {
+        //     q: "'root' in parents",
+        //     fields: 'files(id, name)',
+        // };
 
-        const dd = await rrdr.json();
-        console.log(dd);
-
-        let fff = await gapi.client.drive.files.list();
-        console.log(fff);
+        // const all = await gapi.client.drive.files.list(params);
+        // console.log("tutaaaaaaajjjjjjjj");
+        // console.log(JSON.parse(all.body));
 
         const response = await gapi.client.drive.files.get({
             fileId: GoogleSecrets.SECRET_FILE_ID,
-            alt: 'media'
+            alt: 'media',
         });
-
-        console.log("sekretyy");
-        console.log(response);
 
         const jsonData = JSON.parse(response.body);
 
@@ -234,3 +246,48 @@ export async function getSecrets(): Promise<Tokens | undefined> {
         return undefined;
     }
 }
+
+export async function findFolderIdByPath(folderNames: string[], language: Language): Promise<string | undefined> {
+
+    let parentFolderId: string | undefined = undefined;
+
+    if (language === Language.English) {
+        parentFolderId = GoogleSecrets.DATA_ENGLISH_FOLDER_ID;
+    }
+    else if (language === Language.German) {
+        parentFolderId = GoogleSecrets.DATA_GERMAN_FOLDER_ID;
+    }
+
+    for (const folderName of folderNames) {
+        parentFolderId = await findFolderId(parentFolderId, folderName);
+        if (!parentFolderId) {
+            return undefined;
+        }
+    }
+
+    return parentFolderId;
+};
+
+async function findFolderId(parentFolderId: string | undefined, folderName: string): Promise<string | undefined> {
+    // const response = await gapi.client.drive.files.list({
+    //     q: `'${parentFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${folderName}'`,
+    // });
+
+    const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+name='${folderName}'&key=${GoogleSecrets.API_KEY}`;
+
+    let response = await fetch(apiUrl, {
+        method: 'GET',
+    })
+
+    //const files = response.result.files;
+    const files = (await response.json()).files;
+
+    console.log("tutaj");
+    console.log(files);
+
+    if (files && files.length > 0) {
+        return files[0].id;
+    } else {
+        return undefined;
+    }
+};

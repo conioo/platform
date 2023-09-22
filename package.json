@@ -6,6 +6,7 @@
     "@octokit/rest": "19.0.6",
     "@octokit/types": "^11.1.0",
     "@react-oauth/google": "^0.11.1",
+    "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,7 +16,9 @@
     "@types/node": "^16.18.39",
     "@types/react": "^18.2.16",
     "@types/react-dom": "^18.2.7",
+    "@types/react-redux": "^7.1.26",
     "@types/react-router-dom": "^5.3.3",
+    "@types/redux": "^3.6.0",
     "audiobuffer-to-blob": "^1.0.2",
     "axios": "^1.4.0",
     "blob": "^0.1.0",
@@ -35,8 +38,12 @@
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0",
+    "react-redux": "^8.1.2",
+    "react-router-dom": "^6.16.0",
     "react-scripts": "^5.0.1",
+    "redux": "^4.2.1",
+    "redux-devtools-extension": "^2.13.9",
+    "redux-persist": "^6.0.0",
     "speech-synthesis-recorder": "^1.2.1",
     "stream": "^0.0.2",
     "sync-request": "^6.1.0",
@@ -69,5 +76,5 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://conioo.github.io/platform"
+  "homepage": "https://conioo.github.io/platform/#"
 }

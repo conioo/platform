@@ -1,16 +1,36 @@
-import Buttons from './Buttons';
+import Buttons from '../components/Buttons';
 import '../css/Record.css';
 import React, { useState } from 'react';
 import State from '../models/State';
 import Action from '../types/Action';
 import { useEasySpeech, useEasySpeechType } from '../hooks/EasySpeech';
+import { ActionFunctionArgs, ParamParseKey, Params } from 'react-router-dom';
+import Paths from '../router/Paths';
+import { useDispatch } from 'react-redux';
 
-interface RecordProps {
-    state: State;
-    dispath: React.Dispatch<Action>;
-}
+// interface Args extends ActionFunctionArgs {
+//     params: Params<ParamParseKey<typeof Paths.record>>;
+// }
 
-export default function Record({ state, dispath }: RecordProps) {
+// export async function loader({ params }: Args): Promise<Language> {
+//     console.log("RecordLoader");
+
+//     const languageName = params.language;
+//     let language: Language;
+
+//     if (languageName === LanguagePathName.english) {
+//         language = Language.English;
+//     }
+//     else if (languageName === LanguagePathName.german) {
+//         language = Language.German;
+//     }
+//     else {
+//         throw new Error("ni ma takiego jezora")//blad jakis
+//     }
+
+// }
+
+export default function Record() {
     console.log("Record");
 
     const [textAreaValue, setTextAreaValue] = useState<string | null>(null);
@@ -25,7 +45,7 @@ export default function Record({ state, dispath }: RecordProps) {
                 <button className='generate-segments-button' onClick={() => { SaveTextArea(); }} >Wygeneruj Kafelki</button>
                 <button className='separate-dots-button' onClick={() => { SeparateDots(); }} >Oddziel kropki</button>
             </div>
-            {audioHub && textAreaValue ? <Buttons textAreaValue={textAreaValue} dispath={dispath} state={state} managementAudio={audioHub} /> : null}
+            {audioHub && textAreaValue ? <Buttons textAreaValue={textAreaValue} managementAudio={audioHub} /> : null}
         </>
     );
 

@@ -10,19 +10,23 @@ import Module from '../models/Module';
 import Language from '../types/Language';
 import { useEasySpeechType } from '../hooks/EasySpeech';
 import AudioPlay from './AudioPlay';
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../redux/slices/language';
+import { selectDeeplToken } from '../redux/slices/authentication';
 
 interface ButtonsProps {
     textAreaValue: string;
-    dispath: React.Dispatch<Action>;
-    state: State;
     managementAudio: useEasySpeechType
 }
 
-export default function Buttons({ textAreaValue, dispath, state, managementAudio }: ButtonsProps) {
+export default function Buttons({ textAreaValue, managementAudio }: ButtonsProps) {
     console.log("Buttons");
 
     const [module, setModule] = useState<Module>(new Module());
     const [isColouring, setIsColouring] = useState(false);
+
+    let language = useSelector(selectLanguage);
+    let deeplToken = useSelector(selectDeeplToken);
 
     useEffect(() => {
         GenerateModuleFromString(textAreaValue).then(module => setModule(module));
@@ -34,7 +38,7 @@ export default function Buttons({ textAreaValue, dispath, state, managementAudio
             <>
                 <span id={index.toString() + "e"} key={Math.random()} className='span-segment'>{segment.sentence}</span>
                 <span contentEditable={true} suppressContentEditableWarning={true} id={index.toString() + "p"} key={Math.random()} className='span-segment'>{segment.translation}</span>
-                <AudioPlay state={state} text={segment.sentence} managementAudio={managementAudio} key={Math.random()}></AudioPlay>
+                <AudioPlay text={segment.sentence} managementAudio={managementAudio} key={Math.random()}></AudioPlay>
             </>
         );
     });
@@ -52,7 +56,7 @@ export default function Buttons({ textAreaValue, dispath, state, managementAudio
     return (
         <>
             {
-                (isColouring && <Colouring state={state} dispath={dispath} module={module} backToButtons={backToButtons}></Colouring>) ||
+                (isColouring && <Colouring module={module} backToButtons={backToButtons}></Colouring>) ||
                 (<>
                     <section className='segments'>
                         {segments}
@@ -76,7 +80,7 @@ export default function Buttons({ textAreaValue, dispath, state, managementAudio
             segments[i] = new Segment(sentences[i], translations[i]);
         }
 
-        let result = new Module(segments);
+        let result = new Module("", segments);
         return result;
     }
 
@@ -95,13 +99,13 @@ export default function Buttons({ textAreaValue, dispath, state, managementAudio
             }
         }
 
-        return new Module(newSegmentsData);
+        return new Module("", newSegmentsData);
     }
 
     async function TranslateSentences(sentences: Array<string>): Promise<Array<string>> {
         let sourceLanguage: string;
 
-        if (state.language === Language.English) {
+        if (language === Language.English) {
             sourceLanguage = 'en';
         }
         else {
@@ -110,9 +114,8 @@ export default function Buttons({ textAreaValue, dispath, state, managementAudio
 
         const targetLanguage = 'pl';
 
-        console.log(state.tokens);
         const request = require('sync-request');
-        const baseApiUrl = `https://api-free.deepl.com/v2/translate?auth_key=${state.tokens.deepl}&source_lang=${sourceLanguage}&target_lang=${targetLanguage}`;
+        const baseApiUrl = `https://api-free.deepl.com/v2/translate?auth_key=${deeplToken}&source_lang=${sourceLanguage}&target_lang=${targetLanguage}`;
 
         let mainCounter = 0;
         let resultArray: Array<string> = new Array<string>();
