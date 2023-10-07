@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import '../css/AudioPlay.css';
 import AudioInfo from "../models/AudioInfo";
-import State from "../models/State";
 import EasySpeech from 'easy-speech';
 import { useEasySpeechType } from "../hooks/EasySpeech";
 

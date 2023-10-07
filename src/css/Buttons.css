@@ -1,10 +1,3 @@
-.segments {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    /* grid-template-columns: 35% 35% 30%; */
-    gap: 1px;
-    margin: 2%;
-}
 
 .generate-audio-button {
     cursor: pointer;
@@ -12,6 +5,7 @@
 
 .save-section {
     margin: 1%;
+    margin-bottom: 10%;
 }
 
 .save-button {
@@ -40,12 +34,7 @@
     align-items: center;
 } */
 
-.span-segment {
-    border: 1px solid #ccc;
-    border-radius: 2%;
-    padding: 1%;
-    font-weight: 600;
-}
+
 
 .audio-segment {
     display: flex;

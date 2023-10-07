@@ -24,6 +24,7 @@
     "blob": "^0.1.0",
     "buffer": "^6.0.3",
     "easy-speech": "^2.1.1",
+    "formik": "^2.4.5",
     "fs": "^0.0.1-security",
     "gapi-script": "^1.2.0",
     "gh-pages": "^5.0.0",
@@ -31,24 +32,30 @@
     "google-oauth-gsi": "^2.0.0",
     "googleapis": "^126.0.1",
     "http": "^0.0.1-security",
+    "install": "^0.13.0",
     "mespeak": "^2.0.2",
+    "npm": "^10.1.0",
     "octokit-commit-multiple-files": "^4.3.0",
     "open": "^9.1.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
     "react": "^18.2.0",
+    "react-contenteditable": "^3.3.7",
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.16.0",
     "react-scripts": "^5.0.1",
+    "react-textarea-autosize": "^8.5.3",
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
+    "sanitize-html": "^2.11.0",
     "speech-synthesis-recorder": "^1.2.1",
     "stream": "^0.0.2",
     "sync-request": "^6.1.0",
     "url": "^0.11.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -76,5 +83,8 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://conioo.github.io/platform/#"
+  "homepage": "https://conioo.github.io/platform/#",
+  "devDependencies": {
+    "@types/sanitize-html": "^2.9.1"
+  }
 }

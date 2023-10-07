@@ -1,153 +1,64 @@
-import React, { useState, useEffect, useRef } from 'react';
 import '../css/Buttons.css';
 import Segment from '../models/Segment';
-import State from '../models/State';
-import Action from '../types/Action';
-import ActionType from '../types/ActionType';
-import { saveModuleToGoogleDrive } from '../google/GoogleDriveService';
-import Colouring from './Colouring';
 import Module from '../models/Module';
-import Language from '../types/Language';
-import { useEasySpeechType } from '../hooks/EasySpeech';
-import AudioPlay from './AudioPlay';
-import { useSelector } from 'react-redux';
-import { selectLanguage } from '../redux/slices/language';
-import { selectDeeplToken } from '../redux/slices/authentication';
+import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
+import sanitizeHtml from "sanitize-html"
 
 interface ButtonsProps {
-    textAreaValue: string;
-    managementAudio: useEasySpeechType
+    goToColouring: () => void;
+    module: Module;
+    onSentenceChanged: (newSentence: string, index: number) => void;
+    onTranslationChanged: (newTranslation: string, index: number) => void;
 }
 
-export default function Buttons({ textAreaValue, managementAudio }: ButtonsProps) {
+export default function Buttons({ module, onSentenceChanged, onTranslationChanged, goToColouring }: ButtonsProps) {
     console.log("Buttons");
 
-    const [module, setModule] = useState<Module>(new Module());
-    const [isColouring, setIsColouring] = useState(false);
+    if (!module) {
+        return null;
+    }
 
-    let language = useSelector(selectLanguage);
-    let deeplToken = useSelector(selectDeeplToken);
+    function handleSentenceChanged(event: ContentEditableEvent, index: number) {
+        const sanitizeConf = {
+            allowedTags: ["b", "i", "a", "p"],
+            allowedAttributes: { a: ["href"] }
+        };
 
-    useEffect(() => {
-        GenerateModuleFromString(textAreaValue).then(module => setModule(module));
-    }, [textAreaValue]);
+        let val = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
+
+        onSentenceChanged(val, index);
+    }
+
+    function handleTranslationChanged(event: ContentEditableEvent, index: number) {
+        onTranslationChanged(event.currentTarget.innerHTML, index);
+    }
 
     const segments = module.segments.map((segment: Segment, index: number) => {
-
         return (
             <>
-                <span id={index.toString() + "e"} key={Math.random()} className='span-segment'>{segment.sentence}</span>
-                <span contentEditable={true} suppressContentEditableWarning={true} id={index.toString() + "p"} key={Math.random()} className='span-segment'>{segment.translation}</span>
-                <AudioPlay text={segment.sentence} managementAudio={managementAudio} key={Math.random()}></AudioPlay>
+                <ContentEditable html={segment.sentence} onChange={(event: ContentEditableEvent) => handleSentenceChanged(event, index)} className='span-segment'></ContentEditable>
+                <ContentEditable html={segment.translation} onChange={(event: ContentEditableEvent) => handleTranslationChanged(event, index)} className='span-segment'></ContentEditable>
+                <div className='segments-separator'></div>
             </>
         );
     });
 
-    function colour() {
-        setIsColouring(true);
-        setModule(getupdateModule());
-    }
-
-    function backToButtons() {
-        setIsColouring(false);
-    }
-
-    console.log(isColouring);
     return (
         <>
-            {
-                (isColouring && <Colouring module={module} backToButtons={backToButtons}></Colouring>) ||
-                (<>
-                    <section className='segments'>
-                        {segments}
-                    </section>
-
-                    <section>
-                        <button onClick={colour} className='colour-button'>Koloruj</button>
-                    </section>
-                </>)
-            }
+            <section className='segments'>
+                {segments}
+            </section>
+            <section>
+                <button type='button' onClick={() => { GoToColouring(); }} className='change-segments-button'>Koloruj</button>
+            </section>
         </>
     );
 
-    async function GenerateModuleFromString(stringData: string): Promise<Module> {
-        const sentences = stringData.split('\n');
-        const translations = await TranslateSentences(sentences);
-
-        let segments = new Array<Segment>(sentences.length);
-
-        for (let i: number = 0; i < sentences.length; ++i) {
-            segments[i] = new Segment(sentences[i], translations[i]);
+    function GoToColouring() {
+        if (module.segments.length === 0) {
+            alert("nie wprowadzono danych");
+            return;
         }
-
-        let result = new Module("", segments);
-        return result;
-    }
-
-    function getupdateModule(): Module {
-
-        let newSegmentsData = module.segments.slice();
-
-        for (let i = 0; i < module.segments.length; ++i) {
-            let spanElement = document.getElementById(i + "p") as HTMLSpanElement;
-
-            if (spanElement.textContent) {
-                newSegmentsData[i].translation = spanElement.textContent;
-            }
-            else {
-                newSegmentsData[i].translation = "";
-            }
-        }
-
-        return new Module("", newSegmentsData);
-    }
-
-    async function TranslateSentences(sentences: Array<string>): Promise<Array<string>> {
-        let sourceLanguage: string;
-
-        if (language === Language.English) {
-            sourceLanguage = 'en';
-        }
-        else {
-            sourceLanguage = 'de';
-        }
-
-        const targetLanguage = 'pl';
-
-        const request = require('sync-request');
-        const baseApiUrl = `https://api-free.deepl.com/v2/translate?auth_key=${deeplToken}&source_lang=${sourceLanguage}&target_lang=${targetLanguage}`;
-
-        let mainCounter = 0;
-        let resultArray: Array<string> = new Array<string>();
-
-        try {
-
-            for (let i: number = 0; mainCounter < sentences.length; ++i) {
-                let apiUrl = baseApiUrl;
-
-                for (let j: number = 0; j < 50; ++j) {
-                    apiUrl += "&text=" + sentences[mainCounter];
-                    ++mainCounter;
-
-                    if (mainCounter == sentences.length) {
-                        break;
-                    }
-                }
-
-                console.log(apiUrl);
-                const response = request('POST', apiUrl);
-                console.log(response);
-
-                const responseBody = JSON.parse(response.getBody('utf8'));
-
-                const responseTranslations = responseBody.translations.map((translation: any) => translation.text) as Array<string>;
-
-                resultArray = resultArray.concat(responseTranslations);
-            }
-
-            return resultArray;
-        } catch (error: any) {
-            return ['Error: ' + error.message];
-        }
+        goToColouring();
     }
 }

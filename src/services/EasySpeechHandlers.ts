@@ -1,6 +1,7 @@
 import EasySpeech from "easy-speech";
 import Language from "../types/Language";
-import store from "../redux/store";
+import { EnglishVoices } from "../types/EnglishVoices";
+import { GermanVoices } from "../types/GermanVoices";
 
 export async function EasySpeechInit() {
     let success = await EasySpeech.init({ maxTimeout: 5000, interval: 250 });
@@ -9,36 +10,42 @@ export async function EasySpeechInit() {
         console.log("no loaded easy speech");
     }
 
-    await ChangeVoice(store.getState().language.language);
+    //await ChangeVoice(store.getState().language.language);
 }
 
-export async function ChangeVoice(language: Language) {
+export async function ChangeVoice(language: Language, voiceType: number) {
     let voices = EasySpeech.voices();
 
     if (voices.length === 0) {
         console.log("any voices detected");
+        return;
     }
 
     let defaultVoice: SpeechSynthesisVoice;
 
     if (language === Language.English) {
-        let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === "Google UK English Male");
+        let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === EnglishVoices[voiceType]);
         if (!voice) {
-            voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "en-GB" || voice.lang === "en_GB" || voice.lang.includes("en")));
-
+            voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "en-GB" || voice.lang === "en_GB"));
             if (!voice) {
-                voice = voices[0];
+                voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang.includes("en")));
+                if (!voice) {
+                    return;
+                }
             }
         }
         defaultVoice = voice;
     }
     else {
-        let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === "Google Deutsch");
+        let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === GermanVoices[voiceType]);
         if (!voice) {
-            voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "de-DE" || voice.lang === "de_DE" || voice.lang.includes("de")));
+            voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "de-DE" || voice.lang === "de_DE"));
 
             if (!voice) {
-                voice = voices[0];
+                voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang.includes("de")));
+                if (!voice) {
+                    return;
+                }
             }
         }
         defaultVoice = voice;

@@ -1,0 +1,27 @@
+.remove-file-button {
+    background-color: red;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    margin: 1%;
+}
+
+.modify-filename {
+    margin: 1%;
+}
+
+.move-file-button {
+    cursor: pointer;
+    margin: 1%;
+    background-color: lightblue;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.copy-file-button {
+    cursor: pointer;
+    margin: 1%;
+    background-color: lightblue;
+    border-radius: 10px;
+    font-weight: 600;
+}

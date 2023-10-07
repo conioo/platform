@@ -1,14 +1,11 @@
 import '../css/Hub.css'
 import GapiLogin from '../google/GapiLogin';
-import EasySpeech from 'easy-speech';
 import Language, { convertToEnum } from '../types/Language';
 import { ActionFunctionArgs, Outlet, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
 import Paths, { LanguagePathName } from '../router/Paths';
-import { useAppDispatch } from '../redux/hook';
 import LanguageChanger from '../components/LanguageChanger';
 import { setLanguage } from '../redux/slices/language';
 import { HandleGapiLoad } from '../google/services/AuhorizationService';
-import { useEffect } from 'react';
 import { ChangeVoice, EasySpeechInit } from '../services/EasySpeechHandlers';
 import store from '../redux/store';
 
@@ -34,19 +31,17 @@ export async function loader({ params }: Args): Promise<boolean> {
 
     let language = convertToEnum(languageName);
 
-    if (language != store.getState().language.language) {// dla na poczatku niemiecki nie zadziala
+    if (language != store.getState().language.language) {
         store.dispatch(setLanguage(language));
-        ChangeVoice(language);
+        // ChangeVoice(language);
     }
 
-    console.log("HubLoader-Koniec");
     return true;
 }
 
 async function FirstLoaded() {
     await HandleGapiLoad();
     await EasySpeechInit();
-    console.log("po pp o");
 }
 
 export default function Hub() {
@@ -71,7 +66,7 @@ export default function Hub() {
                 </section>
 
                 <section className='right-section'>
-                    {<button className='return-button' onClick={() => { Return() }}>Powrót</button>}
+                    {/* {<button className='return-button' onClick={() => { Return() }}>Powrót</button>} */}
                 </section>
             </section>
 

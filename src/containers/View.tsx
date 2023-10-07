@@ -3,9 +3,6 @@ import '../css/Colouring.css';
 import '../css/fontello/css/fontello.css';
 import React, { useState, useEffect } from 'react';
 import Segment from '../models/Segment';
-import State from '../models/State';
-import Action from '../types/Action';
-import ActionType from '../types/ActionType';
 import AudioPlay from '../components/AudioPlay';
 import { getModule } from '../google/GoogleDriveService';
 import Module from '../models/Module';
@@ -14,6 +11,7 @@ import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useParams } f
 import EasySpeech from 'easy-speech';
 import { useDispatch } from 'react-redux';
 import Paths from '../router/Paths';
+import { ChangeVoice } from '../services/EasySpeechHandlers';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -30,6 +28,8 @@ export async function loader({ params }: Args): Promise<Module> {
     }
 
     let module = await getModule(fileId);
+
+    await ChangeVoice(module.language, module.voiceType); // a dla starych?
 
     return module;
 }

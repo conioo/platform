@@ -1,79 +1,34 @@
-import Buttons from '../components/Buttons';
 import '../css/Record.css';
-import React, { useState } from 'react';
-import State from '../models/State';
-import Action from '../types/Action';
-import { useEasySpeech, useEasySpeechType } from '../hooks/EasySpeech';
-import { ActionFunctionArgs, ParamParseKey, Params } from 'react-router-dom';
-import Paths from '../router/Paths';
-import { useDispatch } from 'react-redux';
-
-// interface Args extends ActionFunctionArgs {
-//     params: Params<ParamParseKey<typeof Paths.record>>;
-// }
-
-// export async function loader({ params }: Args): Promise<Language> {
-//     console.log("RecordLoader");
-
-//     const languageName = params.language;
-//     let language: Language;
-
-//     if (languageName === LanguagePathName.english) {
-//         language = Language.English;
-//     }
-//     else if (languageName === LanguagePathName.german) {
-//         language = Language.German;
-//     }
-//     else {
-//         throw new Error("ni ma takiego jezora")//blad jakis
-//     }
-
-// }
+import ModuleFormik, { FormikValuesType } from '../components/Forms/ModuleFormik';
+import Module from '../models/Module';
+import { FormikHelpers } from 'formik';
+import { useAppSelector } from '../redux/hook';
+import { selectCurrentParentFolderId } from '../redux/slices/module';
+import { saveModuleToGoogleDrive } from '../google/GoogleDriveService';
+import { useNavigate } from 'react-router-dom';
 
 export default function Record() {
     console.log("Record");
 
-    const [textAreaValue, setTextAreaValue] = useState<string | null>(null);
-    const [audioHub, setAudioHub] = useState<useEasySpeechType>();
+    let currentParentFolderId = useAppSelector(selectCurrentParentFolderId);
+    const navigate = useNavigate();
 
     return (
         <>
-            <div className='textarea-div'>
-                <textarea id='record-textarea'></textarea>
-            </div>
-            <div>
-                <button className='generate-segments-button' onClick={() => { SaveTextArea(); }} >Wygeneruj Kafelki</button>
-                <button className='separate-dots-button' onClick={() => { SeparateDots(); }} >Oddziel kropki</button>
-            </div>
-            {audioHub && textAreaValue ? <Buttons textAreaValue={textAreaValue} managementAudio={audioHub} /> : null}
+            <ModuleFormik module={new Module()} onSubmit={saveModule}></ModuleFormik>
         </>
     );
 
-    function SaveTextArea() {
-        const textarea = (document.getElementById("record-textarea") as HTMLTextAreaElement);
+    async function saveModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
+        console.log("saving");
+        console.log(values.module);
 
-        let value = textarea.value;
-        if (value[value.length - 1] === "\n") {
-            textarea.value = value.slice(0, -1);
+        try {
+            await saveModuleToGoogleDrive(values.module, currentParentFolderId);
+            console.log("saving all correctly");
+            navigate(-1);
+        } catch (error: any) {
+            console.error("Error occured:", error);
         }
-        setTextAreaValue(textarea.value);
-        setAudioHub(useEasySpeech());
-    }
-
-    function SeparateDots() {
-        const textarea = (document.getElementById("record-textarea") as HTMLTextAreaElement);
-        let textsArray = textarea.value.split(". ");
-
-        let newTextArea = "";
-
-        for (let i = 0; i < textsArray.length; ++i) {
-            newTextArea += textsArray[i] + ".\n";
-        }
-
-        while (newTextArea.length > 0 && newTextArea[newTextArea.length - 1] === '\n') {
-            newTextArea = newTextArea.slice(0, -1);
-        }
-
-        textarea.value = newTextArea;
     }
 }
