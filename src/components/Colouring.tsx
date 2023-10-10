@@ -26,8 +26,6 @@ export default function Colouring({ module, onSentenceColorChanged, onTranslatio
         React.createRef<HTMLButtonElement>()]);
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
-        console.log(refsToCollorButton);
-
         if (refsToCollorButton.length === 0) {
             return;
         }
@@ -41,20 +39,6 @@ export default function Colouring({ module, onSentenceColorChanged, onTranslatio
             case "n": { handleClickColor(refsToCollorButton[5], 5); break; }
         }
     }, []);
-
-    // useEffect(() => {
-
-    //     let arrayRefs = new Array<React.RefObject<HTMLButtonElement>>();
-
-    //     for (let i = 0; i < Colors.length; ++i) {
-    //         let refToColorButton = React.createRef<HTMLButtonElement>();
-
-    //         arrayRefs.push(refToColorButton);
-    //     }
-
-    //     console.log("usatwoaon" + arrayRefs);
-    //     setRefsToCollorButton(arrayRefs);
-    // }, []);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);

@@ -3,7 +3,8 @@ import type { RootState } from '../store'
 
 class ModuleState {
     currentParentFolderId: string = "";
-    moduleIdToBeChanged: string | null = null;
+    moduleIdToMove: string | null = null;
+    moduleIdToCopy: string | null = null;
 }
 
 export const moduleSlice = createSlice({
@@ -13,22 +14,33 @@ export const moduleSlice = createSlice({
         setParentFolderId: (state, action) => {
             return { ...state, currentParentFolderId: action.payload };
         },
-        setModuleIdToBeChanged: {
+        setModuleIdToMove: {
             reducer(state, action: PayloadAction<string | null>) {
-                return { ...state, moduleIdToBeChanged: action.payload };
+                return { ...state, moduleIdToMove: action.payload };
             },
-            prepare(moduleIdToBeChanged: string | null) {
+            prepare(moduleId: string | null) {
                 return {
-                    payload: moduleIdToBeChanged
+                    payload: moduleId
+                }
+            }
+        },
+        setModuleIdToCopy: {
+            reducer(state, action: PayloadAction<string | null>) {
+                return { ...state, moduleIdToCopy: action.payload };
+            },
+            prepare(moduleId: string | null) {
+                return {
+                    payload: moduleId
                 }
             }
         }
     },
 })
 
-export const { setParentFolderId } = moduleSlice.actions;
+export const { setParentFolderId, setModuleIdToMove, setModuleIdToCopy} = moduleSlice.actions;
 
 export const selectCurrentParentFolderId = (state: RootState) => state.module.currentParentFolderId;
-export const moduleIdToBeChanged = (state: RootState) => state.module.moduleIdToBeChanged;
+export const selectModuleIdToMove = (state: RootState) => state.module.moduleIdToMove;
+export const selectModuleIdToCopy = (state: RootState) => state.module.moduleIdToCopy;
 
 export default moduleSlice.reducer

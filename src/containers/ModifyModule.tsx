@@ -8,6 +8,11 @@ import Paths from '../router/Paths';
 import Module from '../models/Module';
 import ModuleFormik, { FormikValuesType } from '../components/Forms/ModuleFormik';
 import { FormikHelpers } from 'formik';
+import { useStore } from 'react-redux';
+import { setModuleIdToCopy, setModuleIdToMove } from '../redux/slices/module';
+import { useSelector } from 'react-redux';
+import { selectLanguage } from '../redux/slices/language';
+import { convertToName } from '../types/Language';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -15,7 +20,7 @@ interface Args extends ActionFunctionArgs {
 
 interface loaderReturnType {
     module: Module,
-    fileId: string
+    moduleId: string
 }
 
 export async function loader({ params }: Args): Promise<loaderReturnType> {
@@ -27,7 +32,7 @@ export async function loader({ params }: Args): Promise<loaderReturnType> {
 
     let module = await getModule(fileId);
 
-    return { module, fileId };
+    return { module, moduleId: fileId };
 }
 
 export default function ModifyModule() {
@@ -35,46 +40,81 @@ export default function ModifyModule() {
 
     const loaderData = useLoaderData() as loaderReturnType;
     const navigate = useNavigate();
+    const store = useStore();
+    const language = useSelector(selectLanguage);
     let module = loaderData.module;
 
     const [isRemovingModule, setIsRemovingModule] = useState(false);
     //     const [isSaving, setIsSaving] = useState(false);
 
     if (isRemovingModule) {
-        removeModule(loaderData.fileId).then(() => {
+        removeModule(loaderData.moduleId).then(() => {
             navigate(-1);
             setIsRemovingModule(false);
-        }).catch(exception => console.log(exception));
+        }).catch((exception: any) => console.log(exception));
     }
 
-    //module ->
     return (
         <>
             <h2 className='modify-filename'>{module.name}</h2>
 
             <ModuleFormik module={module} initialContent={getContentFromModule(module)} onSubmit={updateModule}></ModuleFormik>
 
-            <div>
-                <button className='move-file-button' onClick={() => setIsRemovingModule(true)}>Przenieś plik</button>
-                <button className='copy-file-button' onClick={() => setIsRemovingModule(true)}>Skopiuj plik</button>
-                <button className='remove-file-button' onClick={() => setIsRemovingModule(true)}>Usuń plik</button>
-                {isRemovingModule && <span>Usuwanie...</span>}
-            </div>
+            <section className='additional-mudule-options-section'>
+                <button className='move-file-button' onClick={() => onClickMoveButton()}>Przenieś plik</button>
+                <button className='copy-file-button' onClick={() => onClickCopyButton()}>Skopiuj plik</button>
+            </section>
 
+            <button className='remove-file-button' onClick={() => onClickRemoveButton()}>Usuń plik</button>
+            {isRemovingModule && <span>Usuwanie...</span>}
         </>
     );
+
+    function onClickRemoveButton() {
+        let result = window.confirm("napewno usunąć moduł?");
+
+        if (result) {
+            setIsRemovingModule(true);
+        }
+    }
+
+    function onClickMoveButton() {
+        store.dispatch(setModuleIdToMove(loaderData.moduleId));
+
+        navigate(`/${convertToName(language)}/browser/home`);
+    }
+
+    function onClickCopyButton() {
+        store.dispatch(setModuleIdToCopy(loaderData.moduleId));
+
+        navigate(`/${convertToName(language)}/browser/home`);
+    }
+
+    // na glowna strone -> w stai
 
     async function updateModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
         console.log("savings");
 
         try {
-            await updateModuleInGoogleDrive(loaderData.fileId, values.module, module.name);
+            await updateModuleInGoogleDrive(loaderData.moduleId, values.module, module.name);
             console.log("updated all correctly");
             navigate(-1);
         } catch (error: any) {
             console.error("Error occured:", error);
         }
     }
+
+    // async function moveModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
+    //     console.log("savings");
+
+    //     try {
+    //         await updateModuleInGoogleDrive(loaderData.fileId, values.module, module.name);
+    //         console.log("updated all correctly");
+    //         navigate(-1);
+    //     } catch (error: any) {
+    //         console.error("Error occured:", error);
+    //     }
+    // }
 
     function getContentFromModule(module: Module) {
         let content = "";

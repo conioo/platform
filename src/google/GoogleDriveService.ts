@@ -69,6 +69,10 @@ export async function createFolderInGoogleDrive(folderName: string, parentFolder
             },
         });
 
+        console.log(folderResponse.result.id);
+
+        console.log("create folder successfull")
+
     } catch (error: any) {
         console.error('Error creating folder:', error);
     };
@@ -91,8 +95,6 @@ export async function getModule(moduleId: string): Promise<Module> {
         const fileListResponse = await response.json();
         const files = fileListResponse.files;
 
-        console.log(files[0]);
-
         if (!files || !files[0].id) {
             throw new Error('No files in directory');
         }
@@ -101,7 +103,6 @@ export async function getModule(moduleId: string): Promise<Module> {
 
         const fileResponse = await fetch(getModuleUrl);
         const jsonData = await fileResponse.json();
-        console.log(jsonData);
         // const fileResponse = await gapi.client.drive.files.get({
         //     fileId: files[0].id,
         //     alt: 'media'
@@ -211,7 +212,6 @@ export async function removeFolderFromGoogleDrive(folderId: string) {
 
 export async function getSecrets(): Promise<Tokens | undefined> {
     try {
-        console.log("sekrety");
         // const headers = {
         //     Authorization: `Bearer ${gapi.client.getToken().access_token}`,
         // };
@@ -322,42 +322,89 @@ export async function updateModuleInGoogleDrive(moduleId: string, newModuleConte
     };
 }
 
-export async function copyModule(moduleId: string, destinationFolderId: string) {
-    const copyFolderUrl = `https://www.googleapis.com/drive/v3/files/${moduleId}/copy`;
-
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${GoogleSecrets.API_KEY}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            parents: [destinationFolderId],
-        }),
-    };
-
+export async function copyModule(moduleName: string, moduleId: string, destinationFolderId: string) {
     try {
-        const response = await fetch(copyFolderUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error('Error during coping folder');
+        let newModuleFolderId = await createFolder(destinationFolderId, moduleName);
+
+        let files = await getFilesOfFolder(moduleId, "id");
+        console.log(files);
+
+        const accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+
+        for (let i = 0; i < files.length; ++i) {
+
+            const copyFileUrl = `https://www.googleapis.com/drive/v3/files/${files[i].id}/copy`;
+
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    parents: [newModuleFolderId],
+                }),
+            };
+            const response = await fetch(copyFileUrl, requestOptions);// await na koncu 
+            if (!response.ok) {
+                throw new Error('Error during coping folder' + response);
+            }
         }
-
-        const copiedFolderData = await response.json();
-        console.log('Folder copied correctly', copiedFolderData);
-
     } catch (error) {
         console.log('Error during coping folder');
     }
+}
+
+async function getFilesOfFolder(folderId: string, fields: string): Promise<gapi.client.drive.File[]> {
+    try {
+        const fileListResponse = await gapi.client.drive.files.list({
+            q: `'${folderId}' in parents`,
+            fields: `files(${fields})`,
+        });
+
+        if (fileListResponse.result.files === undefined) {
+            throw new Error("files is undefinied");
+        }
+
+        return (fileListResponse.result.files);
+    } catch (error: any) {
+        console.log('Error during get files');
+        throw error;
+    }
+}
+
+async function createFolder(parentFolderId: string, folderName: string, desciption?: string): Promise<string> {
+    try {
+        let folderResponse = await gapi.client.drive.files.create({
+            resource: {
+                name: folderName,
+                mimeType: 'application/vnd.google-apps.folder',
+                parents: [parentFolderId],
+                description: desciption
+            },
+        });
+
+        if (folderResponse.result.id === undefined) {
+            throw new Error("not found folder id");
+        }
+
+        return folderResponse.result.id;
+    } catch (error: any) {
+        console.error('Error creating folder:', error);
+        throw error;
+    };
 }
 
 async function getParentFolderId(folderId: string): Promise<string> {
     try {
         const url = `https://www.googleapis.com/drive/v3/files/${folderId}?fields=parents`;
 
+        const accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+
         const requestOptions = {
             method: 'GET',
             headers: {
-                Authorization: `Bearer ${GoogleSecrets.API_KEY}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         };
         let response = await fetch(url, requestOptions);
@@ -378,20 +425,22 @@ async function getParentFolderId(folderId: string): Promise<string> {
 }
 
 export async function moveModule(moduleId: string, newParentFolderId: string) {
-    //parent dla moduleId
-    //zapisuje -> currentfolder moze miec
     try {
-        let currentParentId = await getParentFolderId(moduleId);
-        const url = `https://www.googleapis.com/drive/v3/files/${moduleId}?addParents=${newParentFolderId}&removeParents=${currentParentId}`;
+        // const url = `https://www.googleapis.com/drive/v3/files/${moduleId}?addParents=${newParentFolderId}&removeParents=${currentParentId}`;
+        const url = `https://www.googleapis.com/drive/v3/files/${moduleId}?addParents=${newParentFolderId}`;
+
+        const accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
 
         const requestOptions = {
             method: 'PATCH',
             headers: {
-                Authorization: `Bearer ${GoogleSecrets.API_KEY}`,
+                Authorization: `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             },
         };
+
         let response = await fetch(url, requestOptions);
+
         if (!response.ok) {
             throw new Error('Error during moving folder');
         }

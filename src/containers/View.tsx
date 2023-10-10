@@ -1,15 +1,14 @@
 import '../css/View.css';
 import '../css/Colouring.css';
 import '../css/fontello/css/fontello.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Segment from '../models/Segment';
 import AudioPlay from '../components/AudioPlay';
 import { getModule } from '../google/GoogleDriveService';
 import Module from '../models/Module';
-import { useEasySpeech, useEasySpeechType } from '../hooks/EasySpeech';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useParams } from 'react-router-dom';
+import { useEasySpeech,} from '../hooks/EasySpeech';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData} from 'react-router-dom';
 import EasySpeech from 'easy-speech';
-import { useDispatch } from 'react-redux';
 import Paths from '../router/Paths';
 import { ChangeVoice } from '../services/EasySpeechHandlers';
 
@@ -20,8 +19,6 @@ interface Args extends ActionFunctionArgs {
 export async function loader({ params }: Args): Promise<Module> {
     const fileId = params.fileid;
 
-    console.log(fileId);
-
     if(!fileId)
     {
         throw new Error("missing file id");
@@ -29,14 +26,13 @@ export async function loader({ params }: Args): Promise<Module> {
 
     let module = await getModule(fileId);
 
-    await ChangeVoice(module.language, module.voiceType); // a dla starych?
+    await ChangeVoice(module.language, module.voiceType);
 
     return module;
 }
 
 export default function View(): JSX.Element {
     console.log("View");
-    console.log(EasySpeech.status());
 
     let module = useLoaderData() as Module;
     let audioHub = useEasySpeech();
@@ -90,7 +86,6 @@ export default function View(): JSX.Element {
         const viewSegment = document.getElementById('view-segments');
 
         if (viewSegment) {
-            console.log(event.target.value);
             viewSegment.style.fontSize = `${event.target.value}px`;
         }
     }

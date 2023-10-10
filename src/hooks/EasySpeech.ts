@@ -13,11 +13,9 @@ export function useEasySpeech(): useEasySpeechType {
 
     const addAudioInfo = (audioInfo: AudioInfo): void => {
         audioInfoArray.push(audioInfo);
-        console.log(audioInfoArray);
     };
 
     const reset = () => {
-        console.log("reset");
         EasySpeech.cancel();
 
         for (let audioInfo of audioInfoArray) {

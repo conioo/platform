@@ -1,13 +1,14 @@
 import '../css/Hub.css'
 import GapiLogin from '../google/GapiLogin';
-import Language, { convertToEnum } from '../types/Language';
+import { convertToEnum, convertToName } from '../types/Language';
 import { ActionFunctionArgs, Outlet, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import Paths, { LanguagePathName } from '../router/Paths';
+import Paths from '../router/Paths';
 import LanguageChanger from '../components/LanguageChanger';
-import { setLanguage } from '../redux/slices/language';
+import { selectLanguage, setLanguage } from '../redux/slices/language';
 import { HandleGapiLoad } from '../google/services/AuhorizationService';
-import { ChangeVoice, EasySpeechInit } from '../services/EasySpeechHandlers';
+import { EasySpeechInit } from '../services/EasySpeechHandlers';
 import store from '../redux/store';
+import { useSelector } from 'react-redux';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.hub>>;
@@ -16,8 +17,6 @@ interface Args extends ActionFunctionArgs {
 let firstLoaded = true;
 
 export async function loader({ params }: Args): Promise<boolean> {
-    console.log("HubLoader");
-
     if (firstLoaded) {
         firstLoaded = false;
         await FirstLoaded();
@@ -33,7 +32,6 @@ export async function loader({ params }: Args): Promise<boolean> {
 
     if (language != store.getState().language.language) {
         store.dispatch(setLanguage(language));
-        // ChangeVoice(language);
     }
 
     return true;
@@ -47,14 +45,22 @@ async function FirstLoaded() {
 export default function Hub() {
     console.log("Hub");
 
-    // useEffect(() => { FirstLoaded() }, []);
     const navigate = useNavigate();
+
+    const language = convertToName(useSelector(selectLanguage));
 
     return (
         <>
             <header>
-                <LanguageChanger></LanguageChanger>
-                <GapiLogin></GapiLogin>
+                <section className='header-left-section'>
+                    <LanguageChanger></LanguageChanger>
+                    <div className='login'>
+                        <button className='change-language-button' onClick={() => navigate(`/${language}/browser/home`)}>Menu Główne</button>
+                    </div>
+                </section>
+                <section className='header-right-section'>
+                    <GapiLogin></GapiLogin>
+                </section>
             </header>
 
             <section className='sections-container'>

@@ -1,0 +1,22 @@
+.paste-module-section{
+    background-color: lightblue;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    width: 40%;
+    height: 40px;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.paste-module-button
+{
+    cursor: pointer;
+    background-color: rgb(129, 174, 189);
+    border-radius: 10px;
+    min-width: 20%;
+    min-height: 60%;
+    font-weight: 600;
+}
