@@ -13,7 +13,7 @@ export async function EasySpeechInit() {
     //await ChangeVoice(store.getState().language.language);
 }
 
-export async function ChangeVoice(language: Language, voiceType: number) {
+export async function ChangeVoice(language: Language, voiceType: number, rate: number = 1) {
     let voices = EasySpeech.voices();
 
     if (voices.length === 0) {
@@ -51,5 +51,9 @@ export async function ChangeVoice(language: Language, voiceType: number) {
         defaultVoice = voice;
     }
 
-    EasySpeech.defaults({ voice: defaultVoice });
+    EasySpeech.defaults({ voice: defaultVoice, rate });
+}
+
+export async function ChangeVoiceRate(rate: number) {
+    EasySpeech.defaults({rate });
 }

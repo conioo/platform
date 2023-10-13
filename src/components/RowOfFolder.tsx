@@ -17,7 +17,7 @@ export default function RowOfModule({ folder, fullPath, isLogin, basePath, remov
             <div className='file-buttons'>
                 <button className='icon-reply file-button' onClick={() => { Navigate(basePath + "/browser/" + fullPath + "/" + folder.name) }} >
                 </button>
-                {isLogin && <button className='icon-wrench file-button' onClick={() => { removeFolder(folder) }} ></button>}
+                {isLogin && <button className='icon-cog file-button' onClick={() => { removeFolder(folder) }} ></button>}
             </div>
         </li>
     );

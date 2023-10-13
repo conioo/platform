@@ -1,0 +1,77 @@
+.options-module-button {
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px 0px rgba(66, 68, 90, 1);
+    border: 1px solid black;
+    margin: 10px;
+    scale: 1.1;
+}
+
+.options-module-button:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out
+}
+
+.options-module-buttons-section {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.options-module-mode-section {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.options-module-speed-display {
+    margin: 10px;
+}
+
+.options-module-speed-section {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.options-module-field-mode-radio {
+    scale: 1.2;
+}
+
+.options-module-field-mode {
+    cursor: pointer;
+}
+
+.options-module-field-mode:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out
+}
+
+.options-module-field-speed {
+    cursor: pointer;
+}
+
+.options-module-field-speed:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease-in-out
+}
+
+.options-module-hidden {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.options-module-field-hidden {
+    scale: 1.5;
+    cursor: pointer;
+}
+
+.options-module-form h5{
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+}

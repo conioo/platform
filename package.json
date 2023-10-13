@@ -34,7 +34,7 @@
     "http": "^0.0.1-security",
     "install": "^0.13.0",
     "mespeak": "^2.0.2",
-    "npm": "^10.1.0",
+    "npm": "^10.2.0",
     "octokit-commit-multiple-files": "^4.3.0",
     "open": "^9.1.0",
     "os": "^0.1.2",
@@ -42,6 +42,7 @@
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.7",
     "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.16.0",
     "react-scripts": "^5.0.1",
@@ -85,6 +86,7 @@
   },
   "homepage": "https://conioo.github.io/platform/#",
   "devDependencies": {
+    "@types/react-modal": "^3.16.1",
     "@types/sanitize-html": "^2.9.1"
   }
 }
