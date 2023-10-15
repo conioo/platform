@@ -1,9 +1,9 @@
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import OptionsModuleForm from './OptionsModuleForm';
 import '../../css/Forms/OptionsModuleFormik.css';
-import { useStore } from 'react-redux';
-import { selectAllOptions, selectDisplayMode, setDisplayMode, setIsHidden, setPlayBackSpeed } from '../../redux/slices/moduleOptions';
-import { useSelector } from 'react-redux';
+import { useStore, useSelector } from 'react-redux';
+import { selectAllOptions} from '../../redux/slices/moduleOptions';
+import { useCookies } from 'react-cookie';
 
 export interface FormikValuesType {
     displayMode: string;
@@ -18,6 +18,9 @@ interface OptionsModuleFormikProps {
 export default function OptionsModuleFormik({ closeModal }: OptionsModuleFormikProps) {
     const store = useStore();
     let allOptions = useSelector(selectAllOptions);
+
+    const [cookie, setCookie] = useCookies(['view-options']);//pobrac
+
     return (
         <Formik
             initialValues={{ displayMode: allOptions.displayMode, playBackSpeed: allOptions.playBackSpeed, isHidden: allOptions.isHidden }}
@@ -33,11 +36,7 @@ export default function OptionsModuleFormik({ closeModal }: OptionsModuleFormikP
     );
 
     function onSubmit(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
-        store.dispatch(setDisplayMode(values.displayMode));
-        store.dispatch(setPlayBackSpeed(values.playBackSpeed));
-        store.dispatch(setIsHidden(values.isHidden));
-
-        // ciasteczka
+        setCookie('view-options', values);
 
         closeModal();
     }

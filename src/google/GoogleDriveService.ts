@@ -462,11 +462,7 @@ async function findFolderId(parentFolderId: string | undefined, folderName: stri
         method: 'GET',
     })
 
-    //const files = response.result.files;
     const files = (await response.json()).files;
-
-    console.log("tutaj");
-    console.log(files);
 
     if (files && files.length > 0) {
         return files[0].id;

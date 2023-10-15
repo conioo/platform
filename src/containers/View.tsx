@@ -1,7 +1,7 @@
 import '../css/View.css';
 import '../css/Colouring.css';
 import '../css/fontello/css/fontello.css';
-import React, { isValidElement, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 import Segment from '../models/Segment';
 import AudioPlay from '../components/AudioPlay';
 import { getModule } from '../google/GoogleDriveService';
@@ -12,8 +12,10 @@ import Paths from '../router/Paths';
 import { ChangeVoice, ChangeVoiceRate } from '../services/EasySpeechHandlers';
 import SettingsModal from '../components/SettingsModal';
 import { useSelector } from 'react-redux';
-import { selectAllOptions, selectDisplayMode } from '../redux/slices/moduleOptions';
+import { selectAllOptions, selectDisplayMode, setDisplayMode, setIsHidden, setPlayBackSpeed } from '../redux/slices/moduleOptions';
 import store from '../redux/store';
+import { useCookies } from 'react-cookie';
+import { FormikValuesType } from '../components/Forms/OptionsModuleFormik';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -38,15 +40,32 @@ export default function View(): JSX.Element {
 
     let module = useLoaderData() as Module;
     let audioHub = useEasySpeech();
-    let viewOptions = useSelector(selectAllOptions);
+    let { playBackSpeed, displayMode, isHidden } = useSelector(selectAllOptions);
+    let fullText = "";
 
-    let isClassic = viewOptions.displayMode === "classic";
+    let isClassic = displayMode === "classic";
 
     let refToSlider = React.createRef<HTMLInputElement>();
 
-    ChangeVoiceRate(viewOptions.playBackSpeed);
+    ChangeVoiceRate(playBackSpeed);
+
+    const [cookies] = useCookies(['view-options']);
+
+    useEffect(() => {
+        let viewOptions = cookies['view-options'] as FormikValuesType;
+
+        if (viewOptions === undefined) {
+            return;
+        }
+
+        store.dispatch(setDisplayMode(viewOptions.displayMode));
+        store.dispatch(setPlayBackSpeed(viewOptions.playBackSpeed));
+        store.dispatch(setIsHidden(viewOptions.isHidden));
+
+    }, [cookies['view-options']]);
 
     const segments = module.segments.map((segment: Segment, index: number) => {
+        fullText += segment.sentence + " ";
 
         let wordPiecies = segment.sentence.split(" ");
 
@@ -62,17 +81,17 @@ export default function View(): JSX.Element {
 
         return (
             <>
-                <div key={Math.random()} className='audioplay-container'>
-                    <AudioPlay key={Math.random()} text={segment.sentence} managementAudio={audioHub}></AudioPlay>
+                <div key={index + "au"} className='audioplay-container'>
+                    {segment.sentence.length > 0 && <AudioPlay key={Math.random()} text={segment.sentence} managementAudio={audioHub}></AudioPlay>}
                 </div>
-                <span key={Math.random()} className="sentence" >{allWords}</span>
+                <span key={index + "se"} className="sentence" >{allWords}</span>
 
-                {!isClassic && <span></span>}
+                {!isClassic && <span key={index + "sp"}></span>}
 
-                <section className='translation-section'>
+                <section className='translation-section' key={index + "tr"}>
                     <span key={Math.random()} className="translation" >{allMeanings}</span>
 
-                    {viewOptions.isHidden && <button className='icon-exchange view-visible-button' onClick={(e) => hiddenButton(e.currentTarget)}></button>}
+                    {isHidden && segment.sentence.length > 0 && <button className='icon-exchange view-visible-button' onClick={(e) => hiddenButton(e.currentTarget)}></button>}
                 </section>
             </>
         );
@@ -88,13 +107,15 @@ export default function View(): JSX.Element {
                 {module.name}
             </h2>
 
-            <input type="range" id="fontSlider" className='font-size-slider' ref={refToSlider} onChange={(event) => handleChangeFontSize(event)} min="10" max="55" defaultValue={20} step="1"></input>
+            <input type="range" id="fontSlider" className='font-size-slider' ref={refToSlider} onChange={(event) => handleChangeFontSize(event)} min="10" max="70" defaultValue={20} step="1"></input>
+
+            <AudioPlay key={"fullText"} text={fullText} managementAudio={audioHub}></AudioPlay>
 
             <section className='view-options-section'>
                 <SettingsModal></SettingsModal>
             </section>
 
-            <section className={viewOptions.displayMode + "-segments view-segments"}>
+            <section className={displayMode + "-segments view-segments"}>
                 {segments}
             </section>
         </>

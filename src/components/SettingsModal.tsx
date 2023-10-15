@@ -15,14 +15,13 @@ export default function SettingsModal({ }: SettingsModal) {
         <>
             <button className='icon-sliders options-button' onClick={() => setShowModal(true)}></button>
 
-            <ReactModal isOpen={showModal} className="view-settings-modal">
+            <ReactModal isOpen={showModal} className="view-settings-modal" appElement={document.getElementsByClassName("view-segments")}>
                 <OptionsModuleFormik closeModal={closeModal}></OptionsModuleFormik>
             </ReactModal>
         </>
     );
 
-    function closeModal()
-    {
+    function closeModal() {
         setShowModal(false);
     }
 }
