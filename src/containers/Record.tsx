@@ -21,7 +21,6 @@ export default function Record() {
 
     async function saveModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
         console.log("saving");
-        console.log(values.module);
 
         try {
             await saveModuleToGoogleDrive(values.module, currentParentFolderId);

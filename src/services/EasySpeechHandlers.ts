@@ -1,19 +1,47 @@
 import EasySpeech from "easy-speech";
-import Language from "../types/Language";
-import { EnglishVoices } from "../types/EnglishVoices";
-import { GermanVoices } from "../types/GermanVoices";
+import store from "../redux/store";
+import { setEnglishVoices, setGermanVoices } from "../redux/slices/language";
 
 export async function EasySpeechInit() {
-    let success = await EasySpeech.init({ maxTimeout: 5000, interval: 250 });
+    try {
+        let success = await EasySpeech.init({ maxTimeout: 5000, interval: 250 });
 
-    if (!success) {
-        console.log("no loaded easy speech");
+        if (!success) {
+            console.log("no loaded easy speech");
+            return;
+        }
+
+        let voices = EasySpeech.voices();
+
+        let english = new Array<SpeechSynthesisVoice>();
+        let german = new Array<SpeechSynthesisVoice>();
+
+        for (let i = 0; i < voices.length; ++i) {
+            if (voices[i].lang.includes("en")) {
+                english.push(voices[i]);
+            }
+
+            if (voices[i].lang.includes("de")) {
+                german.push(voices[i]);
+            }
+        }
+
+        if(english.length > 0)
+        {
+            store.dispatch(setEnglishVoices(english));
+        }
+
+        if(german.length > 0)
+        {
+            store.dispatch(setGermanVoices(german));
+        }
     }
-
-    //await ChangeVoice(store.getState().language.language);
+    catch (error) {
+        console.log(error);
+    }
 }
 
-export async function ChangeVoice(language: Language, voiceType: number, rate: number = 1) {
+export default async function ChangeVoice(voiceName: string) {
     let voices = EasySpeech.voices();
 
     if (voices.length === 0) {
@@ -21,39 +49,16 @@ export async function ChangeVoice(language: Language, voiceType: number, rate: n
         return;
     }
 
-    let defaultVoice: SpeechSynthesisVoice;
+    let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === voiceName);
 
-    if (language === Language.English) {
-        let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === EnglishVoices[voiceType]);
-        if (!voice) {
-            voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "en-GB" || voice.lang === "en_GB"));
-            if (!voice) {
-                voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang.includes("en")));
-                if (!voice) {
-                    return;
-                }
-            }
-        }
-        defaultVoice = voice;
-    }
-    else {
-        let voice = voices.find((voice: SpeechSynthesisVoice) => voice.name === GermanVoices[voiceType]);
-        if (!voice) {
-            voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang === "de-DE" || voice.lang === "de_DE"));
-
-            if (!voice) {
-                voice = voices.find((voice: SpeechSynthesisVoice) => (voice.lang.includes("de")));
-                if (!voice) {
-                    return;
-                }
-            }
-        }
-        defaultVoice = voice;
+    if (!voice) {
+        console.log(`voice ${voiceName} not found`);
+        return;
     }
 
-    EasySpeech.defaults({ voice: defaultVoice, rate });
+    EasySpeech.defaults({ voice });
 }
 
 export async function ChangeVoiceRate(rate: number) {
-    EasySpeech.defaults({rate });
+    EasySpeech.defaults({ rate });
 }

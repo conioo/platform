@@ -6,7 +6,7 @@ import OptionsModuleFormik from './Forms/OptionsModuleFormik';
 interface SettingsModal {
 }
 
-export default function SettingsModal({ }: SettingsModal) {
+export default function SettingsModal({}: SettingsModal) {
     console.log("SettingsModal")
 
     const [showModal, setShowModal] = useState(false);

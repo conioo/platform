@@ -1,7 +1,7 @@
 import '../css/View.css';
 import '../css/Colouring.css';
 import '../css/fontello/css/fontello.css';
-import React, { isValidElement, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Segment from '../models/Segment';
 import AudioPlay from '../components/AudioPlay';
 import { getModule } from '../google/GoogleDriveService';
@@ -9,13 +9,12 @@ import Module from '../models/Module';
 import { useEasySpeech, } from '../hooks/EasySpeech';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData } from 'react-router-dom';
 import Paths from '../router/Paths';
-import { ChangeVoice, ChangeVoiceRate } from '../services/EasySpeechHandlers';
 import SettingsModal from '../components/SettingsModal';
 import { useSelector } from 'react-redux';
-import { selectAllOptions, selectDisplayMode, setDisplayMode, setIsHidden, setPlayBackSpeed } from '../redux/slices/moduleOptions';
-import store from '../redux/store';
+import { ModuleOptionsState, selectAllOptions, setDisplayMode, setIsHidden, setOptions, setPlayBackSpeed, setVoiceName } from '../redux/slices/moduleOptions';
 import { useCookies } from 'react-cookie';
-import { FormikValuesType } from '../components/Forms/OptionsModuleFormik';
+import ChangeVoice, { ChangeVoiceRate } from '../services/EasySpeechHandlers';
+import { useStore } from 'react-redux';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -30,7 +29,8 @@ export async function loader({ params }: Args): Promise<Module> {
 
     let module = await getModule(fileId);
 
-    await ChangeVoice(module.language, module.voiceType, store.getState().moduleOptions.playBackSpeed);
+    //await ChangeVoice(module.language, module.voiceType);
+    ChangeVoice(module.voiceName);
 
     return module;
 }
@@ -40,29 +40,38 @@ export default function View(): JSX.Element {
 
     let module = useLoaderData() as Module;
     let audioHub = useEasySpeech();
-    let { playBackSpeed, displayMode, isHidden } = useSelector(selectAllOptions);
+    let { playBackSpeed, displayMode, isHidden, voiceName } = useSelector(selectAllOptions);
     let fullText = "";
 
     let isClassic = displayMode === "classic";
 
     let refToSlider = React.createRef<HTMLInputElement>();
-
-    ChangeVoiceRate(playBackSpeed);
+    let store = useStore();
 
     const [cookies] = useCookies(['view-options']);
 
     useEffect(() => {
-        let viewOptions = cookies['view-options'] as FormikValuesType;
+        let viewOptions = cookies['view-options'] as ModuleOptionsState;
 
         if (viewOptions === undefined) {
             return;
         }
 
-        store.dispatch(setDisplayMode(viewOptions.displayMode));
-        store.dispatch(setPlayBackSpeed(viewOptions.playBackSpeed));
-        store.dispatch(setIsHidden(viewOptions.isHidden));
+        store.dispatch(setOptions(viewOptions));
 
     }, [cookies['view-options']]);
+
+    useEffect(() => {
+        store.dispatch(setVoiceName(module.voiceName));
+    }, [])
+
+    useEffect(() => {
+        ChangeVoiceRate(playBackSpeed);
+    }, [playBackSpeed])
+
+    useEffect(() => {
+        ChangeVoice(voiceName);
+    }, [voiceName])
 
     const segments = module.segments.map((segment: Segment, index: number) => {
         fullText += segment.sentence + " ";

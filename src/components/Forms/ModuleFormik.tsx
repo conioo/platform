@@ -29,6 +29,7 @@ export default function ModuleFormik({ module = new Module(), initialContent = "
     //       .required('Required'),
     //     email: Yup.string().email('Invalid email address').required('Required'),
     //   });
+    
     return (
         <Formik
             initialValues={{ module, content: initialContent }}
@@ -60,9 +61,9 @@ function onValidate(values: FormikValuesType): FormikErrors<FormikValuesType> {
         errors.module.language = `invalid language type ${values.module.language}`;
     }
 
-    if (values.module.voiceType < 0 || values.module.voiceType > 3) {
+    if (values.module.voiceName.length < 1) {
         errors.module = moduleErrors;
-        errors.module.voiceType = `invalid voice type ${values.module.voiceType}`;
+        errors.module.voiceName = `invalid voice name ${values.module.voiceName}`;
     }
 
     if (values.module.segments.length < 1 || (values.module.segments.length === 1 && values.module.segments[0].sentence === "")) {

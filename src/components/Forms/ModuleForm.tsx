@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Field, useFormikContext } from 'formik';
 import Buttons from "../Buttons";
 import Colouring from "../Colouring";
@@ -13,11 +13,9 @@ import { useSelector } from "react-redux";
 import { selectDeeplToken } from "../../redux/slices/authentication";
 import Segment from "../../models/Segment";
 import VoiceSelectField from "../VoiceSelectField";
-
-export interface FormikValuesType {
-    module: Module;
-    content: string;
-}
+import { FormikValuesType } from "./ModuleFormik";
+import Language from "../../types/Language";
+import store from "../../redux/store";
 
 export default function ModuleForm() {
     const [isColouring, setIsColouring] = useState<boolean>(false);
@@ -26,6 +24,23 @@ export default function ModuleForm() {
 
     let language = useSelector(selectLanguage);
     let deeplToken = useSelector(selectDeeplToken);
+
+    useEffect(() => {
+        let state = store.getState();
+
+        if (language === Language.English) {
+            if (state.language.englishVoices !== undefined && state.language.englishVoices.length > 0) {
+                setFieldValue("module.voiceName", state.language.englishVoices[state.language.englishVoices.length - 1].name);
+            }
+        }
+        else if (language === Language.German) {
+            if (state.language.germanVoices !== undefined && state.language.germanVoices.length > 0) {
+                setFieldValue("module.voiceName", state.language.germanVoices[state.language.germanVoices.length - 1].name);
+            }
+        }
+    }, [])
+
+    console.log(values);
 
     return (
         <>
@@ -111,7 +126,7 @@ export default function ModuleForm() {
 
         newModule.language = values.module.language;
         newModule.name = values.module.name;
-        newModule.voiceType = values.module.voiceType;
+        newModule.voiceName = values.module.voiceName;
         newModule.segments = new Array<Segment>(newSentences.length);
 
         let sentencesToTranslation = new Array<string>();

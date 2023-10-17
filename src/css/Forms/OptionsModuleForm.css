@@ -12,6 +12,13 @@
     transition: transform 0.2s ease-in-out
 }
 
+.options-module-section {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
 .options-module-buttons-section {
     display: flex;
     justify-content: center;
@@ -19,22 +26,8 @@
     align-items: center;
 }
 
-.options-module-mode-section {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-}
-
 .options-module-speed-display {
     margin: 10px;
-}
-
-.options-module-speed-section {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
 }
 
 .options-module-field-mode-radio {
@@ -59,13 +52,6 @@
     transition: transform 0.2s ease-in-out
 }
 
-.options-module-hidden {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-}
-
 .options-module-field-hidden {
     scale: 1.5;
     cursor: pointer;
@@ -74,4 +60,9 @@
 .options-module-form h5{
     margin-block-start: 1em;
     margin-block-end: 1em;
+}
+
+.options-module-voice
+{
+    cursor: pointer;
 }

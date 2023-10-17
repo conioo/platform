@@ -1,6 +1,6 @@
 .view-settings-modal {
-    width: 50%;
-    height: 50%;
+    width: auto;
+    height: auto;
     background-color: lightgray;
     box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
     border-radius: 20px;
@@ -16,8 +16,13 @@
     align-items: center;
 }
 
-.options-button
-{
+@media (min-width: 600px) {
+    .view-settings-modal {
+        width: 40%;
+    }
+}
+
+.options-button {
     cursor: pointer;
     scale: 1.4;
     border: 1px solid black;
@@ -25,8 +30,7 @@
     box-shadow: 1px 1px 2px 0px rgba(66, 68, 90, 1);
 }
 
-.options-button:hover
-{
+.options-button:hover {
     transform: scale(1.05);
     transition: transform 0.2s ease-in-out
 }

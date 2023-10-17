@@ -12,7 +12,8 @@ import { useStore } from 'react-redux';
 import { setModuleIdToCopy, setModuleIdToMove } from '../redux/slices/module';
 import { useSelector } from 'react-redux';
 import { selectLanguage } from '../redux/slices/language';
-import { convertToName } from '../types/Language';
+import Language, { convertToName } from '../types/Language';
+import store from '../redux/store';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -31,6 +32,12 @@ export async function loader({ params }: Args): Promise<loaderReturnType> {
     }
 
     let module = await getModule(fileId);
+
+    if (module.language === undefined) {
+        module.language = store.getState().language.language;
+    }
+
+    module.voiceName = "Google UK English Male";
 
     return { module, moduleId: fileId };
 }

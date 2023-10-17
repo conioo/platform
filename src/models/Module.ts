@@ -5,12 +5,12 @@ export default class Module {
     segments: Array<Segment>;
     name: string;
     language: Language;
-    voiceType: number;
-
-    constructor(segments: Array<Segment> = new Array<Segment>(), name: string = "", voiceType: number = 0, language = Language.English) {
+    voiceName: string;
+    //Google UK English Female
+    constructor(segments: Array<Segment> = new Array<Segment>(), name: string = "", voiceName: string = "", language = Language.English) {
         this.segments = segments;
         this.name = name;
-        this.voiceType = voiceType;
+        this.voiceName = voiceName;
         this.language = language;
     }
 }

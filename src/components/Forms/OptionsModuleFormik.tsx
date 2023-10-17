@@ -2,14 +2,9 @@ import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import OptionsModuleForm from './OptionsModuleForm';
 import '../../css/Forms/OptionsModuleFormik.css';
 import { useStore, useSelector } from 'react-redux';
-import { selectAllOptions} from '../../redux/slices/moduleOptions';
+import { ModuleOptionsState, selectAllOptions, setVoiceName } from '../../redux/slices/moduleOptions';
 import { useCookies } from 'react-cookie';
-
-export interface FormikValuesType {
-    displayMode: string;
-    playBackSpeed: number;
-    isHidden: boolean;
-}
+import { useEffect } from 'react';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
@@ -17,13 +12,14 @@ interface OptionsModuleFormikProps {
 
 export default function OptionsModuleFormik({ closeModal }: OptionsModuleFormikProps) {
     const store = useStore();
+
     let allOptions = useSelector(selectAllOptions);
 
-    const [cookie, setCookie] = useCookies(['view-options']);//pobrac
+    const [cookie, setCookie] = useCookies(['view-options']);
 
     return (
         <Formik
-            initialValues={{ displayMode: allOptions.displayMode, playBackSpeed: allOptions.playBackSpeed, isHidden: allOptions.isHidden }}
+            initialValues={allOptions}
             onSubmit={onSubmit}
             validate={onValidate}
             validateOnChange={false}
@@ -35,14 +31,14 @@ export default function OptionsModuleFormik({ closeModal }: OptionsModuleFormikP
         </Formik>
     );
 
-    function onSubmit(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
+    function onSubmit(values: ModuleOptionsState, formikHelpers: FormikHelpers<ModuleOptionsState>) {
         setCookie('view-options', values);
 
         closeModal();
     }
 
-    function onValidate(values: FormikValuesType): FormikErrors<FormikValuesType> {
-        let errors: FormikErrors<FormikValuesType> = {};
+    function onValidate(values: ModuleOptionsState): FormikErrors<ModuleOptionsState> {
+        let errors: FormikErrors<ModuleOptionsState> = {};
 
         console.log(values);
         return errors;

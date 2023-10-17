@@ -39,7 +39,7 @@ export async function loader({ params }: Args): Promise<boolean> {
 
 async function FirstLoaded() {
     await HandleGapiLoad();
-    await EasySpeechInit();
+    EasySpeechInit();// czy zdazy przed dzialaniem?
 }
 
 export default function Hub() {

@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 
-class ModuleOptionsState {
+export class ModuleOptionsState {
     displayMode: string = "classic";
     playBackSpeed: number = 1;
     isHidden: boolean = true;
+    voiceName: string = "";
 }
 
 export const moduleSlice = createSlice({
@@ -41,13 +42,33 @@ export const moduleSlice = createSlice({
                 }
             }
         },
+        setVoiceName: {
+            reducer(state, action: PayloadAction<string>) {
+                return { ...state, voiceName: action.payload };
+            },
+            prepare(voiceName: string) {
+                return {
+                    payload: voiceName
+                }
+            }
+        },
+        setOptions: {
+            reducer(state, action: PayloadAction<ModuleOptionsState>) {
+                return { ...state, ...action.payload };
+            },
+            prepare(options: ModuleOptionsState) {
+                return {
+                    payload: options
+                }
+            }
+        },
     },
 })
 
-export const { setDisplayMode, setPlayBackSpeed, setIsHidden } = moduleSlice.actions;
+export const { setDisplayMode, setPlayBackSpeed, setIsHidden, setVoiceName, setOptions } = moduleSlice.actions;
 
 export const selectDisplayMode = (state: RootState) => state.moduleOptions.displayMode;
 export const selectPlayBackSpeed = (state: RootState) => state.moduleOptions.playBackSpeed;
-export const selectAllOptions = (state: RootState): ModuleOptionsState => { return ({ playBackSpeed: state.moduleOptions.playBackSpeed, displayMode: state.moduleOptions.displayMode, isHidden: state.moduleOptions.isHidden }); };
+export const selectAllOptions = (state: RootState): ModuleOptionsState => { return ({ playBackSpeed: state.moduleOptions.playBackSpeed, displayMode: state.moduleOptions.displayMode, isHidden: state.moduleOptions.isHidden, voiceName: state.moduleOptions.voiceName }); };
 
 export default moduleSlice.reducer
