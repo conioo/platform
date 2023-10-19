@@ -11,10 +11,11 @@ import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData } from 'react-
 import Paths from '../router/Paths';
 import SettingsModal from '../components/SettingsModal';
 import { useSelector } from 'react-redux';
-import { ModuleOptionsState, selectAllOptions, setDisplayMode, setIsHidden, setOptions, setPlayBackSpeed, setVoiceName } from '../redux/slices/moduleOptions';
+import { ModuleOptionsState, selectAllOptions, setOptions, setVoiceName } from '../redux/slices/moduleOptions';
 import { useCookies } from 'react-cookie';
 import ChangeVoice, { ChangeVoiceRate } from '../services/EasySpeechHandlers';
 import { useStore } from 'react-redux';
+import { Colors } from '../types/Colors';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -29,7 +30,6 @@ export async function loader({ params }: Args): Promise<Module> {
 
     let module = await getModule(fileId);
 
-    //await ChangeVoice(module.language, module.voiceType);
     ChangeVoice(module.voiceName);
 
     return module;
@@ -49,6 +49,8 @@ export default function View(): JSX.Element {
     let store = useStore();
 
     const [cookies] = useCookies(['view-options']);
+
+    console.log(module);
 
     useEffect(() => {
         let viewOptions = cookies['view-options'] as ModuleOptionsState;
@@ -149,21 +151,9 @@ export default function View(): JSX.Element {
     }
 
     function getColoredSpan(content: string, colorId: number): JSX.Element | null {
-        switch (colorId) {
-            case 0:
-                return getSpan(content, "black");
-            case 1:
-                return getSpan(content, "orange");
-            case 2:
-                return getSpan(content, "red");
-            case 3:
-                return getSpan(content, "purple");
-            case 4:
-                return getSpan(content, "navy");
-            case 5:
-                return getSpan(content, "green");
-            default:
-                return null;
-        }
+
+        let color = Colors[colorId];
+
+        return getSpan(content, color);
     }
 }

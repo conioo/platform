@@ -66,7 +66,7 @@ export default function ModuleForm() {
 
             <section className="save-section">
                 Nazwa pliku: <Field name='module.name' id='fileName'></Field>
-                <input type="submit" className='save-button' value={"Zapisz"}></input>
+                <input type="submit" className='save-button' value={"Zapisz"} onClick={() => setUpdatedModule()}></input>
             </section>
         </>
     );
@@ -135,9 +135,6 @@ export default function ModuleForm() {
         for (let i = 0; i < newSentences.length; ++i) {
             let index = oldSentences.get(newSentences[i]);
 
-            console.log(index);
-            console.log(newSentences.length);
-
             if (index === undefined) {
                 sentencesToTranslation.push(newSentences[i]);
                 indexSentencesToTranslation.push(i);
@@ -158,7 +155,7 @@ export default function ModuleForm() {
         setFieldValue("module", newModule);
     }
 
-    function GenerateColouring() {
+    function setUpdatedModule() {
         let newModule = JSON.parse(JSON.stringify(values.module)) as Module;
 
         for (let i = 0; i < values.module.segments.length; ++i) {
@@ -176,6 +173,11 @@ export default function ModuleForm() {
         }
 
         setFieldValue("module", newModule);
+    }
+
+    function GenerateColouring() {
+
+        setUpdatedModule();
         setIsColouring(true);
     }
 }

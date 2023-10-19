@@ -8,7 +8,7 @@ import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate }
 import Paths from '../router/Paths';
 import { convertToName } from '../types/Language';
 import { selectIsLogin } from '../redux/slices/authentication';
-import module, { selectModuleIdToCopy, selectModuleIdToMove, setParentFolderId } from '../redux/slices/module';
+import module, { setModuleInfoToCopy, selectModuleIdToMove, setParentFolderId, selectModuleInfoToCopy } from '../redux/slices/module';
 import RowOfModule from '../components/RowOfModule';
 import RowOfFolder from '../components/RowOfFolder';
 import { useAppDispatch, useAppSelector } from '../redux/hook';
@@ -77,7 +77,7 @@ export default function FileBrowser() {
     let language = useAppSelector(selectLanguage);
     let isLogin = useAppSelector(selectIsLogin);
 
-    let moduleIdToCopy = useSelector(selectModuleIdToCopy);
+    let moduleInfoToCopy = useSelector(selectModuleInfoToCopy);
     let moduleIdToMove = useSelector(selectModuleIdToMove);
 
     let dispatch = useAppDispatch();
@@ -112,8 +112,8 @@ export default function FileBrowser() {
         let path = currentPath;
 
         return (<>
-            <span onClick={() => navigate(path)} className='current-path-span' key={index+"seg"}>{segmentPath}</span>
-            <span key={index+"sep"}>/</span>
+            <span onClick={() => navigate(path)} className='current-path-span' key={index + "seg"}>{segmentPath}</span>
+            <span key={index + "sep"}>/</span>
         </>);
     });
 
@@ -123,7 +123,6 @@ export default function FileBrowser() {
                 <div>
                     {paths}
                 </div>
-                {/* {state.currentPath.length > 1 && <button onClick={() => backFromFolder(1)} className='return-folder-button'>Powrót</button>} */}
             </section>
 
             <ul className='list-of-files'>
@@ -131,7 +130,7 @@ export default function FileBrowser() {
                 {listOfNameFiles}
             </ul>
 
-            <Pastemodule moduleIdToCopy={moduleIdToCopy} moduleIdToMove={moduleIdToMove} updateListOfFiles={updateListOfFiles}></Pastemodule>
+            <Pastemodule moduleInfoToCopy={moduleInfoToCopy} moduleIdToMove={moduleIdToMove} updateListOfFiles={updateListOfFiles}></Pastemodule>
 
             {isLogin &&
                 <section className='new-file-section'>

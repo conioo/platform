@@ -14,11 +14,22 @@ interface ButtonsProps {
 export default function Buttons({ module, onSentenceChanged, onTranslationChanged, goToColouring }: ButtonsProps) {
     console.log("Buttons");
 
+    const sanitizeConf = {
+        allowedTags: ["b", "i", "a", "p"],
+        allowedAttributes: { a: ["href"] }
+    };
+
     if (!module) {
         return null;
     }
 
     function handleSentenceChanged(event: ContentEditableEvent, index: number) {
+        let val = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
+
+        onSentenceChanged(val, index);
+    }
+
+    function handleTranslationChanged(event: ContentEditableEvent, index: number) {
         const sanitizeConf = {
             allowedTags: ["b", "i", "a", "p"],
             allowedAttributes: { a: ["href"] }
@@ -26,11 +37,7 @@ export default function Buttons({ module, onSentenceChanged, onTranslationChange
 
         let val = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
 
-        onSentenceChanged(val, index);
-    }
-
-    function handleTranslationChanged(event: ContentEditableEvent, index: number) {
-        onTranslationChanged(event.currentTarget.innerHTML, index);
+        onTranslationChanged(val, index);
     }
 
     const segments = module.segments.map((segment: Segment, index: number) => {

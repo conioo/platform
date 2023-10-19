@@ -1,22 +1,22 @@
 import { useSelector } from "react-redux";
 import { copyModule, moveModule } from "../google/GoogleDriveService";
-import { selectCurrentParentFolderId, setModuleIdToCopy, setModuleIdToMove } from "../redux/slices/module";
+import { moduleInfoToCopy, selectCurrentParentFolderId, setModuleIdToMove, setModuleInfoToCopy } from "../redux/slices/module";
 import '../css/PasteModule.css';
 import { useStore } from "react-redux";
 
 interface PasteModuleProps {
     moduleIdToMove: string | null;
-    moduleIdToCopy: string | null;
+    moduleInfoToCopy: moduleInfoToCopy | null;
     updateListOfFiles: () => void;
 }
 
-export default function Pastemodule({ moduleIdToMove, moduleIdToCopy, updateListOfFiles}: PasteModuleProps) {
+export default function Pastemodule({ moduleIdToMove, moduleInfoToCopy, updateListOfFiles}: PasteModuleProps) {
     console.log("Pastemodule")
 
     const currentParentFolderId = useSelector(selectCurrentParentFolderId);
     const store = useStore();
 
-    if(moduleIdToMove === null && moduleIdToCopy === null)
+    if(moduleIdToMove === null && moduleInfoToCopy === null)
     {
         return null;
     }
@@ -33,9 +33,9 @@ export default function Pastemodule({ moduleIdToMove, moduleIdToCopy, updateList
             store.dispatch(setModuleIdToMove(null));
             updateListOfFiles();
 
-        } else if (moduleIdToCopy !== null) {
-            await copyModule("kabaczek", moduleIdToCopy, currentParentFolderId);
-            store.dispatch(setModuleIdToCopy(null));
+        } else if (moduleInfoToCopy !== null) {
+            await copyModule(moduleInfoToCopy.moduleName, moduleInfoToCopy.moduleId, currentParentFolderId);
+            store.dispatch(setModuleInfoToCopy(null));
             updateListOfFiles();
         }
     }

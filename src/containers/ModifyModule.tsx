@@ -9,7 +9,7 @@ import Module from '../models/Module';
 import ModuleFormik, { FormikValuesType } from '../components/Forms/ModuleFormik';
 import { FormikHelpers } from 'formik';
 import { useStore } from 'react-redux';
-import { setModuleIdToCopy, setModuleIdToMove } from '../redux/slices/module';
+import { setModuleInfoToCopy, setModuleIdToMove } from '../redux/slices/module';
 import { useSelector } from 'react-redux';
 import { selectLanguage } from '../redux/slices/language';
 import Language, { convertToName } from '../types/Language';
@@ -88,11 +88,13 @@ export default function ModifyModule() {
     function onClickMoveButton() {
         store.dispatch(setModuleIdToMove(loaderData.moduleId));
 
+        //nazwa
+
         navigate(`/${convertToName(language)}/browser/home`);
     }
 
     function onClickCopyButton() {
-        store.dispatch(setModuleIdToCopy(loaderData.moduleId));
+        store.dispatch(setModuleInfoToCopy({moduleId: loaderData.moduleId, moduleName: loaderData.module.name}));
 
         navigate(`/${convertToName(language)}/browser/home`);
     }

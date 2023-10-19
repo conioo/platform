@@ -1,10 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 
+export interface moduleInfoToCopy {
+    moduleId: string;
+    moduleName: string;
+}
+
 class ModuleState {
     currentParentFolderId: string = "";
     moduleIdToMove: string | null = null;
-    moduleIdToCopy: string | null = null;
+    moduleInfoToCopy: moduleInfoToCopy | null = null;
 }
 
 export const moduleSlice = createSlice({
@@ -24,23 +29,23 @@ export const moduleSlice = createSlice({
                 }
             }
         },
-        setModuleIdToCopy: {
-            reducer(state, action: PayloadAction<string | null>) {
-                return { ...state, moduleIdToCopy: action.payload };
+        setModuleInfoToCopy: {
+            reducer(state, action: PayloadAction<moduleInfoToCopy | null>) {
+                return { ...state, moduleInfoToCopy: action.payload };
             },
-            prepare(moduleId: string | null) {
+            prepare(moduleInfo: moduleInfoToCopy | null) {
                 return {
-                    payload: moduleId
+                    payload: moduleInfo
                 }
             }
         }
     },
 })
 
-export const { setParentFolderId, setModuleIdToMove, setModuleIdToCopy} = moduleSlice.actions;
+export const { setParentFolderId, setModuleIdToMove, setModuleInfoToCopy } = moduleSlice.actions;
 
 export const selectCurrentParentFolderId = (state: RootState) => state.module.currentParentFolderId;
 export const selectModuleIdToMove = (state: RootState) => state.module.moduleIdToMove;
-export const selectModuleIdToCopy = (state: RootState) => state.module.moduleIdToCopy;
+export const selectModuleInfoToCopy = (state: RootState) => state.module.moduleInfoToCopy;
 
 export default moduleSlice.reducer
