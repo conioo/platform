@@ -7,7 +7,7 @@ import AudioPlay from '../components/AudioPlay';
 import { getModule } from '../google/GoogleDriveService';
 import Module from '../models/Module';
 import { useEasySpeech, } from '../hooks/EasySpeech';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData } from 'react-router-dom';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
 import Paths from '../router/Paths';
 import SettingsModal from '../components/SettingsModal';
 import { useSelector } from 'react-redux';
@@ -16,12 +16,19 @@ import { useCookies } from 'react-cookie';
 import ChangeVoice, { ChangeVoiceRate } from '../services/EasySpeechHandlers';
 import { useStore } from 'react-redux';
 import { Colors } from '../types/Colors';
+import { selectBasePath } from '../redux/slices/language';
+import { selectIsLogin } from '../redux/slices/authentication';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
 }
 
-export async function loader({ params }: Args): Promise<Module> {
+interface loaderReturnType {
+    module: Module,
+    fileId: string
+}
+
+export async function loader({ params }: Args): Promise<loaderReturnType> {
     const fileId = params.fileid;
 
     if (!fileId) {
@@ -32,13 +39,13 @@ export async function loader({ params }: Args): Promise<Module> {
 
     ChangeVoice(module.voiceName);
 
-    return module;
+    return { module, fileId };
 }
 
 export default function View(): JSX.Element {
     console.log("View");
 
-    let module = useLoaderData() as Module;
+    let { module, fileId } = useLoaderData() as loaderReturnType;
     let audioHub = useEasySpeech();
     let { playBackSpeed, displayMode, isHidden, voiceName } = useSelector(selectAllOptions);
     let fullText = "";
@@ -49,6 +56,9 @@ export default function View(): JSX.Element {
     let store = useStore();
 
     const [cookies] = useCookies(['view-options']);
+    const navigate = useNavigate();
+    const basePath = useSelector(selectBasePath);
+    const isLogin = useSelector(selectIsLogin);
 
     console.log(module);
 
@@ -100,7 +110,7 @@ export default function View(): JSX.Element {
                 {!isClassic && <span key={index + "sp"}></span>}
 
                 <section className='translation-section' key={index + "tr"}>
-                    <span key={Math.random()} className="translation" >{allMeanings}</span>
+                    <span key={Math.random()} className="translation">{allMeanings}</span>
 
                     {isHidden && segment.sentence.length > 0 && <button className='icon-exchange view-visible-button' onClick={(e) => hiddenButton(e.currentTarget)}></button>}
                 </section>
@@ -109,7 +119,17 @@ export default function View(): JSX.Element {
     });
 
     const hiddenButton = (button: HTMLButtonElement) => {
-        button.style.visibility = 'hidden';
+        // button.style.visibility = 'hidden';
+        if(button.style.opacity === "0")
+        {
+            button.style.opacity = "1";
+        }else{
+            button.style.opacity = "0";
+        }
+    };
+
+    const showButton = (button: HTMLButtonElement) => {
+        button.style.visibility = 'visible';
     };
 
     return (
@@ -123,8 +143,14 @@ export default function View(): JSX.Element {
             <AudioPlay key={"fullText"} text={fullText} managementAudio={audioHub}></AudioPlay>
 
             <section className='view-options-section'>
-                <SettingsModal></SettingsModal>
-            </section>
+                <section className='view-options-left'>
+                    <button className='icon-reply options-button' onClick={() => navigate(-1)}></button>
+                </section>
+                <section className='view-options-right'>
+                    {isLogin && <button className='icon-cog-alt options-button' onClick={() => { navigate(basePath + "/modify/" + fileId) }}></button>}
+                    <SettingsModal></SettingsModal>
+                </section>
+            </section >
 
             <section className={displayMode + "-segments view-segments"}>
                 {segments}

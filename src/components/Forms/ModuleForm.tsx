@@ -16,26 +16,37 @@ import VoiceSelectField from "../VoiceSelectField";
 import { FormikValuesType } from "./ModuleFormik";
 import Language from "../../types/Language";
 import store from "../../redux/store";
+import { useNavigate } from "react-router-dom";
 
 export default function ModuleForm() {
     const [isColouring, setIsColouring] = useState<boolean>(false);
 
     const { values, setFieldValue } = useFormikContext<FormikValuesType>();
 
-    let language = useSelector(selectLanguage);
-    let deeplToken = useSelector(selectDeeplToken);
+    const language = useSelector(selectLanguage);
+    const deeplToken = useSelector(selectDeeplToken);
+    const navigate = useNavigate();
 
     useEffect(() => {
         let state = store.getState();
 
         if (language === Language.English) {
             if (state.language.englishVoices !== undefined && state.language.englishVoices.length > 0) {
-                setFieldValue("module.voiceName", state.language.englishVoices[state.language.englishVoices.length - 1].name);
+                if (values.module.voiceName.length > 0) {
+                    setFieldValue("module.voiceName", values.module.voiceName.length);
+                }
+                else {
+                    setFieldValue("module.voiceName", state.language.englishVoices[state.language.englishVoices.length - 1].name);
+                }
             }
         }
         else if (language === Language.German) {
             if (state.language.germanVoices !== undefined && state.language.germanVoices.length > 0) {
-                setFieldValue("module.voiceName", state.language.germanVoices[state.language.germanVoices.length - 1].name);
+                if (values.module.voiceName.length > 0) {
+                    setFieldValue("module.voiceName", values.module.voiceName.length);
+                } else {
+                    setFieldValue("module.voiceName", state.language.germanVoices[state.language.germanVoices.length - 1].name);
+                }
             }
         }
     }, [])
@@ -47,6 +58,8 @@ export default function ModuleForm() {
             <div className='textarea-div'>
                 <Field as="textarea" name="content" id="record-textarea"></Field>
             </div>
+
+            <button className='icon-reply options-button return-button' onClick={() => navigate(-1)} type="button"></button>
 
             <div>
                 <button type="button" className='generate-segments-button' onClick={() => { updateModuleFromContent(); }} >Wygeneruj Kafelki</button>

@@ -49,11 +49,33 @@
 
 .view-options-section {
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: space-between;
     flex-direction: row;
     width: 100%;
     margin: 5px;
+}
+
+.options-button {
+    cursor: pointer;
+    scale: 1.4;
+    margin: 20%;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px 0px rgba(66, 68, 90, 1);
+}
+
+.view-options-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: row;
+}
+
+.view-options-left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
 }
 
 .view-visible-button {

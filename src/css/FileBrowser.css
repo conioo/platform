@@ -1,6 +1,4 @@
 .list-of-files {
-    /* min-height: 40%; */
-    /* max-height: 60%; */
     width: 60%;
     overflow: hidden;
     overflow-y: scroll;
@@ -15,6 +13,12 @@
     flex-direction: column;
 
     margin-top: 0;
+}
+
+@media (max-width: 600px) {
+    .list-of-files {
+        width: 80%;
+    }
 }
 
 .row-of-files {

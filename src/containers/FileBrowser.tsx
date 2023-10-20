@@ -12,7 +12,7 @@ import module, { setModuleInfoToCopy, selectModuleIdToMove, setParentFolderId, s
 import RowOfModule from '../components/RowOfModule';
 import RowOfFolder from '../components/RowOfFolder';
 import { useAppDispatch, useAppSelector } from '../redux/hook';
-import { selectLanguage } from '../redux/slices/language';
+import { selectBasePath, selectLanguage } from '../redux/slices/language';
 import store from '../redux/store';
 import { useSelector } from 'react-redux';
 import Pastemodule from '../components/PasteModule';
@@ -74,7 +74,6 @@ export default function FileBrowser() {
         setFilesInfo(newFilesInfo);
     }
 
-    let language = useAppSelector(selectLanguage);
     let isLogin = useAppSelector(selectIsLogin);
 
     let moduleInfoToCopy = useSelector(selectModuleInfoToCopy);
@@ -83,8 +82,7 @@ export default function FileBrowser() {
     let dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    let languageName = convertToName(language);
-    let basePath = "/" + languageName;
+    let basePath = useSelector(selectBasePath);
 
     let listOfNameFiles: Array<JSX.Element> | undefined;
     let listOfNameFolders: Array<JSX.Element> | undefined;
@@ -105,7 +103,7 @@ export default function FileBrowser() {
 
     const folderNames = filesInfo.fullPath.split('/').filter((name: any) => name !== '');
 
-    let currentPath = "/" + languageName + "/browser";
+    let currentPath = basePath + "/browser";
 
     let paths = folderNames.map((segmentPath, index) => {
         currentPath += "/" + segmentPath;

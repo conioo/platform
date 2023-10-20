@@ -74,3 +74,12 @@ main {
     display: flex;
     justify-content: flex-end;
 }
+
+.options-button {
+    cursor: pointer;
+    scale: 1.4;
+    margin: 20%;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px 0px rgba(66, 68, 90, 1);
+}

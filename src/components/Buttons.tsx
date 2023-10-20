@@ -3,6 +3,7 @@ import Segment from '../models/Segment';
 import Module from '../models/Module';
 import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
 import sanitizeHtml from "sanitize-html"
+import { useEffect } from 'react';
 
 interface ButtonsProps {
     goToColouring: () => void;
@@ -19,6 +20,12 @@ export default function Buttons({ module, onSentenceChanged, onTranslationChange
         allowedAttributes: { a: ["href"] }
     };
 
+    // useEffect(() => {
+    //     for (let i = 0; i < module.segments.length; ++i) {
+    //         onTranslationChanged(sanitizeHtml(module.segments[i].translation, sanitizeConf), i);
+    //     }
+    // }, []);
+
     if (!module) {
         return null;
     }
@@ -30,11 +37,6 @@ export default function Buttons({ module, onSentenceChanged, onTranslationChange
     }
 
     function handleTranslationChanged(event: ContentEditableEvent, index: number) {
-        const sanitizeConf = {
-            allowedTags: ["b", "i", "a", "p"],
-            allowedAttributes: { a: ["href"] }
-        };
-
         let val = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
 
         onTranslationChanged(val, index);

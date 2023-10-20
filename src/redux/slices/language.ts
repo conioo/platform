@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import Language from '../../types/Language';
+import Language, { convertToName } from '../../types/Language';
 
 class LanguageState {
     language: Language = Language.English;
@@ -48,6 +48,7 @@ export const languageSlice = createSlice({
 export const { setLanguage, setEnglishVoices, setGermanVoices } = languageSlice.actions
 
 export const selectLanguage = (state: RootState) => state.language.language;
+export const selectBasePath = (state: RootState) => "/" + convertToName(state.language.language); ;
 export const selectEnglishVoices = (state: RootState) => state.language.englishVoices
 export const selectGermanVoices = (state: RootState) => state.language.germanVoices;
 export const selectLanguageState = (state: RootState) => state.language;

@@ -1,4 +1,4 @@
-.module-form{
+.module-form {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -6,7 +6,7 @@
     flex-direction: column;
 }
 
-.separate-dots-button{
+.separate-dots-button {
     cursor: pointer;
 }
 
@@ -18,7 +18,7 @@
     margin: 2%;
 }
 
-.change-segments-button{
+.change-segments-button {
     cursor: pointer;
 }
 
@@ -30,7 +30,7 @@
     min-height: 1em;
 }
 
-.segments-separator{
+.segments-separator {
     height: 2px;
     background-color: lightgray;
     width: 100%;
@@ -38,10 +38,17 @@
     margin-bottom: 5px;
 }
 
-.main-modify-section{
+.main-modify-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     margin-bottom: 50px;
+}
+
+.return-button {
+    position: absolute;
+    top: 80px;
+    left: 3%;
+    margin: 0;
 }

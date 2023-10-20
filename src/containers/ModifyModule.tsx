@@ -37,8 +37,6 @@ export async function loader({ params }: Args): Promise<loaderReturnType> {
         module.language = store.getState().language.language;
     }
 
-    module.voiceName = "Google UK English Male";
-
     return { module, moduleId: fileId };
 }
 
