@@ -7,11 +7,32 @@ import '../../css/ModuleForm.css';
 import ModuleForm from "./ModuleForm";
 import * as Yup from 'yup';
 import Language from '../../types/Language';
+import Segment from '../../models/Segment';
 
-export interface FormikValuesType {
-    module: Module;
-    content: string;
-}
+const moduleScheme = Yup.object({
+    name: Yup.string()
+        .min(1, 'Must be 1 characters or more')
+        .required('Required'),
+    language: Yup.number()
+        .oneOf([Language.English, Language.German], "invalid language type")
+        .required('Required'),
+    voiceName: Yup.string()
+        .min(1, 'Must be 1 characters or more')
+        .required('Required'),
+    segments: Yup.array<undefined, Segment>()
+        .min(1, 'Must be at least 1 element')
+        .required('Required'),
+});
+
+const formikValuesScheme = Yup.object({
+    content: Yup.string()
+        .min(1, 'Must be 1 characters or more')
+        .required('Required'),
+
+    module: moduleScheme
+});
+
+export type FormikValuesType = Yup.InferType<typeof formikValuesScheme>;
 
 interface ModuleFormProps {
     initialContent?: string;
@@ -20,21 +41,10 @@ interface ModuleFormProps {
 }
 
 export default function ModuleFormik({ module = new Module(), initialContent = "", onSubmit }: ModuleFormProps) {
-    // const yupScheme = Yup.object({
-    //     firstName: Yup.string()
-    //       .max(15, 'Must be 15 characters or less')
-    //       .required('Required'),
-    //     lastName: Yup.string()
-    //       .max(20, 'Must be 20 characters or less')
-    //       .required('Required'),
-    //     email: Yup.string().email('Invalid email address').required('Required'),
-    //   });
-    
     return (
         <Formik
             initialValues={{ module, content: initialContent }}
             onSubmit={onSubmit}
-            validate={onValidate}
             validateOnChange={false}
             validateOnBlur={false}
         >
@@ -43,37 +53,4 @@ export default function ModuleFormik({ module = new Module(), initialContent = "
             </Form>
         </Formik>
     );
-}
-
-function onValidate(values: FormikValuesType): FormikErrors<FormikValuesType> {
-    let errors: FormikErrors<FormikValuesType> = {};
-    let moduleErrors: FormikErrors<Module> = {};
-
-    console.log(values);
-
-    if (values.module.name.length < 1) {
-        errors.module = moduleErrors;
-        errors.module.name = `the module name should have at least 1 character, now it has ${values.module.name.length}`;
-    }
-
-    if (values.module.language !== Language.English && values.module.language !== Language.German) {
-        errors.module = moduleErrors;
-        errors.module.language = `invalid language type ${values.module.language}`;
-    }
-
-    if (values.module.voiceName.length < 1) {
-        errors.module = moduleErrors;
-        errors.module.voiceName = `invalid voice name ${values.module.voiceName}`;
-    }
-
-    if (values.module.segments.length < 1 || (values.module.segments.length === 1 && values.module.segments[0].sentence === "")) {
-        errors.module = moduleErrors;
-        errors.module.segments = "the module name should have at least 1 segment";
-    }
-
-    if (errors.module) {
-        alert(JSON.stringify(errors));
-    }
-
-    return errors;
 }

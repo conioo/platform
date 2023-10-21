@@ -4,9 +4,10 @@ import { useState } from "react";
 import OptionsModuleFormik from './Forms/OptionsModuleFormik';
 
 interface SettingsModal {
+    defaultVoiceName: string;
 }
 
-export default function SettingsModal({}: SettingsModal) {
+export default function SettingsModal({ defaultVoiceName }: SettingsModal) {
     console.log("SettingsModal")
 
     const [showModal, setShowModal] = useState(false);
@@ -16,7 +17,7 @@ export default function SettingsModal({}: SettingsModal) {
             <button className='icon-sliders options-button' onClick={() => setShowModal(true)}></button>
 
             <ReactModal isOpen={showModal} className="view-settings-modal" appElement={document.getElementsByClassName("view-segments")}>
-                <OptionsModuleFormik closeModal={closeModal}></OptionsModuleFormik>
+                <OptionsModuleFormik closeModal={closeModal} defaultVoiceName={defaultVoiceName}></OptionsModuleFormik>
             </ReactModal>
         </>
     );

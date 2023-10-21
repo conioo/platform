@@ -119,17 +119,11 @@ export default function View(): JSX.Element {
     });
 
     const hiddenButton = (button: HTMLButtonElement) => {
-        // button.style.visibility = 'hidden';
-        if(button.style.opacity === "0")
-        {
+        if (button.style.opacity === "0") {
             button.style.opacity = "1";
-        }else{
+        } else {
             button.style.opacity = "0";
         }
-    };
-
-    const showButton = (button: HTMLButtonElement) => {
-        button.style.visibility = 'visible';
     };
 
     return (
@@ -148,7 +142,7 @@ export default function View(): JSX.Element {
                 </section>
                 <section className='view-options-right'>
                     {isLogin && <button className='icon-cog-alt options-button' onClick={() => { navigate(basePath + "/modify/" + fileId) }}></button>}
-                    <SettingsModal></SettingsModal>
+                    <SettingsModal defaultVoiceName={module.voiceName}></SettingsModal>
                 </section>
             </section >
 

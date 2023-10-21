@@ -1,21 +1,28 @@
 import { Field, useFormikContext } from 'formik';
 import '../../css/Forms/OptionsModuleForm.css';
-import EasySpeech from 'easy-speech';
 import { ModuleOptionsState } from '../../redux/slices/moduleOptions';
 import { useSelector } from 'react-redux';
 import { selectLanguageState } from '../../redux/slices/language';
 import Language from '../../types/Language';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import ErrorAlerts from '../../services/FormikErrorsAlert';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
+    defaultVoiceName: string;
 }
 
-export default function OptionsModuleForm({ closeModal }: OptionsModuleFormikProps) {
-    const { values, setFieldValue } = useFormikContext<ModuleOptionsState>();
+export default function OptionsModuleForm({ closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
+    const { values, errors, setFieldValue, isSubmitting } = useFormikContext<ModuleOptionsState>();
 
     let languageState = useSelector(selectLanguageState);
     let voiceOptions: (JSX.Element | undefined)[] = new Array<undefined>();
+
+    useEffect(() => {
+        if (isSubmitting === false) {
+            ErrorAlerts(errors);
+        }
+    }, [isSubmitting]);
 
     if (languageState.language === Language.English) {
         if (languageState.englishVoices !== undefined) {
@@ -72,7 +79,7 @@ export default function OptionsModuleForm({ closeModal }: OptionsModuleFormikPro
     function setDefaultValues() {
         setFieldValue(`displayMode`, 'classic');
         setFieldValue(`playBackSpeed`, 1);
-        setFieldValue('isHidden', false);
-        setFieldValue('voiceName', "");
+        setFieldValue('isHidden', true);
+        setFieldValue('voiceName', defaultVoiceName);
     }
 }

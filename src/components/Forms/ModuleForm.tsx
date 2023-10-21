@@ -17,11 +17,12 @@ import { FormikValuesType } from "./ModuleFormik";
 import Language from "../../types/Language";
 import store from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import ErrorAlerts from "../../services/FormikErrorsAlert";
 
 export default function ModuleForm() {
     const [isColouring, setIsColouring] = useState<boolean>(false);
 
-    const { values, setFieldValue } = useFormikContext<FormikValuesType>();
+    const { values, errors, isSubmitting, setFieldValue } = useFormikContext<FormikValuesType>();
 
     const language = useSelector(selectLanguage);
     const deeplToken = useSelector(selectDeeplToken);
@@ -32,19 +33,14 @@ export default function ModuleForm() {
 
         if (language === Language.English) {
             if (state.language.englishVoices !== undefined && state.language.englishVoices.length > 0) {
-                if (values.module.voiceName.length > 0) {
-                    setFieldValue("module.voiceName", values.module.voiceName.length);
-                }
-                else {
+                if (values.module.voiceName.length < 1) {
                     setFieldValue("module.voiceName", state.language.englishVoices[state.language.englishVoices.length - 1].name);
                 }
             }
         }
         else if (language === Language.German) {
             if (state.language.germanVoices !== undefined && state.language.germanVoices.length > 0) {
-                if (values.module.voiceName.length > 0) {
-                    setFieldValue("module.voiceName", values.module.voiceName.length);
-                } else {
+                if (values.module.voiceName.length < 1) {
                     setFieldValue("module.voiceName", state.language.germanVoices[state.language.germanVoices.length - 1].name);
                 }
             }
@@ -52,6 +48,12 @@ export default function ModuleForm() {
     }, [])
 
     console.log(values);
+
+    useEffect(() => {
+        if (isSubmitting === false) {
+            ErrorAlerts(errors);
+        }
+    }, [isSubmitting]);
 
     return (
         <>
@@ -189,7 +191,6 @@ export default function ModuleForm() {
     }
 
     function GenerateColouring() {
-
         setUpdatedModule();
         setIsColouring(true);
     }

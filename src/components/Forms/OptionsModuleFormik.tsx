@@ -4,29 +4,43 @@ import '../../css/Forms/OptionsModuleFormik.css';
 import { useStore, useSelector } from 'react-redux';
 import { ModuleOptionsState, selectAllOptions, setVoiceName } from '../../redux/slices/moduleOptions';
 import { useCookies } from 'react-cookie';
-import { useEffect } from 'react';
+import * as Yup from 'yup';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
+    defaultVoiceName: string;
 }
 
-export default function OptionsModuleFormik({ closeModal }: OptionsModuleFormikProps) {
+export default function OptionsModuleFormik({ closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
     const store = useStore();
 
     let allOptions = useSelector(selectAllOptions);
 
     const [cookie, setCookie] = useCookies(['view-options']);
 
+    const yupScheme = Yup.object({
+        playBackSpeed: Yup.number()
+            .min(0.1, "Must be at least 0.1")
+            .max(2, "Must be less than 2")
+            .required('Required'),
+        displayMode: Yup.string()
+            .oneOf(["classic", "vertical"], "Must be classic or vertical")
+            .required('Required'),
+        voiceName: Yup.string()
+            .min(1, "Must be at least 1 sign")
+            .required('Required')
+    });
+
     return (
         <Formik
             initialValues={allOptions}
             onSubmit={onSubmit}
-            validate={onValidate}
+            validationSchema={yupScheme}
             validateOnChange={false}
             validateOnBlur={false}
         >
             <Form className="options-module-form">
-                <OptionsModuleForm closeModal={closeModal}></OptionsModuleForm>
+                <OptionsModuleForm closeModal={closeModal} defaultVoiceName={defaultVoiceName}></OptionsModuleForm>
             </Form>
         </Formik>
     );
@@ -35,12 +49,5 @@ export default function OptionsModuleFormik({ closeModal }: OptionsModuleFormikP
         setCookie('view-options', values);
 
         closeModal();
-    }
-
-    function onValidate(values: ModuleOptionsState): FormikErrors<ModuleOptionsState> {
-        let errors: FormikErrors<ModuleOptionsState> = {};
-
-        console.log(values);
-        return errors;
     }
 }
