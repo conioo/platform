@@ -38,8 +38,8 @@ export async function loader({ params }: Args): Promise<boolean> {
 }
 
 async function FirstLoaded() {
+    EasySpeechInit();
     await HandleGapiLoad();
-    EasySpeechInit();// czy zdazy przed dzialaniem?
 }
 
 export default function Hub() {

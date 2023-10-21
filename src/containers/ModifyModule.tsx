@@ -14,6 +14,8 @@ import { useSelector } from 'react-redux';
 import { selectLanguage } from '../redux/slices/language';
 import Language, { convertToName } from '../types/Language';
 import store from '../redux/store';
+import { selectIsLogin } from '../redux/slices/authentication';
+import NoAuthorization from '../components/NoAuthorization';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -47,10 +49,15 @@ export default function ModifyModule() {
     const navigate = useNavigate();
     const store = useStore();
     const language = useSelector(selectLanguage);
-    let module = loaderData.module;
-
+    const isLogin = useSelector(selectIsLogin);
     const [isRemovingModule, setIsRemovingModule] = useState(false);
-    //     const [isSaving, setIsSaving] = useState(false);
+
+    if(!isLogin)
+    {
+        return(<NoAuthorization language={language}></NoAuthorization>)
+    }
+
+    let module = loaderData.module;
 
     if (isRemovingModule) {
         removeModule(loaderData.moduleId).then(() => {

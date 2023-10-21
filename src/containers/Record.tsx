@@ -6,12 +6,22 @@ import { useAppSelector } from '../redux/hook';
 import { selectCurrentParentFolderId } from '../redux/slices/module';
 import { saveModuleToGoogleDrive } from '../google/GoogleDriveService';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsLogin } from '../redux/slices/authentication';
+import NoAuthorization from '../components/NoAuthorization';
+import { selectLanguage } from '../redux/slices/language';
 
 export default function Record() {
     console.log("Record");
 
     let currentParentFolderId = useAppSelector(selectCurrentParentFolderId);
     const navigate = useNavigate();
+    const isLogin = useSelector(selectIsLogin);
+    const language = useSelector(selectLanguage);
+
+    if (!isLogin) {
+        return (<NoAuthorization language={language}></NoAuthorization>);
+    }
 
     return (
         <>
