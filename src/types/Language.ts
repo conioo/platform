@@ -2,7 +2,8 @@ import { LanguagePathName } from "../router/Paths";
 
 enum Language {
     English,
-    German
+    German,
+    Spanish
 }
 
 export function convertToEnum(languageName: string): Language {
@@ -13,6 +14,9 @@ export function convertToEnum(languageName: string): Language {
     }
     else if (languageName === LanguagePathName.german) {
         language = Language.German;
+    }
+    else if (languageName === LanguagePathName.spanish) {
+        language = Language.Spanish;
     }
     else {
         throw new Error("missing language name")
@@ -29,6 +33,9 @@ export function convertToName(language: Language): string {
     }
     else if (language === Language.German) {
         languageName = LanguagePathName.german;
+    }
+    else if (language === Language.Spanish) {
+        languageName = LanguagePathName.spanish;
     }
     else {
         throw new Error("missing language")

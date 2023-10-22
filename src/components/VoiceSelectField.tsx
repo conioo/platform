@@ -22,6 +22,13 @@ export default function VoiceSelectField() {
             });
         }
     }
+    else if (languageState.language === Language.Spanish) {
+        if (languageState.spanishVoices !== undefined) {
+            options = languageState.spanishVoices.map((voice, index) => {
+                return <option value={voice.name} key={index + "vo"}>{voice.name}</option>
+            });
+        }
+    }
 
     return (<Field name="module.voiceName" as="select" className="voice-select-field">
         {options}

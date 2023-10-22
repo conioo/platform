@@ -1,6 +1,6 @@
 import EasySpeech from "easy-speech";
 import store from "../redux/store";
-import { setEnglishVoices, setGermanVoices } from "../redux/slices/language";
+import { setEnglishVoices, setGermanVoices, setSpanishVoices } from "../redux/slices/language";
 
 export async function EasySpeechInit() {
     try {
@@ -15,6 +15,7 @@ export async function EasySpeechInit() {
 
         let english = new Array<SpeechSynthesisVoice>();
         let german = new Array<SpeechSynthesisVoice>();
+        let spanish = new Array<SpeechSynthesisVoice>();
 
         for (let i = 0; i < voices.length; ++i) {
             if (voices[i].lang.includes("en")) {
@@ -24,16 +25,22 @@ export async function EasySpeechInit() {
             if (voices[i].lang.includes("de")) {
                 german.push(voices[i]);
             }
+
+            if (voices[i].lang.includes("es")) {
+                spanish.push(voices[i]);
+            }
         }
 
-        if(english.length > 0)
-        {
+        if (english.length > 0) {
             store.dispatch(setEnglishVoices(english));
         }
 
-        if(german.length > 0)
-        {
+        if (german.length > 0) {
             store.dispatch(setGermanVoices(german));
+        }
+
+        if (spanish.length > 0) {
+            store.dispatch(setSpanishVoices(spanish));
         }
     }
     catch (error) {

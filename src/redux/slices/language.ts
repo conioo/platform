@@ -6,6 +6,7 @@ class LanguageState {
     language: Language = Language.English;
     englishVoices?: Array<SpeechSynthesisVoice>;
     germanVoices?: Array<SpeechSynthesisVoice>;
+    spanishVoices?: Array<SpeechSynthesisVoice>;
 }
 
 export const languageSlice = createSlice({
@@ -41,16 +42,27 @@ export const languageSlice = createSlice({
                     payload: voices
                 }
             }
+        },
+        setSpanishVoices: {
+            reducer(state, action: PayloadAction<Array<SpeechSynthesisVoice>>) {
+                return { ...state, spanishVoices: action.payload };
+            },
+            prepare(voices: Array<SpeechSynthesisVoice>) {
+                return {
+                    payload: voices
+                }
+            }
         }
     },
 })
 
-export const { setLanguage, setEnglishVoices, setGermanVoices } = languageSlice.actions
+export const { setLanguage, setEnglishVoices, setGermanVoices, setSpanishVoices } = languageSlice.actions
 
 export const selectLanguage = (state: RootState) => state.language.language;
 export const selectBasePath = (state: RootState) => "/" + convertToName(state.language.language); ;
 export const selectEnglishVoices = (state: RootState) => state.language.englishVoices
 export const selectGermanVoices = (state: RootState) => state.language.germanVoices;
+export const selectSpanishVoices = (state: RootState) => state.language.spanishVoices;
 export const selectLanguageState = (state: RootState) => state.language;
 
 export default languageSlice.reducer

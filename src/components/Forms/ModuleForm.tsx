@@ -45,6 +45,13 @@ export default function ModuleForm() {
                 }
             }
         }
+        else if (language === Language.Spanish) {
+            if (state.language.spanishVoices !== undefined && state.language.spanishVoices.length > 0) {
+                if (values.module.voiceName.length < 1) {
+                    setFieldValue("module.voiceName", state.language.spanishVoices[state.language.spanishVoices.length - 1].name);
+                }
+            }
+        }
     }, [])
 
     console.log(values);

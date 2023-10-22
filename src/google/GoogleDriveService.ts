@@ -256,6 +256,9 @@ export async function findFolderIdByPath(folderNames: string[], language: Langua
     else if (language === Language.German) {
         parentFolderId = GoogleSecrets.DATA_GERMAN_FOLDER_ID;
     }
+    else if (language === Language.Spanish) {
+        parentFolderId = GoogleSecrets.DATA_SPANISH_FOLDER_ID;
+    }
 
     for (const folderName of folderNames) {
         parentFolderId = await findFolderId(parentFolderId, folderName);
@@ -470,3 +473,20 @@ async function findFolderId(parentFolderId: string | undefined, folderName: stri
         return undefined;
     }
 };
+
+export async function existFolder(folderId: string): Promise<boolean> {
+
+    let response = await gapi.client.drive.files.get({
+        fileId: folderId
+    });
+
+    console.log(response);
+
+    if (response.status === 200) {
+        return true;
+    }
+
+    return false;
+}
+
+//folder istnieje, kopiuj, przenies, usuń

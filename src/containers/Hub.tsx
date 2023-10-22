@@ -29,10 +29,10 @@ export async function loader({ params }: Args): Promise<boolean> {
     }
 
     let language = convertToEnum(languageName);
+    console.log(language);
+    console.log(languageName);
 
-    if (language != store.getState().language.language) {
-        store.dispatch(setLanguage(language));
-    }
+    store.dispatch(setLanguage(language));
 
     return true;
 }

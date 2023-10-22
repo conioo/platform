@@ -36,6 +36,12 @@ export default function OptionsModuleForm({ closeModal, defaultVoiceName }: Opti
                 return <option value={voice.name} key={index + "vo"}>{voice.name}</option>
             });
         }
+    }else if (languageState.language === Language.Spanish) {
+        if (languageState.spanishVoices !== undefined) {
+            voiceOptions = languageState.spanishVoices.map((voice, index) => {
+                return <option value={voice.name} key={index + "vo"}>{voice.name}</option>
+            });
+        }
     }
 
     return (

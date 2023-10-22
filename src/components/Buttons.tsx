@@ -15,10 +15,10 @@ interface ButtonsProps {
 export default function Buttons({ module, onSentenceChanged, onTranslationChanged, goToColouring }: ButtonsProps) {
     console.log("Buttons");
 
-    const sanitizeConf = {
-        allowedTags: ["b", "i", "a", "p"],
-        allowedAttributes: { a: ["href"] }
-    };
+    // const sanitizeConf = {
+    //     allowedTags: ["b", "i", "a", "p"],
+    //     allowedAttributes: { a: ["href"] }
+    // };
 
     // useEffect(() => {
     //     for (let i = 0; i < module.segments.length; ++i) {
@@ -31,13 +31,13 @@ export default function Buttons({ module, onSentenceChanged, onTranslationChange
     }
 
     function handleSentenceChanged(event: ContentEditableEvent, index: number) {
-        let val = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
+        let val = sanitizeHtml(event.currentTarget.innerHTML);
 
         onSentenceChanged(val, index);
     }
 
     function handleTranslationChanged(event: ContentEditableEvent, index: number) {
-        let val = sanitizeHtml(event.currentTarget.innerHTML, sanitizeConf);
+        let val = sanitizeHtml(event.currentTarget.innerHTML);
 
         onTranslationChanged(val, index);
     }

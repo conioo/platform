@@ -1,13 +1,16 @@
 import Language from "../types/Language";
 
 export async function TranslateSentences(sentences: Array<string>, language: Language, deeplToken: string): Promise<Array<string>> {
-    let sourceLanguage: string;
+    let sourceLanguage: string = "";
 
     if (language === Language.English) {
         sourceLanguage = 'en';
     }
-    else {
+    else if(language === Language.German){
         sourceLanguage = 'de';
+    }
+    else if(language === Language.Spanish){
+        sourceLanguage = 'es';
     }
 
     const targetLanguage = 'pl';
@@ -34,7 +37,6 @@ export async function TranslateSentences(sentences: Array<string>, language: Lan
 
             console.log(apiUrl);
             const response = request('POST', apiUrl);
-            console.log(response);
 
             const responseBody = JSON.parse(response.getBody('utf8'));
 
