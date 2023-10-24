@@ -251,13 +251,13 @@ export async function findFolderIdByPath(folderNames: string[], language: Langua
     let parentFolderId: string | undefined = undefined;
 
     if (language === Language.English) {
-        parentFolderId = GoogleSecrets.DATA_ENGLISH_FOLDER_ID;
+        parentFolderId = process.env.REACT_APP_DATA_ENGLISH_FOLDER_ID;
     }
     else if (language === Language.German) {
-        parentFolderId = GoogleSecrets.DATA_GERMAN_FOLDER_ID;
+        parentFolderId = process.env.REACT_APP_DATA_GERMAN_FOLDER_ID;
     }
     else if (language === Language.Spanish) {
-        parentFolderId = GoogleSecrets.DATA_SPANISH_FOLDER_ID;
+        parentFolderId = process.env.REACT_APP_DATA_SPANISH_FOLDER_ID;
     }
 
     for (const folderName of folderNames) {
@@ -474,19 +474,16 @@ async function findFolderId(parentFolderId: string | undefined, folderName: stri
     }
 };
 
-export async function existFolder(folderId: string): Promise<boolean> {
+export async function getFolderName(folderId: string): Promise<string> {
 
     let response = await gapi.client.drive.files.get({
-        fileId: folderId
+        fileId: folderId,
+        fields: "name"
     });
 
-    console.log(response);
-
-    if (response.status === 200) {
-        return true;
+    if (response.result.name === undefined) {
+        throw new Error("not found name property in response");
     }
 
-    return false;
+    return  response.result.name;
 }
-
-//folder istnieje, kopiuj, przenies, usuń

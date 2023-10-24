@@ -29,8 +29,6 @@ export async function loader({ params }: Args): Promise<boolean> {
     }
 
     let language = convertToEnum(languageName);
-    console.log(language);
-    console.log(languageName);
 
     store.dispatch(setLanguage(language));
 
