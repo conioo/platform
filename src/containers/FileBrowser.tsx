@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
+import Pastemodule from '../components/PasteModule';
+import RowOfFolder from '../components/RowOfFolder';
+import RowOfModule from '../components/RowOfModule';
 import '../css/Buttons.css';
 import '../css/FileBrowser.css';
+import '../css/fontello/css/fontello.css';
 import { createFolderInGoogleDrive, findFolderIdByPath, getListOfFiles, isEmptyFolder, removeFolderFromGoogleDrive } from '../google/GoogleDriveService';
 import File from '../models/File';
-import '../css/fontello/css/fontello.css';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import Paths from '../router/Paths';
-import { selectIsLogin } from '../redux/slices/authentication';
-import module, { setModuleInfoToCopy, selectModuleIdToMove, setParentFolderId, selectModuleInfoToCopy } from '../redux/slices/module';
-import RowOfModule from '../components/RowOfModule';
-import RowOfFolder from '../components/RowOfFolder';
 import { useAppDispatch, useAppSelector } from '../redux/hook';
+import { selectIsLogin } from '../redux/slices/authentication';
+import { setParentFolderId } from '../redux/slices/folder';
 import { selectBasePath, selectLanguage } from '../redux/slices/language';
-import { useSelector } from 'react-redux';
-import Pastemodule from '../components/PasteModule';
+import Paths from '../router/Paths';
 
 interface FilesInfo {
     parentFolderId: string;
@@ -31,7 +31,6 @@ interface loaderReturnType {
     folderNames: string[];
 }
 
-//let reloadFiles = false;
 
 export async function loader({ params }: Args): Promise<loaderReturnType> {
     let path = params['*'];
@@ -42,7 +41,7 @@ export async function loader({ params }: Args): Promise<loaderReturnType> {
 
     const folderNames = path.split('/').filter((name: any) => name !== '') as string[];
 
-    if (folderNames[0] != "home") {
+    if (folderNames[0] !== "home") {
         throw new Error("invalid browser path");
     }
 
@@ -73,8 +72,6 @@ export default function FileBrowser() {
 
     let isLogin = useAppSelector(selectIsLogin);
 
-    let moduleInfoToCopy = useSelector(selectModuleInfoToCopy);
-    let moduleIdToMove = useSelector(selectModuleIdToMove);
 
     const navigate = useNavigate();
 
@@ -96,13 +93,13 @@ export default function FileBrowser() {
     if (filesInfo !== undefined) {
         listOfNameFiles = filesInfo.files.map((file, index) => {
             return (
-                <RowOfModule isLogin={isLogin} file={file} basePath={basePath} key={index + "mod"}></RowOfModule>
+                <RowOfModule isLogin={isLogin?isLogin:false} file={file} basePath={basePath} key={index + "mod"}></RowOfModule>
             );
         });
 
         listOfNameFolders = filesInfo.folders.map((folder, index) => {
             return (
-                <RowOfFolder isLogin={isLogin} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} removeFolder={removeFolder} key={index + "fol"}></RowOfFolder>
+                <RowOfFolder isLogin={isLogin?isLogin:false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} removeFolder={removeFolder} key={index + "fol"}></RowOfFolder>
             );
         });
 
@@ -134,7 +131,7 @@ export default function FileBrowser() {
                 {listOfNameFiles}
             </ul>
 
-            <Pastemodule moduleInfoToCopy={moduleInfoToCopy} moduleIdToMove={moduleIdToMove} updateListOfFiles={updateListOfFiles}></Pastemodule>
+            <Pastemodule updateListOfFiles={updateListOfFiles}></Pastemodule>
 
             {isLogin &&
                 <section className='new-file-section'>

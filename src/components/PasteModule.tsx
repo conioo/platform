@@ -1,23 +1,26 @@
-import { useSelector } from "react-redux";
-import { copyModule, moveModule } from "../google/GoogleDriveService";
-import { moduleInfoToCopy, selectCurrentParentFolderId, setModuleIdToMove, setModuleInfoToCopy } from "../redux/slices/module";
+import { useSelector, useStore } from "react-redux";
 import '../css/PasteModule.css';
-import { useStore } from "react-redux";
+import { copyFolder, moveFolder } from "../google/GoogleDriceAuthorizeService";
+import { copyModule, moveModule } from "../google/GoogleDriveService";
+import { selectCurrentParentFolderId, selectfolderIdToMove, selectfolderInfoToCopy, setFolderIdToMove, setFolderInfoToCopy } from "../redux/slices/folder";
+import { selectModuleIdToMove, selectModuleInfoToCopy, setModuleIdToMove, setModuleInfoToCopy } from "../redux/slices/module";
 
 interface PasteModuleProps {
-    moduleIdToMove: string | null;
-    moduleInfoToCopy: moduleInfoToCopy | null;
     updateListOfFiles: () => void;
 }
 
-export default function Pastemodule({ moduleIdToMove, moduleInfoToCopy, updateListOfFiles}: PasteModuleProps) {
+export default function Pastemodule({ updateListOfFiles }: PasteModuleProps) {
     console.log("Pastemodule")
+
+    let moduleInfoToCopy = useSelector(selectModuleInfoToCopy);
+    let moduleIdToMove = useSelector(selectModuleIdToMove);
+    let folderInfoToCopy = useSelector(selectfolderInfoToCopy);
+    let folderIdToMove = useSelector(selectfolderIdToMove);
 
     const currentParentFolderId = useSelector(selectCurrentParentFolderId);
     const store = useStore();
 
-    if(moduleIdToMove === null && moduleInfoToCopy === null)
-    {
+    if (moduleIdToMove === null && moduleInfoToCopy === null && folderInfoToCopy === null && folderIdToMove === null) {
         return null;
     }
 
@@ -36,6 +39,14 @@ export default function Pastemodule({ moduleIdToMove, moduleInfoToCopy, updateLi
         } else if (moduleInfoToCopy !== null) {
             await copyModule(moduleInfoToCopy.moduleName, moduleInfoToCopy.moduleId, currentParentFolderId);
             store.dispatch(setModuleInfoToCopy(null));
+            updateListOfFiles();
+        } else if (folderInfoToCopy !== null) {
+            await copyFolder(folderInfoToCopy.folderName, folderInfoToCopy.folderId, currentParentFolderId);
+            store.dispatch(setFolderInfoToCopy(null));
+            updateListOfFiles();
+        } else if (folderIdToMove !== null) {
+            await moveFolder(folderIdToMove, currentParentFolderId);
+            store.dispatch(setFolderIdToMove(null));
             updateListOfFiles();
         }
     }

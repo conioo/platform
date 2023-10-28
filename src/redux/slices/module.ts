@@ -7,7 +7,6 @@ export interface moduleInfoToCopy {
 }
 
 class ModuleState {
-    currentParentFolderId: string = "";
     moduleIdToMove: string | null = null;
     moduleInfoToCopy: moduleInfoToCopy | null = null;
 }
@@ -16,9 +15,6 @@ export const moduleSlice = createSlice({
     name: 'module',
     initialState: new ModuleState(),
     reducers: {
-        setParentFolderId: (state, action) => {
-            return { ...state, currentParentFolderId: action.payload };
-        },
         setModuleIdToMove: {
             reducer(state, action: PayloadAction<string | null>) {
                 return { ...state, moduleIdToMove: action.payload };
@@ -42,9 +38,8 @@ export const moduleSlice = createSlice({
     },
 })
 
-export const { setParentFolderId, setModuleIdToMove, setModuleInfoToCopy } = moduleSlice.actions;
+export const {setModuleIdToMove, setModuleInfoToCopy } = moduleSlice.actions;
 
-export const selectCurrentParentFolderId = (state: RootState) => state.module.currentParentFolderId;
 export const selectModuleIdToMove = (state: RootState) => state.module.moduleIdToMove;
 export const selectModuleInfoToCopy = (state: RootState) => state.module.moduleInfoToCopy;
 

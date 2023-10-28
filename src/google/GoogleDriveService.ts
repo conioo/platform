@@ -2,9 +2,8 @@ import File from "../models/File";
 import Module from "../models/Module";
 import Tokens from "../models/Tokens";
 import Language from "../types/Language";
-import GoogleSecrets from "./GoogleSecrets";
 
-interface FileResponse {
+export interface FileResponse {
     name: string;
     id: string;
     description: string;
@@ -30,7 +29,7 @@ export async function saveModuleToGoogleDrive(moduleContent: Module, parentFolde
         const newFolderId = folderResponse.result.id;
 
         if (!newFolderId) {
-            throw "Missing for folder id";
+            throw Error("Missing for folder id");
         }
 
         const metadata = {
@@ -81,7 +80,7 @@ export async function createFolderInGoogleDrive(folderName: string, parentFolder
 export async function getModule(moduleId: string): Promise<Module> {
     console.log("moduly");
 
-    const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents+and+name+=+'module.json'&key=${GoogleSecrets.API_KEY}&fields=files(name,id)`;
+    const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents+and+name+=+'module.json'&key=${process.env.REACT_APP_API_KEY}&fields=files(name,id)`;
 
     try {
         // const fileListResponse = await gapi.client.drive.files.list({
@@ -99,7 +98,7 @@ export async function getModule(moduleId: string): Promise<Module> {
             throw new Error('No files in directory');
         }
 
-        const getModuleUrl = `https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media&key=${GoogleSecrets.API_KEY}`;
+        const getModuleUrl = `https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media&key=${process.env.REACT_APP_API_KEY}`;
 
         const fileResponse = await fetch(getModuleUrl);
         const jsonData = await fileResponse.json();
@@ -155,7 +154,7 @@ export async function removeModule(moduleId: string) {
 export async function getListOfFiles(folderId: string): Promise<{ files: Array<File>, folders: Array<File> } | undefined> {
 
     try {
-        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${GoogleSecrets.API_KEY}&fields=files(name,description, id, mimeType)`;
+        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents&key=${process.env.REACT_APP_API_KEY}&fields=files(name,description, id, mimeType)`;
 
         let filesArray = new Array<File>();
         let foldersArray = new Array<File>();
@@ -212,27 +211,8 @@ export async function removeFolderFromGoogleDrive(folderId: string) {
 
 export async function getSecrets(): Promise<Tokens | undefined> {
     try {
-        // const headers = {
-        //     Authorization: `Bearer ${gapi.client.getToken().access_token}`,
-        // };
-
-        // const url = `https://www.googleapis.com/drive/v3/files?q='${GoogleSecrets.DATA_ENGLISH_FOLDER_ID}'+in+parents&key=${GoogleSecrets.API_KEY}&fields=files(name,description, id, mimeType)`;
-
-        // let ress = await fetch(url, { headers });
-        // let gg = await ress.json();
-        // console.log(gg);
-
-        // const params = {
-        //     q: "'root' in parents",
-        //     fields: 'files(id, name)',
-        // };
-
-        // const all = await gapi.client.drive.files.list(params);
-        // console.log("tutaaaaaaajjjjjjjj");
-        // console.log(JSON.parse(all.body));
-
         const response = await gapi.client.drive.files.get({
-            fileId: GoogleSecrets.SECRET_FILE_ID,
+            fileId: process.env.REACT_APP_SECRET_FILE_ID ? process.env.REACT_APP_SECRET_FILE_ID : "",
             alt: 'media',
         });
 
@@ -272,7 +252,7 @@ export async function findFolderIdByPath(folderNames: string[], language: Langua
 
 export async function updateModuleInGoogleDrive(moduleId: string, newModuleContent: Module, oldModuleName: string) {
     try {
-        const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents+and+name+=+'module.json'&key=${GoogleSecrets.API_KEY}&fields=files(name,id)`;
+        const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents+and+name+=+'module.json'&key=${process.env.REACT_APP_API_KEY}&fields=files(name,id)`;
 
         const response = await fetch(fileListUrl);
         const fileListResponse = await response.json();
@@ -285,10 +265,6 @@ export async function updateModuleInGoogleDrive(moduleId: string, newModuleConte
         console.log(files[0].id);
 
         const jsonString = JSON.stringify(newModuleContent);
-        const metadata = {
-            name: 'module.json',
-            mimeType: 'application/json',
-        };
 
         const accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
 
@@ -327,7 +303,7 @@ export async function updateModuleInGoogleDrive(moduleId: string, newModuleConte
 
 export async function copyModule(moduleName: string, moduleId: string, destinationFolderId: string) {
     try {
-        let newModuleFolderId = await createFolder(destinationFolderId, moduleName);
+        let newModuleFolderId = await createModuleFolder(destinationFolderId, moduleName);
 
         let files = await getFilesOfFolder(moduleId, "id");
         console.log(files);
@@ -358,25 +334,20 @@ export async function copyModule(moduleName: string, moduleId: string, destinati
     }
 }
 
-async function getFilesOfFolder(folderId: string, fields: string): Promise<gapi.client.drive.File[]> {
-    try {
-        const fileListResponse = await gapi.client.drive.files.list({
-            q: `'${folderId}' in parents`,
-            fields: `files(${fields})`,
-        });
+export async function getFilesOfFolder(folderId: string, fields: string): Promise<gapi.client.drive.File[]> {
+    const fileListResponse = await gapi.client.drive.files.list({
+        q: `'${folderId}' in parents`,
+        fields: `files(${fields})`,
+    });
 
-        if (fileListResponse.result.files === undefined) {
-            throw new Error("files is undefinied");
-        }
-
-        return (fileListResponse.result.files);
-    } catch (error: any) {
-        console.log('Error during get files');
-        throw error;
+    if (fileListResponse.result.files === undefined) {
+        throw new Error("files is undefinied");
     }
+
+    return (fileListResponse.result.files);
 }
 
-async function createFolder(parentFolderId: string, folderName: string, desciption?: string): Promise<string> {
+async function createModuleFolder(parentFolderId: string, folderName: string, desciption?: string): Promise<string> {
     try {
         let folderResponse = await gapi.client.drive.files.create({
             resource: {
@@ -459,7 +430,7 @@ async function findFolderId(parentFolderId: string | undefined, folderName: stri
     //     q: `'${parentFolderId}' in parents and mimeType='application/vnd.google-apps.folder' and name='${folderName}'`,
     // });
 
-    const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+name='${folderName}'&key=${GoogleSecrets.API_KEY}`;
+    const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+name='${folderName}'&key=${process.env.REACT_APP_API_KEY}`;
 
     let response = await fetch(apiUrl, {
         method: 'GET',
@@ -473,17 +444,3 @@ async function findFolderId(parentFolderId: string | undefined, folderName: stri
         return undefined;
     }
 };
-
-export async function getFolderName(folderId: string): Promise<string> {
-
-    let response = await gapi.client.drive.files.get({
-        fileId: folderId,
-        fields: "name"
-    });
-
-    if (response.result.name === undefined) {
-        throw new Error("not found name property in response");
-    }
-
-    return  response.result.name;
-}

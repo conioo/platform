@@ -10,26 +10,24 @@
     margin: 1%;
 }
 
-.move-file-button {
+.additional-button {
     cursor: pointer;
     margin: 1%;
+    margin-right: 10px;
+    margin-left: 10px;
     background-color: lightblue;
     border-radius: 10px;
     font-weight: 600;
 }
 
-.copy-file-button {
-    cursor: pointer;
-    margin: 1%;
-    background-color: lightblue;
-    border-radius: 10px;
-    font-weight: 600;
-}
-
-.additional-mudule-options-section
+.additional-modify-options-section
 {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
+}
+
+.common-modify-button{
+    margin: 20px;
 }

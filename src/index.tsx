@@ -1,18 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Hub from './containers/Hub';
-import './css/index.css';
-import { BrowserRouter, LoaderFunction, Navigate, RouterProvider, createBrowserRouter, createHashRouter } from "react-router-dom";
-import FileBrowser from './containers/FileBrowser';
 import { Provider } from 'react-redux';
-import store from './redux/store';
+import { LoaderFunction, Navigate, RouterProvider, createHashRouter } from "react-router-dom";
 import ErrorPage from './components/ErrorPage';
-import View, { loader as viewLoader } from './containers/View';
-import { loader as hubLoader } from './containers/Hub';
-import { loader as fileBrowserLoader } from './containers/FileBrowser';
+import NoAuthorization from './components/NoAuthorization';
+import FileBrowser, { loader as fileBrowserLoader } from './containers/FileBrowser';
+import Hub, { loader as hubLoader } from './containers/Hub';
+import ModifyFolder, { loader as modifyFolderLoader } from './containers/ModifyFolder';
 import ModifyModule, { loader as modifyModuleLoader } from './containers/ModifyModule';
+import Record, { loader as recordLoader } from './containers/Record';
+import View, { loader as viewLoader } from './containers/View';
+import './css/index.css';
+import store from './redux/store';
 import Paths from './router/Paths';
-import Record from './containers/Record';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -32,6 +32,7 @@ const router = createHashRouter([
       },
       {
         path: Paths.record,
+        loader: recordLoader,
         element: <Record></Record>
       },
       {
@@ -42,7 +43,16 @@ const router = createHashRouter([
       {
         path: Paths.modify,
         loader: modifyModuleLoader,
-        element: <ModifyModule></ModifyModule>
+        element: <ModifyModule></ModifyModule>,
+      },
+      {
+        path: Paths.modifyFolder,
+        loader: modifyFolderLoader,
+        element: <ModifyFolder></ModifyFolder>
+      },
+      {
+        path: Paths.noAuthorization,
+        element: <NoAuthorization></NoAuthorization>
       }
     ]
   },
@@ -50,10 +60,7 @@ const router = createHashRouter([
     path: "/",
     element: <Navigate to="/en/browser/home"></Navigate>,
   }
-],
-  {
-    // basename: "/platform"
-  });
+]);
 
 root.render(
   <React.Fragment>

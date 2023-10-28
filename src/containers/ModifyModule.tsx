@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import '../css/Buttons.css';
-import '../css/ModifyModule.css';
-import Segment from '../models/Segment';
-import { getModule, removeModule, updateModuleInGoogleDrive } from '../google/GoogleDriveService';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import Paths from '../router/Paths';
-import Module from '../models/Module';
-import ModuleFormik, { FormikValuesType } from '../components/Forms/ModuleFormik';
 import { FormikHelpers } from 'formik';
-import { useStore } from 'react-redux';
-import { setModuleInfoToCopy, setModuleIdToMove } from '../redux/slices/module';
-import { useSelector } from 'react-redux';
-import { selectLanguage } from '../redux/slices/language';
-import Language, { convertToName } from '../types/Language';
-import store from '../redux/store';
+import { useState } from 'react';
+import { useSelector, useStore } from 'react-redux';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
+import ModuleFormik, { FormikValuesType } from '../components/Forms/ModuleFormik';
+import '../css/Buttons.css';
+import '../css/Modify.css';
+import { getModule, removeModule, updateModuleInGoogleDrive } from '../google/GoogleDriveService';
+import Module from '../models/Module';
 import { selectIsLogin } from '../redux/slices/authentication';
-import NoAuthorization from '../components/NoAuthorization';
+import { selectLanguage } from '../redux/slices/language';
+import { setModuleIdToMove, setModuleInfoToCopy } from '../redux/slices/module';
+import store from '../redux/store';
+import Paths from '../router/Paths';
+import { convertToName } from '../types/Language';
+import { authorizedAccess } from '../google/services/AuhorizationService';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -26,18 +24,20 @@ interface loaderReturnType {
     moduleId: string
 }
 
-export async function loader({ params }: Args): Promise<loaderReturnType> {
+export async function loader({ params }: Args): Promise<loaderReturnType | Response> {
     const fileId = params.fileid;
 
     if (!fileId) {
         throw new Error("missing file id");
     }
 
-    let module = await getModule(fileId);
+    let authorizedResponse = await authorizedAccess();
 
-    if (module.language === undefined) {
-        module.language = store.getState().language.language;
+    if (authorizedResponse !== undefined) {
+        return authorizedResponse;
     }
+
+    let module = await getModule(fileId);
 
     return { module, moduleId: fileId };
 }
@@ -49,13 +49,7 @@ export default function ModifyModule() {
     const navigate = useNavigate();
     const store = useStore();
     const language = useSelector(selectLanguage);
-    const isLogin = useSelector(selectIsLogin);
     const [isRemovingModule, setIsRemovingModule] = useState(false);
-
-    if(!isLogin)
-    {
-        return(<NoAuthorization language={language}></NoAuthorization>)
-    }
 
     let module = loaderData.module;
 
@@ -99,7 +93,7 @@ export default function ModifyModule() {
     }
 
     function onClickCopyButton() {
-        store.dispatch(setModuleInfoToCopy({moduleId: loaderData.moduleId, moduleName: loaderData.module.name}));
+        store.dispatch(setModuleInfoToCopy({ moduleId: loaderData.moduleId, moduleName: loaderData.module.name }));
 
         navigate(`/${convertToName(language)}/browser/home`);
     }

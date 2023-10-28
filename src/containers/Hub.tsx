@@ -9,6 +9,7 @@ import { HandleGapiLoad } from '../google/services/AuhorizationService';
 import { EasySpeechInit } from '../services/EasySpeechHandlers';
 import store from '../redux/store';
 import { useSelector } from 'react-redux';
+import { selectIsLogin } from '../redux/slices/authentication';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.hub>>;
@@ -70,15 +71,10 @@ export default function Hub() {
                 </section>
 
                 <section className='right-section'>
-                    {/* {<button className='return-button' onClick={() => { Return() }}>Powrót</button>} */}
                 </section>
             </section>
 
             <footer></footer>
         </>
     );
-
-    function Return() {
-        navigate(-1);
-    }
 }

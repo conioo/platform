@@ -4,7 +4,8 @@ const Paths = {
     record: "record",
     view: "view/:fileid",
     modify: "modify/:fileid",
-    modifyFolder: "modify-folder/:folderid"
+    modifyFolder: "modify-folder/:folderid",
+    noAuthorization: "no-authorization",
 } as const;
 
 export const LanguagePathName = {
