@@ -2,18 +2,14 @@ import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import ModuleFormik, { FormikValuesType } from '../components/Forms/ModuleFormik';
-import '../css/Buttons.css';
+import ModuleFormik, { FormikValuesType } from '../components/Forms/Module/ModuleFormik';
 import '../css/Modify.css';
 import { getModule, removeModule, updateModuleInGoogleDrive } from '../google/GoogleDriveService';
-import Module from '../models/Module';
-import { selectIsLogin } from '../redux/slices/authentication';
+import { authorizedAccess } from '../google/services/AuhorizationService';
 import { selectLanguage } from '../redux/slices/language';
 import { setModuleIdToMove, setModuleInfoToCopy } from '../redux/slices/module';
-import store from '../redux/store';
 import Paths from '../router/Paths';
-import { convertToName } from '../types/Language';
-import { authorizedAccess } from '../google/services/AuhorizationService';
+import Module from '../models/NewModule';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -89,13 +85,13 @@ export default function ModifyModule() {
 
         //nazwa
 
-        navigate(`/${convertToName(language)}/browser/home`);
+        navigate(`/${language}/browser/home`);
     }
 
     function onClickCopyButton() {
         store.dispatch(setModuleInfoToCopy({ moduleId: loaderData.moduleId, moduleName: loaderData.module.name }));
 
-        navigate(`/${convertToName(language)}/browser/home`);
+        navigate(`/${language}/browser/home`);
     }
 
     // na glowna strone -> w stai
@@ -127,13 +123,13 @@ export default function ModifyModule() {
     function getContentFromModule(module: Module) {
         let content = "";
 
-        for (let i = 0; i < module.segments.length; ++i) {
-            content += module.segments[i].sentence + "\n";
-        }
+        // for (let i = 0; i < module.segments.length; ++i) {
+        //     content += module.segments[i].sentence + "\n";
+        // }
 
-        if (content.length > 0) {
-            content = content.slice(0, -1);
-        }
+        // if (content.length > 0) {
+        //     content = content.slice(0, -1);
+        // }
 
         return content;
     }

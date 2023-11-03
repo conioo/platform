@@ -1,6 +1,6 @@
 import EasySpeech from "easy-speech";
 import store from "../redux/store";
-import { setEnglishVoices, setGermanVoices, setSpanishVoices } from "../redux/slices/language";
+import { setEnglishVoices, setGermanVoices, setIsEasySpeech, setSpanishVoices } from "../redux/slices/language";
 
 export async function EasySpeechInit() {
     try {
@@ -42,6 +42,8 @@ export async function EasySpeechInit() {
         if (spanish.length > 0) {
             store.dispatch(setSpanishVoices(spanish));
         }
+
+        store.dispatch(setIsEasySpeech(true));
     }
     catch (error) {
         console.log(error);
@@ -64,6 +66,7 @@ export default async function ChangeVoice(voiceName: string) {
     }
 
     EasySpeech.defaults({ voice });
+    //console.log(voice);
 }
 
 export async function ChangeVoiceRate(rate: number) {

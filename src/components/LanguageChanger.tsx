@@ -1,5 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
-import Language, { convertToName } from "../types/Language"
+import Language from "../types/Language"
 import { useAppSelector } from "../redux/hook";
 import { selectLanguage } from "../redux/slices/language";
 import "../css/LanguageChanger.css";
@@ -19,7 +19,7 @@ export default function LanguageChanger() {
     )
 
     function changeLanguage(language: string) {
-        if (convertToName(currentLanguage) !== language) {
+        if (currentLanguage !== language) {
             navigate(`/${language}/browser/home`);
         }
     }

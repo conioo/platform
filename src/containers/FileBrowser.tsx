@@ -4,7 +4,6 @@ import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate }
 import Pastemodule from '../components/PasteModule';
 import RowOfFolder from '../components/RowOfFolder';
 import RowOfModule from '../components/RowOfModule';
-import '../css/Buttons.css';
 import '../css/FileBrowser.css';
 import '../css/fontello/css/fontello.css';
 import { createFolderInGoogleDrive, findFolderIdByPath, getListOfFiles, isEmptyFolder, removeFolderFromGoogleDrive } from '../google/GoogleDriveService';
@@ -65,10 +64,6 @@ export default function FileBrowser() {
         });
     }, [loaderData]);
 
-    // if (reloadFiles) {
-    //     reloadFiles = false;
-    //     setFilesInfo(newFilesInfo);
-    // }
 
     let isLogin = useAppSelector(selectIsLogin);
 

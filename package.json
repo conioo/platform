@@ -33,6 +33,7 @@
     "google-oauth-gsi": "^2.0.0",
     "googleapis": "^126.0.1",
     "http": "^0.0.1-security",
+    "immer": "^10.0.3",
     "install": "^0.13.0",
     "mespeak": "^2.0.2",
     "npm": "^10.2.0",
@@ -40,6 +41,7 @@
     "open": "^9.1.0",
     "os": "^0.1.2",
     "path": "^0.12.7",
+    "randomstring": "^1.3.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
     "react-contenteditable": "^3.3.7",
@@ -50,15 +52,18 @@
     "react-redux": "^8.1.2",
     "react-router-dom": "^6.16.0",
     "react-scripts": "^5.0.1",
+    "react-sortablejs": "^6.1.4",
     "react-textarea-autosize": "^8.5.3",
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "sanitize-html": "^2.11.0",
+    "sortablejs": "^1.15.0",
     "speech-synthesis-recorder": "^1.2.1",
     "stream": "^0.0.2",
     "sync-request": "^6.1.0",
     "url": "^0.11.1",
+    "use-immer": "^0.9.0",
     "web-vitals": "^2.1.4",
     "yup": "^1.3.2"
   },
@@ -90,7 +95,9 @@
   },
   "homepage": "https://conioo.github.io/platform/#",
   "devDependencies": {
+    "@types/randomstring": "^1.1.10",
     "@types/react-modal": "^3.16.1",
-    "@types/sanitize-html": "^2.9.1"
+    "@types/sanitize-html": "^2.9.1",
+    "@types/sortablejs": "^1.15.4"
   }
 }

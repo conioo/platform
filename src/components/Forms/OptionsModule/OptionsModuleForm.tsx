@@ -1,11 +1,11 @@
 import { Field, useFormikContext } from 'formik';
-import '../../css/Forms/OptionsModuleForm.css';
-import { ModuleOptionsState } from '../../redux/slices/moduleOptions';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectLanguageState } from '../../redux/slices/language';
-import Language from '../../types/Language';
-import { useEffect, useState } from 'react';
-import ErrorAlerts from '../../services/FormikErrorsAlert';
+import { selectLanguageState } from '../../../redux/slices/language';
+import { ModuleOptionsState } from '../../../redux/slices/moduleOptions';
+import ErrorAlerts from '../../../services/FormikErrorsAlert';
+import Language from '../../../types/Language';
+import '../../../css/Forms/OptionsModuleForm.css';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;

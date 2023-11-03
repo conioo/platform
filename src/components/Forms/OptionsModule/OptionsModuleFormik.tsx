@@ -1,8 +1,8 @@
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import OptionsModuleForm from './OptionsModuleForm';
-import '../../css/Forms/OptionsModuleFormik.css';
+import '../../../css/Forms/OptionsModuleFormik.css';
 import { useStore, useSelector } from 'react-redux';
-import { ModuleOptionsState, selectAllOptions, setVoiceName } from '../../redux/slices/moduleOptions';
+import { ModuleOptionsState, selectAllOptions, setVoiceName } from '../../../redux/slices/moduleOptions';
 import { useCookies } from 'react-cookie';
 import * as Yup from 'yup';
 

@@ -1,5 +1,5 @@
 import File from "../models/File";
-import Module from "../models/Module";
+import Module from "../models/NewModule";
 import Tokens from "../models/Tokens";
 import Language from "../types/Language";
 
@@ -293,6 +293,28 @@ export async function updateModuleInGoogleDrive(moduleId: string, newModuleConte
 
             console.log('Filename updated successfully');
         };
+
+        console.log('File updated successfully:', fileResponse);
+
+    } catch (error: any) {
+        console.error('Error updating file:', error);
+    };
+}
+
+export async function updateFileInGoogleDrive(fileId: string, newFileContent: Module) {
+    try {
+        const jsonString = JSON.stringify(newFileContent);
+
+        const accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+
+        let fileResponse = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: jsonString,
+        })
 
         console.log('File updated successfully:', fileResponse);
 

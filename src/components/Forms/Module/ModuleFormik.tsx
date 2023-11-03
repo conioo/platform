@@ -1,27 +1,40 @@
-import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
-import Module from "../../models/Module";
-import '../../css/Record.css';
-import '../../css/Buttons.css';
-import '../../css/Colouring.css';
-import '../../css/ModuleForm.css';
-import ModuleForm from "./ModuleForm";
+import { Form, Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import Language from '../../types/Language';
-import Segment from '../../models/Segment';
+import './css/Buttons.css';
+import './css/Colouring.css';
+import './css/ModuleForm.css';
+import Module from '../../../models/NewModule';
+import Segment from '../../../models/Segment';
+import Language from '../../../types/Language';
+import ModuleForm from "./ModuleForm";
+
+const segmentScheme = Yup.object().shape({
+});
+
+const sectionScheme = Yup.object().shape({
+    segments: Yup.array<Segment>()
+        .required()
+});
 
 const moduleScheme = Yup.object({
     name: Yup.string()
         .min(1, 'Must be 1 characters or more')
         .required('Required'),
-    language: Yup.number()
-        .oneOf([Language.English, Language.German], "invalid language type")
+    language: Yup.mixed<Language>()
+        .oneOf([Language.English, Language.German, Language.Spanish], "invalid language type")
+        .required('Required'),
+    targetLanguage: Yup.mixed<Language>()
+        .oneOf(Object.values(Language), "invalid language type")
         .required('Required'),
     voiceName: Yup.string()
         .min(1, 'Must be 1 characters or more')
         .required('Required'),
-    segments: Yup.array<undefined, Segment>()
-        .min(1, 'Must be at least 1 element')
-        .required('Required'),
+    sections: Yup.array()
+        .of(sectionScheme)
+        .required()
+    // segments: Yup.array<undefined, Segment>()
+    //     .min(1, 'Must be at least 1 element')
+    //     .required('Required'),
 });
 
 const formikValuesScheme = Yup.object({

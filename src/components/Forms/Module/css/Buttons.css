@@ -12,30 +12,6 @@
     cursor: pointer;
 }
 
-.rgb-button {
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    filter: brightness(0.3);
-}
-
-.rgb-button.selected {
-    filter: brightness(1);
-    border-color: white;
-}
-
-
-
-/* .buttonSegments {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    align-items: center;
-} */
-
-
-
 .audio-segment {
     display: flex;
     align-items: center;
@@ -49,4 +25,18 @@
 .colour-button {
     cursor: pointer;
     margin: 10%;
+}
+
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 0.20rem 0.40rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.sorto{
+    display: flex;
+    flex-direction: row;
 }

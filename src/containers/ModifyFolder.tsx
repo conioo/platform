@@ -10,7 +10,6 @@ import { useAppDispatch } from '../redux/hook';
 import { setFolderIdToMove, setFolderInfoToCopy } from '../redux/slices/folder';
 import { selectLanguage } from '../redux/slices/language';
 import Paths from '../router/Paths';
-import { convertToName } from '../types/Language';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface Args extends ActionFunctionArgs {
@@ -117,12 +116,12 @@ export default function ModifyFolder() {
     function onClickMoveButton() {
         dispatch(setFolderIdToMove(loaderData.folderId));
 
-        navigate(`/${convertToName(language)}/browser/home`);
+        navigate(`/${language}/browser/home`);
     }
 
     function onClickCopyButton() {
         dispatch(setFolderInfoToCopy({ folderId: loaderData.folderId, folderName: folderName }));
 
-        navigate(`/${convertToName(language)}/browser/home`);
+        navigate(`/${language}/browser/home`);
     }
 }

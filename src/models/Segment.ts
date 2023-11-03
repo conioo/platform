@@ -3,13 +3,13 @@ export default class Segment {
     translation: string;
 
     sentenceColors: Array<number>;
-    translationsColors: Array<number>;
+    translationColors: Array<number>;//+s
 
     constructor(sentence: string, translation: string) {
         this.sentence = sentence;
         this.translation = translation;
 
         this.sentenceColors = new Array<number>();
-        this.translationsColors = new Array<number>();
+        this.translationColors = new Array<number>();
     }
 }

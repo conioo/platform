@@ -1,23 +1,21 @@
-import '../css/View.css';
-import '../css/Colouring.css';
-import '../css/fontello/css/fontello.css';
-import React, { useEffect } from 'react';
-import Segment from '../models/Segment';
-import AudioPlay from '../components/AudioPlay';
-import { getModule } from '../google/GoogleDriveService';
-import Module from '../models/Module';
-import { useEasySpeech, } from '../hooks/EasySpeech';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import Paths from '../router/Paths';
-import SettingsModal from '../components/SettingsModal';
-import { useSelector } from 'react-redux';
-import { ModuleOptionsState, selectAllOptions, setOptions, setVoiceName } from '../redux/slices/moduleOptions';
+import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import ChangeVoice, { ChangeVoiceRate } from '../services/EasySpeechHandlers';
-import { useStore } from 'react-redux';
-import { Colors } from '../types/Colors';
-import { selectBasePath } from '../redux/slices/language';
+import { useSelector, useStore } from 'react-redux';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
+import AudioPlay from '../components/AudioPlay';
+import SettingsModal from '../components/SettingsModal';
+import '../css/View.css';
+import '../css/fontello/css/fontello.css';
+import { getModule } from '../google/GoogleDriveService';
+import { useEasySpeech, } from '../hooks/EasySpeech';
+import Module from '../models/NewModule';
 import { selectIsLogin } from '../redux/slices/authentication';
+import { selectBasePath } from '../redux/slices/language';
+import { ModuleOptionsState, selectAllOptions, setOptions, setVoiceName } from '../redux/slices/moduleOptions';
+import Paths from '../router/Paths';
+import ChangeVoice, { ChangeVoiceRate } from '../services/EasySpeechHandlers';
+import { Colors } from '../types/Colors';
+import ClassicView from '../components/Views/ClassicView';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -48,7 +46,8 @@ export default function View(): JSX.Element {
     let { module, fileId } = useLoaderData() as loaderReturnType;
     let audioHub = useEasySpeech();
     let { playBackSpeed, displayMode, isHidden, voiceName } = useSelector(selectAllOptions);
-    let fullText = "";
+    const [text, setText] = useState<string>("");
+
 
     let isClassic = displayMode === "classic";
 
@@ -85,46 +84,39 @@ export default function View(): JSX.Element {
         ChangeVoice(voiceName);
     }, [voiceName])
 
-    const segments = module.segments.map((segment: Segment, index: number) => {
-        fullText += segment.sentence + " ";
+    // const segments = module.segments.map((segment: Segment, index: number) => {
+    //     fullText += segment.sentence + " ";
 
-        let wordPiecies = segment.sentence.split(" ");
+    //     let wordPiecies = segment.sentence.split(" ");
 
-        let allWords = wordPiecies.map((word: string, internalIndex: number) => {
-            return getColoredSpan(word, segment.sentenceColors[internalIndex]);
-        })
+    //     let allWords = wordPiecies.map((word: string, internalIndex: number) => {
+    //         return getColoredSpan(word, segment.sentenceColors[internalIndex]);
+    //     })
 
-        let meaningPiecies = segment.translation.split(" ");
+    //     let meaningPiecies = segment.translation.split(" ");
 
-        let allMeanings = meaningPiecies.map((meaning: string, internalIndex: number) => {
-            return getColoredSpan(meaning, segment.translationsColors[internalIndex]);
-        })
+    //     let allMeanings = meaningPiecies.map((meaning: string, internalIndex: number) => {
+    //         return getColoredSpan(meaning, segment.translationColors[internalIndex]);
+    //     })
 
-        return (
-            <>
-                <div key={index + "au"} className='audioplay-container'>
-                    {segment.sentence.length > 0 && <AudioPlay key={Math.random()} text={segment.sentence} managementAudio={audioHub}></AudioPlay>}
-                </div>
-                <span key={index + "se"} className="sentence" >{allWords}</span>
+    //     return (
+    //         <>
+    //             <div key={index + "au"} className='audioplay-container'>
+    //                 {segment.sentence.length > 0 && <AudioPlay key={Math.random()} text={segment.sentence} managementAudio={audioHub}></AudioPlay>}
+    //             </div>
+    //             <span key={index + "se"} className="sentence" >{allWords}</span>
 
-                {!isClassic && <span key={index + "sp"}></span>}
+    //             {!isClassic && <span key={index + "sp"}></span>}
 
-                <section className='translation-section' key={index + "tr"}>
-                    <span key={Math.random()} className="translation">{allMeanings}</span>
+    //             <section className='translation-section' key={index + "tr"}>
+    //                 <span key={Math.random()} className="translation">{allMeanings}</span>
 
-                    {isHidden && segment.sentence.length > 0 && <button className='icon-exchange view-visible-button' onClick={(e) => hiddenButton(e.currentTarget)}></button>}
-                </section>
-            </>
-        );
-    });
+    //                 {isHidden && segment.sentence.length > 0 && <button className='icon-exchange view-visible-button' onClick={(e) => hiddenButton(e.currentTarget)}></button>}
+    //             </section>
+    //         </>
+    //     );
+    // });
 
-    const hiddenButton = (button: HTMLButtonElement) => {
-        if (button.style.opacity === "0") {
-            button.style.opacity = "1";
-        } else {
-            button.style.opacity = "0";
-        }
-    };
 
     return (
         <>
@@ -134,7 +126,7 @@ export default function View(): JSX.Element {
 
             <input type="range" id="fontSlider" className='font-size-slider' ref={refToSlider} onChange={(event) => handleChangeFontSize(event)} min="10" max="70" defaultValue={20} step="1"></input>
 
-            <AudioPlay key={"fullText"} text={fullText} managementAudio={audioHub}></AudioPlay>
+            <AudioPlay key={"fullText"} text={text} managementAudio={audioHub}></AudioPlay>
 
             <section className='view-options-section'>
                 <section className='view-options-left'>
@@ -146,9 +138,7 @@ export default function View(): JSX.Element {
                 </section>
             </section >
 
-            <section className={displayMode + "-segments view-segments"}>
-                {segments}
-            </section>
+            {displayMode === "classic" && <ClassicView module={module} setText={setText} getColoredSpan={getColoredSpan}></ClassicView>}
         </>
     );
 
@@ -166,11 +156,11 @@ export default function View(): JSX.Element {
 
     function getSpan(content: string, additionalClassName: string): JSX.Element {
         return (
-            <span key={Math.random()} className={additionalClassName} >{content + " "}</span>
+            <span key={Math.random()} className={additionalClassName} data-type={1}>{content}&nbsp;</span>
         );
     }
 
-    function getColoredSpan(content: string, colorId: number): JSX.Element | null {
+    function getColoredSpan(content: string, colorId: number): JSX.Element {
 
         let color = Colors[colorId];
 

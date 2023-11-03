@@ -3,7 +3,6 @@ import store from "../../redux/store";
 import { login, logout, setIsLogin } from "../../redux/slices/authentication";
 import { redirect } from "react-router-dom";
 import Paths from "../../router/Paths";
-import { convertToName } from "../../types/Language";
 
 export async function HandleGapiLoad() {
     await gapi.load('client:auth2', initClient);
@@ -50,7 +49,7 @@ export async function authorizedAccess(): Promise<Response | undefined> {
 
     if (!isLogin) {
         console.log(isLogin);
-        return redirect(`/${convertToName(state.language.language)}/${Paths.noAuthorization}`);
+        return redirect(`/${state.language.language}/${Paths.noAuthorization}`);
     }
     else {
         return;

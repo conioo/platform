@@ -1,6 +1,6 @@
 import Language from "../types/Language";
 
-export async function TranslateSentences(sentences: Array<string>, language: Language, deeplToken: string): Promise<Array<string>> {
+export async function TranslateSentences(sentences: Array<string>, language: Language, targetLanguage: Language, deeplToken: string): Promise<Array<string>> {
     let sourceLanguage: string = "";
 
     if (language === Language.English) {
@@ -12,8 +12,6 @@ export async function TranslateSentences(sentences: Array<string>, language: Lan
     else if(language === Language.Spanish){
         sourceLanguage = 'es';
     }
-
-    const targetLanguage = 'pl';
 
     const request = require('sync-request');
     const baseApiUrl = `https://api-free.deepl.com/v2/translate?auth_key=${deeplToken}&source_lang=${sourceLanguage}&target_lang=${targetLanguage}`;

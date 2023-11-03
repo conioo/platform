@@ -1,5 +1,7 @@
 import EasySpeech from "easy-speech";
 import AudioInfo from "../models/AudioInfo";
+import { useSelector } from "react-redux";
+import { selectIsEasySpeech } from "../redux/slices/language";
 
 export interface useEasySpeechType {
     addAudioInfo: (audioInfo: AudioInfo) => void;
@@ -8,7 +10,12 @@ export interface useEasySpeechType {
 
 let audioInfoArray = new Array<AudioInfo>();
 
-export function useEasySpeech(): useEasySpeechType {
+export function useEasySpeech(): useEasySpeechType | undefined {
+
+    if (!useSelector(selectIsEasySpeech)) {
+        return undefined;
+    }
+
     audioInfoArray = new Array<AudioInfo>();
 
     const addAudioInfo = (audioInfo: AudioInfo): void => {
@@ -36,27 +43,4 @@ export function useEasySpeech(): useEasySpeechType {
         addAudioInfo,
         reset
     });
-
-
-    // ResetAudio(audioInfo: AudioInfo<HTMLButtonElement>) {
-    //     if (audioInfo.refToAudio.current) {
-    //         if (audioInfo.refToAudio.current.classList.contains("icon-pause")) {
-    //             audioInfo.refToAudio.current.classList.toggle("icon-pause");
-    //         }
-    //         audioInfo.isSpeaking = false;
-    //     }
-    // }
-
-    // ResetAudioControls() {
-    //     for (let audioInfo of this.AudioInfoArray) {
-    //         if (audioInfo.isSpeaking) {
-    //             this.ResetAudio(audioInfo);
-    //         }
-    //     }
-    // }
-
-    // AddToCollection(audioInfo: AudioInfo<HTMLButtonElement>) {
-    //     this.AudioInfoArray.push(audioInfo);
-    // }
-
 }

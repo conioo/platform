@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
-import Language, { convertToName } from '../../types/Language';
+import Language from '../../types/Language';
 
 class LanguageState {
     language: Language = Language.English;
+    isEasySpeech: boolean = false;
     englishVoices?: Array<SpeechSynthesisVoice>;
     germanVoices?: Array<SpeechSynthesisVoice>;
     spanishVoices?: Array<SpeechSynthesisVoice>;
@@ -52,17 +53,28 @@ export const languageSlice = createSlice({
                     payload: voices
                 }
             }
+        },
+        setIsEasySpeech: {
+            reducer(state, action: PayloadAction<boolean>) {
+                return { ...state, isEasySpeech: action.payload };
+            },
+            prepare(isEasySpeech: boolean) {
+                return {
+                    payload: isEasySpeech
+                }
+            }
         }
     },
 })
 
-export const { setLanguage, setEnglishVoices, setGermanVoices, setSpanishVoices } = languageSlice.actions
+export const { setLanguage, setEnglishVoices, setGermanVoices, setSpanishVoices, setIsEasySpeech } = languageSlice.actions
 
 export const selectLanguage = (state: RootState) => state.language.language;
-export const selectBasePath = (state: RootState) => "/" + convertToName(state.language.language); ;
+export const selectBasePath = (state: RootState) => "/" + state.language.language;
 export const selectEnglishVoices = (state: RootState) => state.language.englishVoices
 export const selectGermanVoices = (state: RootState) => state.language.germanVoices;
 export const selectSpanishVoices = (state: RootState) => state.language.spanishVoices;
 export const selectLanguageState = (state: RootState) => state.language;
+export const selectIsEasySpeech = (state: RootState) => state.language.isEasySpeech;
 
 export default languageSlice.reducer

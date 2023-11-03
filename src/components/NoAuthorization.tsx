@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import Language, { convertToName } from "../types/Language";
+import Language from "../types/Language";
 import { useSelector } from "react-redux";
 import { selectIsLogin } from "../redux/slices/authentication";
 import { selectLanguage } from "../redux/slices/language";
@@ -23,7 +23,7 @@ export default function NoAuthorization({ }: NoAuthorizationProps) {
     return (
         <>
             <h2>Brak uprawnień</h2>
-            <button className='options-button' onClick={() => navigate(`/${convertToName(language)}/browser/home`)}>Strona Główne</button>
+            <button className='options-button' onClick={() => navigate(`/${language}/browser/home`)}>Strona Główne</button>
         </>
     )
 }

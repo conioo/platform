@@ -1,7 +1,7 @@
 import '../css/SettingsModal.css';
 import ReactModal from "react-modal";
 import { useState } from "react";
-import OptionsModuleFormik from './Forms/OptionsModuleFormik';
+import OptionsModuleFormik from './Forms/OptionsModule/OptionsModuleFormik';
 
 interface SettingsModal {
     defaultVoiceName: string;
