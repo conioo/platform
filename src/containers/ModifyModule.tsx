@@ -10,6 +10,7 @@ import { selectLanguage } from '../redux/slices/language';
 import { setModuleIdToMove, setModuleInfoToCopy } from '../redux/slices/module';
 import Paths from '../router/Paths';
 import Module from '../models/NewModule';
+import Segment from '../models/Segment';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -123,13 +124,16 @@ export default function ModifyModule() {
     function getContentFromModule(module: Module) {
         let content = "";
 
-        // for (let i = 0; i < module.segments.length; ++i) {
-        //     content += module.segments[i].sentence + "\n";
-        // }
+        for (const section of module.sections) {
+            for (const segment of section.segments) {
+                content += segment.sentence + " ";
+            }
+            content += "\n";
+        }
 
-        // if (content.length > 0) {
-        //     content = content.slice(0, -1);
-        // }
+        if (content.length > 0) {
+            content = content.slice(0, -1);
+        }
 
         return content;
     }

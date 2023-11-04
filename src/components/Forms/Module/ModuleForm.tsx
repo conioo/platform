@@ -2,10 +2,6 @@ import { useFormikContext } from 'formik';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import './css/Buttons.css';
-import './css/Colouring.css';
-import './css/ModuleForm.css';
-import { selectDeeplToken } from "../../../redux/slices/authentication";
 import { selectLanguage } from "../../../redux/slices/language";
 import store from "../../../redux/store";
 import ErrorAlerts from "../../../services/FormikErrorsAlert";
@@ -16,6 +12,9 @@ import Content from './Content';
 import { FormikValuesType } from "./ModuleFormik";
 import Saving from './Saving';
 import Segmenting from './Segmenting';
+import './css/Buttons.css';
+import './css/Colouring.css';
+import './css/ModuleForm.css';
 
 export default function ModuleForm() {
     const [FormState, setFormState] = useState<string>("content");
@@ -23,7 +22,6 @@ export default function ModuleForm() {
     const { values, errors, isSubmitting, setFieldValue } = useFormikContext<FormikValuesType>();
 
     const language = useSelector(selectLanguage);
-    const deeplToken = useSelector(selectDeeplToken);
     const navigate = useNavigate();
 
     useEffect(() => {
