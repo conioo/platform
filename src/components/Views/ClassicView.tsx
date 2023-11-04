@@ -8,6 +8,7 @@ import Segment from "../../models/Segment";
 import { useAppSelector } from "../../redux/hook";
 import AudioPlay from "../AudioPlay";
 import { Colors } from "../../types/Colors";
+import Element from "./Element";
 
 interface ClassicViewProps {
     module: Module;
@@ -20,7 +21,7 @@ export default function ClassicView({ module, setText }: ClassicViewProps) {
     const isHiddenOptions = useAppSelector((state) => state.moduleOptions.isHidden);
 
     const [translations, setTranslations] = useState<Array<Array<JSX.Element>>>();
-    const [currentTranslationIndex, updateCurrentTranslationIndex] = useImmer<Array<number>>(new Array<number>(module.sections.length).fill(-1));
+    const [currentTranslationIndex, updateCurrentTranslationIndex] = useImmer<Array<number>>(new Array<number>(module.sections.length).fill(0));
     const [isHidden, updateIsHidden] = useImmer<Array<boolean>>(new Array<boolean>(module.sections.length).fill(isHiddenOptions));
 
     let audioHub = useEasySpeech();
@@ -41,7 +42,13 @@ export default function ClassicView({ module, setText }: ClassicViewProps) {
                 let wordPiecies = segment.sentence.split(" ");
 
                 let allWords = wordPiecies.map((word: string, internalIndex: number) => {
-                    return getColoredSpan(word, segment.sentenceColors[internalIndex], sectionIndex, segmentIndex);
+                    return <Element
+                        updateCurrentTranslationIndex={updateCurrentTranslationIndex}
+                        updateIsHidden={updateIsHidden}
+                        sectionIndex={sectionIndex}
+                        segmentIndex={segmentIndex}
+                        colorId={segment.sentenceColors[internalIndex]}
+                        content={word}></Element>
                 })
 
                 let meaningPiecies = segment.translation.split(" ");
@@ -57,19 +64,6 @@ export default function ClassicView({ module, setText }: ClassicViewProps) {
                 );
 
                 return allWords;
-                return (
-                    <section
-                        key={segmentIndex}
-                        onClick={() => {
-                            updateCurrentTranslationIndex(indexes => {
-                                indexes[sectionIndex] = segmentIndex
-                            });
-                            updateIsHidden(state => { state[sectionIndex] = false });
-                        }}
-                        className="sentence sentence-section">
-                        {allWords}
-                    </section>
-                );
             });
 
             fullText += fullSentence;

@@ -35,3 +35,7 @@
 .word[data-type]:hover {
     opacity: 0.5;
 }
+
+.hovered{
+    opacity: 0.5;
+}
