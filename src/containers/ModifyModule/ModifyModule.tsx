@@ -2,15 +2,14 @@ import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import ModuleFormik, { FormikValuesType } from '../components/Forms/Module/ModuleFormik';
-import '../css/Modify.css';
-import { getModule, removeModule, updateModuleInGoogleDrive } from '../google/GoogleDriveService';
-import { authorizedAccess } from '../google/services/AuhorizationService';
-import { selectLanguage } from '../redux/slices/language';
-import { setModuleIdToMove, setModuleInfoToCopy } from '../redux/slices/module';
-import Paths from '../router/Paths';
-import Module from '../models/NewModule';
-import Segment from '../models/Segment';
+import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik';
+import { getModule, removeModule, updateModuleInGoogleDrive } from '../../google/GoogleDriveService';
+import { authorizedAccess } from '../../google/services/AuhorizationService';
+import Module from '../../models/Module';
+import { selectLanguage } from '../../redux/slices/language';
+import { setModuleIdToMove, setModuleInfoToCopy } from '../../redux/slices/module';
+import Paths from '../../router/Paths';
+import './ModifyModule.scss';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;

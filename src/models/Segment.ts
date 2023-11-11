@@ -3,7 +3,7 @@ export default class Segment {
     translation: string;
 
     sentenceColors: Array<number>;
-    translationColors: Array<number>;//+s
+    translationColors: Array<number>;
 
     constructor(sentence: string, translation: string) {
         this.sentence = sentence;

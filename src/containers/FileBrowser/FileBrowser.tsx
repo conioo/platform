@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import Pastemodule from '../components/PasteModule';
-import RowOfFolder from '../components/RowOfFolder';
-import RowOfModule from '../components/RowOfModule';
-import '../css/FileBrowser.css';
-import '../css/fontello/css/fontello.css';
-import { createFolderInGoogleDrive, findFolderIdByPath, getListOfFiles, isEmptyFolder, removeFolderFromGoogleDrive } from '../google/GoogleDriveService';
-import File from '../models/File';
-import { useAppDispatch, useAppSelector } from '../redux/hook';
-import { selectIsLogin } from '../redux/slices/authentication';
-import { setParentFolderId } from '../redux/slices/folder';
-import { selectBasePath, selectLanguage } from '../redux/slices/language';
-import Paths from '../router/Paths';
+import Pastemodule from '../../components/PasteModule';
+import RowOfFolder from '../../components/RowOfFolder';
+import RowOfModule from '../../components/RowOfModule';
+import { createFolderInGoogleDrive, findFolderIdByPath, getListOfFiles, isEmptyFolder, removeFolderFromGoogleDrive } from '../../google/GoogleDriveService';
+import File from '../../models/File';
+import { useAppDispatch, useAppSelector } from '../../redux/hook';
+import { selectIsLogin } from '../../redux/slices/authentication';
+import { setParentFolderId } from '../../redux/slices/folder';
+import { selectBasePath, selectLanguage } from '../../redux/slices/language';
+import Paths from '../../router/Paths';
+import '../../css/fontello/css/fontello.css';
+import './FileBrowser.scss';
 
 interface FilesInfo {
     parentFolderId: string;

@@ -3,10 +3,11 @@ import * as Yup from 'yup';
 import './css/Buttons.css';
 import './css/Colouring.css';
 import './css/ModuleForm.css';
-import Module from '../../../models/NewModule';
+import Module from '../../../models/Module';
 import Segment from '../../../models/Segment';
 import Language from '../../../types/Language';
 import ModuleForm from "./ModuleForm";
+import TargetLanguage from '../../../types/TargetLanguage';
 
 const segmentScheme = Yup.object().shape({
 });
@@ -21,10 +22,10 @@ const moduleScheme = Yup.object({
         .min(1, 'Must be 1 characters or more')
         .required('Required'),
     language: Yup.mixed<Language>()
-        .oneOf([Language.English, Language.German, Language.Spanish], "invalid language type")
+    .oneOf(Object.values(Language), "invalid language type")
         .required('Required'),
-    targetLanguage: Yup.mixed<Language>()
-        .oneOf(Object.values(Language), "invalid language type")
+    targetLanguage: Yup.mixed<TargetLanguage>()
+        .oneOf(Object.values(TargetLanguage), "invalid language type")
         .required('Required'),
     voiceName: Yup.string()
         .min(1, 'Must be 1 characters or more')

@@ -1,0 +1,7 @@
+@import "./../../../../css/main.scss";
+
+.sortable-section__separator {
+    // min-height: 2rem;
+    min-height: $badge-font-size + ($badge-padding-y * 2);
+    cursor: pointer;
+}

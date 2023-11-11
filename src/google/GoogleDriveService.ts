@@ -1,5 +1,5 @@
 import File from "../models/File";
-import Module from "../models/NewModule";
+import Module from "../models/Module";
 import Tokens from "../models/Tokens";
 import Language from "../types/Language";
 

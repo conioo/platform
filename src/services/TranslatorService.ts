@@ -1,6 +1,7 @@
 import Language from "../types/Language";
+import TargetLanguage from "../types/TargetLanguage";
 
-export async function TranslateSentences(sentences: Array<string>, language: Language, targetLanguage: Language, deeplToken: string): Promise<Array<string>> {
+export async function TranslateSentences(sentences: Array<string>, language: Language, targetLanguage: TargetLanguage, deeplToken: string): Promise<Array<string>> {
     let sourceLanguage: string = "";
 
     if (language === Language.English) {

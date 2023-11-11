@@ -1,30 +1,29 @@
 import { useMemo, useState } from "react";
 import { useImmer } from "use-immer";
 import "../../css/Views/ClassicView.css";
-import { useEasySpeech } from "../../hooks/EasySpeech";
-import Module from "../../models/NewModule";
+import Module from "../../models/Module";
 import Section from "../../models/Section";
 import Segment from "../../models/Segment";
 import { useAppSelector } from "../../redux/hook";
 import AudioPlay from "../AudioPlay";
 import { Colors } from "../../types/Colors";
 import Element from "./Element";
+import { useEasySpeechType } from "../../hooks/EasySpeech";
 
 interface ClassicViewProps {
     module: Module;
+    audioHub?: useEasySpeechType;
     setText: (text: string) => void;
     getColoredSpan: (content: string, colorId: number) => JSX.Element;
 }
 
-export default function ClassicView({ module, setText }: ClassicViewProps) {
+export default function ClassicView({ module, setText, audioHub }: ClassicViewProps) {
     console.log("ClassicView");
     const isHiddenOptions = useAppSelector((state) => state.moduleOptions.isHidden);
 
     const [translations, setTranslations] = useState<Array<Array<JSX.Element>>>();
     const [currentTranslationIndex, updateCurrentTranslationIndex] = useImmer<Array<number>>(new Array<number>(module.sections.length).fill(0));
     const [isHidden, updateIsHidden] = useImmer<Array<boolean>>(new Array<boolean>(module.sections.length).fill(isHiddenOptions));
-
-    let audioHub = useEasySpeech();
 
     const sectionsParts = useMemo(() => {
         let translations = new Array<Array<JSX.Element>>();

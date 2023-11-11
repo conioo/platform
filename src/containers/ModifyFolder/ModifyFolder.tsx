@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import '../css/Modify.css';
-import { changeFolderName, getFolderName, removeFolder } from '../google/GoogleDriceAuthorizeService';
-import { isEmptyFolder } from '../google/GoogleDriveService';
-import { authorizedAccess } from '../google/services/AuhorizationService';
-import useLogoutRedirect from '../hooks/LogoutRedirect';
-import { useAppDispatch } from '../redux/hook';
-import { setFolderIdToMove, setFolderInfoToCopy } from '../redux/slices/folder';
-import { selectLanguage } from '../redux/slices/language';
-import Paths from '../router/Paths';
+import { changeFolderName, getFolderName, removeFolder } from '../../google/GoogleDriceAuthorizeService';
+import { isEmptyFolder } from '../../google/GoogleDriveService';
+import { authorizedAccess } from '../../google/services/AuhorizationService';
+import useLogoutRedirect from '../../hooks/LogoutRedirect';
+import { useAppDispatch } from '../../redux/hook';
+import { setFolderIdToMove, setFolderInfoToCopy } from '../../redux/slices/folder';
+import { selectLanguage } from '../../redux/slices/language';
+import Paths from '../../router/Paths';
+import './ModifyFolder.scss';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface Args extends ActionFunctionArgs {

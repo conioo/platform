@@ -1,6 +1,8 @@
 import EasySpeech from "easy-speech";
 import store from "../redux/store";
 import { setEnglishVoices, setGermanVoices, setIsEasySpeech, setSpanishVoices } from "../redux/slices/language";
+import { useEasySpeechType } from "../hooks/EasySpeech";
+import AudioInfo from "../models/AudioInfo";
 
 export async function EasySpeechInit() {
     try {
@@ -71,4 +73,37 @@ export default async function ChangeVoice(voiceName: string) {
 
 export async function ChangeVoiceRate(rate: number) {
     EasySpeech.defaults({ rate });
+}
+
+export function getEasySpeech(): useEasySpeechType | undefined {
+
+    let audioInfoArray = new Array<AudioInfo>();//zewnatrz
+
+    const addAudioInfo = (audioInfo: AudioInfo): void => {
+        console.log(audioInfo);
+        audioInfoArray.push(audioInfo);
+    };
+
+    const reset = () => {
+        EasySpeech.cancel();
+
+        for (let audioInfo of audioInfoArray) {
+            if (audioInfo.isSpeaking) {
+                audioInfo.refToAudio.current?.classList.remove("icon-pause");
+                audioInfo.isSpeaking = false;
+            }
+        }
+    };
+
+    const handleEnd = () => {
+        console.log(audioInfoArray);
+        reset();
+    };
+
+    EasySpeech.on({ end: handleEnd });
+
+    return ({
+        addAudioInfo,
+        reset
+    });
 }

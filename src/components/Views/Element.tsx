@@ -33,7 +33,6 @@ export default function Element({ updateCurrentTranslationIndex, updateIsHidden,
 
     function onMouseEnter() {
         const elements = document.getElementsByClassName(segmentClassName);
-        console.log(elements);
         for (let i = 0; i < elements.length; ++i) {
             elements[i].classList.add("hovered");
         }

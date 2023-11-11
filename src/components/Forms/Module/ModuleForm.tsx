@@ -11,7 +11,7 @@ import Colouring from "./Colouring";
 import Content from './Content';
 import { FormikValuesType } from "./ModuleFormik";
 import Saving from './Saving';
-import Segmenting from './Segmenting';
+import Segmenting from './Segmenting/Segmenting';
 import './css/Buttons.css';
 import './css/Colouring.css';
 import './css/ModuleForm.css';

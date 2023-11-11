@@ -1,14 +1,14 @@
 import { Field, useFormikContext } from 'formik';
 import { useSelector } from 'react-redux';
-import Module from '../../../models/NewModule';
+import Module from '../../../models/Module';
 import Section from '../../../models/Section';
 import Segment from '../../../models/Segment';
 import { selectDeeplToken } from '../../../redux/slices/authentication';
 import { selectLanguage } from '../../../redux/slices/language';
 import { TranslateSentences } from '../../../services/TranslatorService';
+import Language from '../../../types/Language';
 import { FormikValuesType } from './ModuleFormik';
 import './css/Content.css';
-import Language from '../../../types/Language';
 
 interface ContentProps {
     goNext: () => void;

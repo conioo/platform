@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useSelector, useStore } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import AudioPlay from '../components/AudioPlay';
-import SettingsModal from '../components/SettingsModal';
-import '../css/View.css';
-import '../css/fontello/css/fontello.css';
-import { getModule } from '../google/GoogleDriveService';
-import { useEasySpeech, } from '../hooks/EasySpeech';
-import Module from '../models/NewModule';
-import { selectIsLogin } from '../redux/slices/authentication';
-import { selectBasePath } from '../redux/slices/language';
-import { ModuleOptionsState, selectAllOptions, setOptions, setVoiceName } from '../redux/slices/moduleOptions';
-import Paths from '../router/Paths';
-import ChangeVoice, { ChangeVoiceRate } from '../services/EasySpeechHandlers';
-import { Colors } from '../types/Colors';
-import ClassicView from '../components/Views/ClassicView';
+import AudioPlay from '../../components/AudioPlay';
+import SettingsModal from '../../components/SettingsModal';
+import ClassicView from '../../components/Views/ClassicView';
+import '../../css/fontello/css/fontello.css';
+import { getModule } from '../../google/GoogleDriveService';
+import Module from '../../models/Module';
+import { selectIsLogin } from '../../redux/slices/authentication';
+import { selectBasePath, selectIsEasySpeech } from '../../redux/slices/language';
+import { ModuleOptionsState, selectAllOptions, setOptions, setVoiceName } from '../../redux/slices/moduleOptions';
+import Paths from '../../router/Paths';
+import ChangeVoice, { ChangeVoiceRate, getEasySpeech } from '../../services/EasySpeechHandlers';
+import { Colors } from '../../types/Colors';
+import './View.scss';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -44,12 +43,12 @@ export default function View(): JSX.Element {
     console.log("View");
 
     let { module, fileId } = useLoaderData() as loaderReturnType;
-    let audioHub = useEasySpeech();
     let { playBackSpeed, displayMode, isHidden, voiceName } = useSelector(selectAllOptions);
+
+    const isEasySpeech = useSelector(selectIsEasySpeech);
+
+    const [audioHub, setAudioHub] = useState(isEasySpeech ? getEasySpeech : undefined);
     const [text, setText] = useState<string>("");
-
-
-    let isClassic = displayMode === "classic";
 
     let refToSlider = React.createRef<HTMLInputElement>();
     let store = useStore();
@@ -138,7 +137,7 @@ export default function View(): JSX.Element {
                 </section>
             </section >
 
-            {displayMode === "classic" && <ClassicView module={module} setText={setText} getColoredSpan={getColoredSpan}></ClassicView>}
+            {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub} getColoredSpan={getColoredSpan}></ClassicView>}
         </>
     );
 

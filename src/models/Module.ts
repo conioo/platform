@@ -1,15 +1,16 @@
 import Language from "../types/Language";
-import Segment from "./Segment";
+import TargetLanguage from "../types/TargetLanguage";
+import Section from "./Section";
 
 export default class Module {
-    segments: Array<Segment>;
+    sections: Array<Section>;
     name: string;
     language: Language;
-    targetLanguage: Language;
+    targetLanguage: TargetLanguage;
     voiceName: string;
-
-    constructor(segments: Array<Segment> = new Array<Segment>(), name: string = "", voiceName: string = "", language = Language.English, targetLanguage = Language.Polish) {
-        this.segments = segments;
+    
+    constructor(sections: Array<Section> = new Array<Section>(), name: string = "", voiceName: string = "", language = Language.English, targetLanguage = TargetLanguage.Polish) {
+        this.sections = sections;
         this.name = name;
         this.voiceName = voiceName;
         this.language = language;
