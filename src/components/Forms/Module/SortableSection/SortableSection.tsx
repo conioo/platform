@@ -5,18 +5,29 @@ import './SortableSection.scss'
 
 interface SortableSectionProps {
     segments: BaseSortableType[];
-    onDoubleClick?: (index: number) => void;
+    onDoubleClick: (id: string) => void;
 }//onDoubleClick(index)
 
+const backgrounds = [
+    "primary",
+    "info",
+    "danger",
+    "success",
+    "warning",
+    "light"
+]
+
 export default function SortableSection({ segments, onDoubleClick }: SortableSectionProps) {
+    let backgroundIndex = 0;
 
     return (
         <>
-            {segments.map((baseSortable, index) => {
+            {segments.map((baseSortable) => {
                 if (baseSortable['word']) {
-                    return (<Badge key={baseSortable.id} className='disabled' bg='secondary'>{baseSortable.word}</Badge>);
+                    return (<Badge key={baseSortable.id} className='disabled' bg={backgrounds[backgroundIndex]}>{baseSortable.word}</Badge>);
                 } else {
-                    return (<Badge key={baseSortable.id} className='sortable-section__separator' bg='dark' onDoubleClick={() => {  }}></Badge>);
+                    next();
+                    return (<Badge key={baseSortable.id} className='sortable-section__separator' bg='dark' onDoubleClick={() => { onDoubleClick(baseSortable.id) }}> </Badge>);
                 }
             })}
         </>
@@ -26,4 +37,12 @@ export default function SortableSection({ segments, onDoubleClick }: SortableSec
         //     kapusta
         // </div>
     );
+
+    function next() {
+        ++backgroundIndex;
+
+        if (backgroundIndex == backgrounds.length) {
+            backgroundIndex = 0;
+        }
+    }
 }

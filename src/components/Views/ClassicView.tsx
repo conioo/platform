@@ -5,7 +5,7 @@ import Module from "../../models/Module";
 import Section from "../../models/Section";
 import Segment from "../../models/Segment";
 import { useAppSelector } from "../../redux/hook";
-import AudioPlay from "../AudioPlay";
+import AudioPlay from "../AudioPlay/AudioPlay";
 import { Colors } from "../../types/Colors";
 import Element from "./Element";
 import { useEasySpeechType } from "../../hooks/EasySpeech";

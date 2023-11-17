@@ -1,9 +1,9 @@
-import { useRef } from "react";
-import '../css/AudioPlay.css';
-import AudioInfo from "../models/AudioInfo";
 import EasySpeech from 'easy-speech';
-import { useEasySpeechType } from "../hooks/EasySpeech";
 import React from "react";
+import { useEasySpeechType } from "../../hooks/EasySpeech";
+import AudioInfo from "../../models/AudioInfo";
+import './AudioPlay.scss';
+import Button from 'react-bootstrap/esm/Button';
 
 interface AudioPlayProps {
     text: string;
@@ -21,6 +21,7 @@ export default function AudioPlay({ text, managementAudio }: AudioPlayProps) {
     managementAudio.addAudioInfo(audioInfo);
 
     return (
+        // <Button className='audio-play' ref={audioInfo.refToAudio} onClick={() => onPlayHandle(text, audioInfo, managementAudio)}><i className='icon-play'></i></Button>
         <button className='icon-play audio-play' ref={audioInfo.refToAudio} onClick={() => onPlayHandle(text, audioInfo, managementAudio)}></button>
     )
 }

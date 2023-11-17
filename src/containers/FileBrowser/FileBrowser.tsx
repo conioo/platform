@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Button from 'react-bootstrap/esm/Button';
 import { useSelector } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
 import Pastemodule from '../../components/PasteModule';
-import RowOfFolder from '../../components/RowOfFolder';
-import RowOfModule from '../../components/RowOfModule';
-import { createFolderInGoogleDrive, findFolderIdByPath, getListOfFiles, isEmptyFolder, removeFolderFromGoogleDrive } from '../../google/GoogleDriveService';
+import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
+import RowOfModule from '../../components/RowOfModule/RowOfModule';
+import '../../css/fontello/css/fontello.css';
+import { createFolderInGoogleDrive, findFolderIdByPath, getListOfFiles } from '../../google/GoogleDriveService';
 import File from '../../models/File';
 import { useAppDispatch, useAppSelector } from '../../redux/hook';
 import { selectIsLogin } from '../../redux/slices/authentication';
 import { setParentFolderId } from '../../redux/slices/folder';
 import { selectBasePath, selectLanguage } from '../../redux/slices/language';
 import Paths from '../../router/Paths';
-import '../../css/fontello/css/fontello.css';
 import './FileBrowser.scss';
 
 interface FilesInfo {
@@ -44,7 +48,7 @@ export async function loader({ params }: Args): Promise<loaderReturnType> {
         throw new Error("invalid browser path");
     }
 
-    folderNames.shift();
+    //folderNames.shift();
 
     return { path, folderNames };
 }
@@ -54,6 +58,8 @@ export default function FileBrowser() {
 
     let loaderData = useLoaderData() as loaderReturnType;
     const [filesInfo, setFilesInfo] = useState<FilesInfo>();
+    const [folderOpenId, setFolderOpenId] = useState<string>();
+
     let dispatch = useAppDispatch();
     const language = useSelector(selectLanguage);
 
@@ -68,7 +74,7 @@ export default function FileBrowser() {
     let isLogin = useAppSelector(selectIsLogin);
 
 
-    const navigate = useNavigate();
+    const Navigate = useNavigate();
 
     let basePath = useSelector(selectBasePath);
 
@@ -88,52 +94,52 @@ export default function FileBrowser() {
     if (filesInfo !== undefined) {
         listOfNameFiles = filesInfo.files.map((file, index) => {
             return (
-                <RowOfModule isLogin={isLogin?isLogin:false} file={file} basePath={basePath} key={index + "mod"}></RowOfModule>
+                <RowOfModule isLogin={isLogin ? isLogin : false} file={file} basePath={basePath} key={index + "mod"}></RowOfModule>
             );
         });
 
         listOfNameFolders = filesInfo.folders.map((folder, index) => {
             return (
-                <RowOfFolder isLogin={isLogin?isLogin:false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} removeFolder={removeFolder} key={index + "fol"}></RowOfFolder>
+                <RowOfFolder isLogin={isLogin ? isLogin : false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} setFolderOpenId={setFolderOpenId} key={index + "fol"}></RowOfFolder>
             );
         });
 
-        const folderNames = filesInfo.fullPath.split('/').filter((name: any) => name !== '');
-
         let currentPath = basePath + "/browser";
 
-        paths = folderNames.map((segmentPath, index) => {
+        paths = loaderData.folderNames.map((segmentPath, index) => {
             currentPath += "/" + segmentPath;
             let path = currentPath;
 
-            return (<>
-                <span onClick={() => navigate(path)} className='current-path-span' key={index + "seg"}>{segmentPath}</span>
-                <span key={index + "sep"}>/</span>
-            </>);
+            return (
+                <Breadcrumb.Item onClick={() => Navigate(path)} active={index + 1 === loaderData.folderNames.length}>{segmentPath}</Breadcrumb.Item>
+            );
         });
+
     }
 
     return (
-        <>
-            <section className='paths-section'>
-                <div>
-                    {paths}
-                </div>
-            </section>
+        <section className='file-browser'>
+            <Breadcrumb className='file-browser__breadcrumb'>
+                {paths}
+            </Breadcrumb>
 
-            <ul className='list-of-files'>
+            <ListGroup as="ul" className='file-browser__list-group'>
                 {listOfNameFolders}
                 {listOfNameFiles}
-            </ul>
+            </ListGroup>
 
             <Pastemodule updateListOfFiles={updateListOfFiles}></Pastemodule>
 
             {isLogin &&
-                <section className='new-file-section'>
-                    <button className='new-file-button' onClick={() => { navigate(basePath + "/record") }}>Nowy plik</button>
-                    <button className='new-file-button' onClick={() => { createNewFolder() }}>Nowy folder</button>
-                </section>}
-        </>
+                <section className='file-browser__button-group-section'>
+                    <ButtonGroup className='file-browser__button-group'>
+                        <Button variant='warning' onClick={() => { Navigate(basePath + "/record") }}>Nowy plik</Button>
+                        <Button variant='warning' onClick={() => { createNewFolder() }}>Nowy folder</Button>
+                    </ButtonGroup>
+                </section>
+            }
+
+        </section>
     );
 
     async function updateListOfFiles() {
@@ -170,28 +176,33 @@ export default function FileBrowser() {
         await updateListOfFiles();
     }
 
-    async function removeFolder(folder: File) {
-        if (!await isEmptyFolder(folder.id)) {
-            alert("folder nie jest pusty");
-            return;
-        }
+    // async function removeFolder(folder: File) {
+    //     if (!await isEmptyFolder(folder.id)) {
+    //         alert("folder nie jest pusty");
+    //         return;
+    //     }
 
-        await removeFolderFromGoogleDrive(folder.id);
-        await updateListOfFiles();
-    }
+    //     await removeFolderFromGoogleDrive(folder.id);
+    //     await updateListOfFiles();
+    // }
 
     async function getFilesInfo(loaderData: loaderReturnType) {
-        const folderId = await findFolderIdByPath(loaderData.folderNames, language);
+        let folderId: string | undefined;
 
-        if (!folderId) {
-            throw new Error("invalid browser path");
+        if (folderOpenId) {
+            folderId = folderOpenId;
+            setFolderOpenId(undefined);
+        } else {
+            folderId = await findFolderIdByPath(loaderData.folderNames.slice(1), language);
+
+            if (!folderId) {
+                throw new Error("invalid browser path");
+            }
         }
 
         let listOfFiles = await getListOfFiles(folderId) as FilesInfo;
         listOfFiles.parentFolderId = folderId;
         listOfFiles.fullPath = loaderData.path;
-
-        // reloadFiles = true;
 
         return listOfFiles;
     }

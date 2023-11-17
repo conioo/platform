@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { useSelector, useStore } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import AudioPlay from '../../components/AudioPlay';
+import AudioPlay from '../../components/AudioPlay/AudioPlay';
 import SettingsModal from '../../components/SettingsModal';
 import ClassicView from '../../components/Views/ClassicView';
 import '../../css/fontello/css/fontello.css';
@@ -15,6 +15,7 @@ import Paths from '../../router/Paths';
 import ChangeVoice, { ChangeVoiceRate, getEasySpeech } from '../../services/EasySpeechHandlers';
 import { Colors } from '../../types/Colors';
 import './View.scss';
+import VerticalView from '../../components/Views/VerticalView';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.view>>;
@@ -138,6 +139,7 @@ export default function View(): JSX.Element {
             </section >
 
             {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub} getColoredSpan={getColoredSpan}></ClassicView>}
+            {displayMode === "vertical" && <VerticalView module={module} setText={setText} audioHub={audioHub} getColoredSpan={getColoredSpan}></VerticalView>}
         </>
     );
 

@@ -8,6 +8,7 @@ import Segment from '../../../../models/Segment';
 import { FormikValuesType } from '../ModuleFormik';
 import SortableSection from '../SortableSection';
 import './Segmenting.scss';
+import Button from 'react-bootstrap/esm/Button';
 
 interface SegmentingProps {
     goBack: () => void;
@@ -43,19 +44,20 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
     const [separators, setSeparators] = useState<Array<SeparatorType>>(initSeparators);
 
     // console.log(separatorIdCounter);
-    // console.log(sections);
+    console.log(sections);
     // console.log(separators);
 
     function initSeparators(): Array<SeparatorType> {
         let separators = new Array<SeparatorType>();
 
-        let startId = separatorIdCounter;
+        separators.push({ id: `${separatorIdCounter}` });
+        // let startId = separatorIdCounter;
 
-        for (; startId < 1; ++startId) {
-            separators.push({ id: `${startId}` });
-        }
+        // for (; startId < 1; ++startId) {
+        //     separators.push({ id: `${startId}` });
+        // }
 
-        setSeparatorIdCounter(startId);
+        // setSeparatorIdCounter(startId);
         return separators;
     }
 
@@ -120,12 +122,11 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
                     filter={".disabled"}
                     animation={100}
                     onAdd={(event) => {
-                        console.log(event);
                         addSeparator(sectionIndex, "translations", event.newIndex);
                     }}>
-                    <SortableSection segments={sortableSegment.sentences}></SortableSection>
-                         {/* onDoubleClick={(index: number) => removeSeparator(index, "sentences", index)} */}
-                    
+                    <SortableSection segments={sortableSegment.sentences} onDoubleClick={(id: string) => removeSeparator(id, "sentences", sectionIndex)}></SortableSection>
+                    {/* onDoubleClick={(index: number) => removeSeparator(index, "sentences", index)} */}
+
                 </ReactSortable>
                 <ReactSortable
                     className='segmenting__sortable'
@@ -138,29 +139,23 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
                     onAdd={(event) => {
                         addSeparator(sectionIndex, "sentences", event.newIndex);
                     }}>
-                    <SortableSection segments={sortableSegment.translations}></SortableSection>
+                    <SortableSection segments={sortableSegment.translations} onDoubleClick={(id: string) => removeSeparator(id, "translations", sectionIndex)}></SortableSection>
                 </ReactSortable>
             </Row >
         </>);
     });
 
     const separatorSection = (<ReactSortable
-        className='sorto'
+        className='segmenting__sortable'
         group={{ name: 'separator', pull: 'clone' }}
         list={separators}
         setList={setSeparators}
-        ghostClass='blue-background-class'
-        filter={".filtered"}
+        filter={".disabled"}
         sort={false}
         clone={getSeparator}
-        touchStartThreshold={10}
         animation={150}>
-        <SortableSection segments={separators}></SortableSection>
-        {/* {separators.map((separator) => {
-            return (<span key={separator.id} className={`part-segment separator-segment`}>a</span>);
-        })} */}
+        <SortableSection segments={separators} onDoubleClick={() => null}></SortableSection>
     </ReactSortable >)
-
 
     return (
         <>
@@ -172,6 +167,8 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
 
             {separatorSection}
 
+            <Button className='addSeparatorsEverywhere'>Dodaj Separatory</Button>
+
             <section>
                 <button onClick={() => goBack()} className='change-segments-button'>Wstecz</button>
                 <button onClick={() => { generateModule(); goNext(); }} className='change-segments-button'>Dalej</button>
@@ -179,8 +176,59 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
         </>
     );
 
-    function removeSeparator(sectionIndex: number, sequenceName: string, targetIndex?: number) {
-        //2
+    function addSeparatorsEverywhere()
+    {
+
+    }
+
+    function removeSeparator(id: string, sequenceName: string, sectionIndex: number) {
+        let newSections = sections.slice();
+
+        let separatorCount = 0;
+
+        if (sequenceName === "sentences") {
+            for (let i = 0; i < sections[sectionIndex].sentences.length; ++i) {
+                if (!sections[sectionIndex].sentences[i].word) {
+                    if (sections[sectionIndex].sentences[i].id === id) {
+                        newSections[sectionIndex].sentences.splice(i, 1);
+                        break;
+                    }
+                    ++separatorCount;
+                }
+            }
+
+            for (let i = 0; i < sections[sectionIndex].translations.length; ++i) {
+                if (!sections[sectionIndex].translations[i].word) {
+
+                    if (separatorCount === 0) {
+                        newSections[sectionIndex].translations.splice(i, 1);
+                    }
+                    --separatorCount;
+                }
+            }
+        } else if (sequenceName === "translations") {
+            for (let i = 0; i < sections[sectionIndex].translations.length; ++i) {
+                if (!sections[sectionIndex].translations[i].word) {
+                    if (sections[sectionIndex].translations[i].id === id) {
+                        newSections[sectionIndex].translations.splice(i, 1);
+                        break;
+                    }
+                    ++separatorCount;
+                }
+            }
+
+            for (let i = 0; i < sections[sectionIndex].sentences.length; ++i) {
+                if (!sections[sectionIndex].sentences[i].word) {
+
+                    if (separatorCount === 0) {
+                        newSections[sectionIndex].sentences.splice(i, 1);
+                    }
+                    --separatorCount;
+                }
+            }
+        }
+
+        setSections(newSections);
     }
 
     function addSeparator(sectionIndex: number, sequenceName: string, targetIndex?: number) {
@@ -194,12 +242,11 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
             newSections[sectionIndex].translations.splice(targetIndex, 0, { id: `${separatorIdCounter}` });
         }
 
-        setSeparatorIdCounter(separatorIdCounter + 1);
         setSections(newSections);
     }
 
     function getSeparator() {
-        let newSeparator = { id: `${separatorIdCounter}` }
+        let newSeparator = { id: `${separatorIdCounter + 1}` }
         setSeparatorIdCounter(separatorIdCounter + 1);
         return (newSeparator);
     }
@@ -288,8 +335,6 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
 
         setFieldValue("module.sections", newSections);
     }
-
-
 
     function getSentenceId(sectionIndex: number, counter: number) {
         return (`s ${sectionIndex} ${counter}`);

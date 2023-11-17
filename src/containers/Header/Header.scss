@@ -1,7 +1,11 @@
-@import "./../../css/main.scss";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
 
 .header {
     width: 100%;
+    min-height: 8vh;
+    max-height: 10vh;
     box-shadow: $box-shadow;
     z-index: 1;
     display: flex;
@@ -10,7 +14,7 @@
     &__navbar {
         padding: 0.5rem;
     }
-
+    
     &__brand {
     }
 
@@ -19,12 +23,16 @@
 
         .nav-link:hover {
             opacity: 0.5;
+            scale: 1.02;
+            transition: scale 0.2s ease-in-out, opacity 0.2s ease-in-out;
         }
     }
 
     &__link {
         &:hover {
             opacity: 0.5;
+            scale: 1.02;
+            transition: scale 0.2s ease-in-out, opacity 0.2s ease-in-out;
         }
     }
 
