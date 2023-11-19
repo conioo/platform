@@ -5,7 +5,7 @@ import { selectLanguageState } from '../../../redux/slices/language';
 import { ModuleOptionsState } from '../../../redux/slices/moduleOptions';
 import ErrorAlerts from '../../../services/FormikErrorsAlert';
 import Language from '../../../types/Language';
-import '../../../css/Forms/OptionsModuleForm.css';
+import '../../../styles/Forms/OptionsModuleForm.css';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
@@ -52,9 +52,13 @@ export default function OptionsModuleForm({ closeModal, defaultVoiceName }: Opti
                     Klasyczne
                     <Field type="radio" name="displayMode" value="classic" className="options-module-field-mode-radio" checked={values.displayMode === 'classic'}></Field>
                 </label>
-                <label className="options-module-field-mode">
+                {/* <label className="options-module-field-mode">
                     Pionowe
                     <Field type="radio" name="displayMode" value="vertical" className="options-module-field-mode-radio" checked={values.displayMode === 'vertical'}></Field>
+                </label> */}
+                <label className="options-module-field-mode">
+                    Chmurkowe
+                    <Field type="radio" name="displayMode" value="overlay" className="options-module-field-mode-radio" checked={values.displayMode === 'overlay'}></Field>
                 </label>
             </section>
 

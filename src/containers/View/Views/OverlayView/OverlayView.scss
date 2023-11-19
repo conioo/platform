@@ -1,0 +1,30 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.overlay-view {
+    display: grid;
+    grid-template-columns: auto auto;
+    max-width: 100%;
+
+    &__segments {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding-left: 1rem;
+    }
+
+    &__tooltip {
+        // font-size: inherit !important;
+        // background-color: $secondary !important;
+        // &:hover{
+        //     opacity: 0.5;
+        // }
+    }
+
+    &__segment {
+        cursor: pointer;
+        &:hover {
+            opacity: 0.5;
+        }
+    }
+}

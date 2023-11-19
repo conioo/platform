@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { LoaderFunction, Navigate, RouterProvider, createHashRouter } from "react-router-dom";
-import ErrorPage from './components/ErrorPage';
+import { Navigate, RouterProvider, createHashRouter } from "react-router-dom";
+import ErrorPage from './components/ErrorPage/ErrorPage';
 import NoAuthorization from './components/NoAuthorization';
 import FileBrowser, { loader as fileBrowserLoader } from './containers/FileBrowser/FileBrowser';
 import Hub, { hubLoader } from './containers/Hub';
@@ -12,7 +12,7 @@ import Record, { recordLoader } from './containers/Record';
 import View, { viewLoader } from './containers/View';
 import store from './redux/store';
 import Paths from './router/Paths';
-import './css/main.scss';
+import './styles/main.scss';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

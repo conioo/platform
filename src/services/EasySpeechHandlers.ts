@@ -89,7 +89,8 @@ export function getEasySpeech(): useEasySpeechType | undefined {
 
         for (let audioInfo of audioInfoArray) {
             if (audioInfo.isSpeaking) {
-                audioInfo.refToAudio.current?.classList.remove("icon-pause");
+                audioInfo.refToAudio.current?.classList.remove("bi-pause-fill");
+                audioInfo.refToAudio.current?.classList.add("bi-play-fill");
                 audioInfo.isSpeaking = false;
             }
         }

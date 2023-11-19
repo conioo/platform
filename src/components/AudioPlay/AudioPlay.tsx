@@ -21,8 +21,7 @@ export default function AudioPlay({ text, managementAudio }: AudioPlayProps) {
     managementAudio.addAudioInfo(audioInfo);
 
     return (
-        // <Button className='audio-play' ref={audioInfo.refToAudio} onClick={() => onPlayHandle(text, audioInfo, managementAudio)}><i className='icon-play'></i></Button>
-        <button className='icon-play audio-play' ref={audioInfo.refToAudio} onClick={() => onPlayHandle(text, audioInfo, managementAudio)}></button>
+        <Button className='audio-play' variant='outline-dark' onClick={() => onPlayHandle(text, audioInfo, managementAudio)}><i className="bi bi-play-fill" ref={audioInfo.refToAudio}></i></Button>
     )
 }
 
@@ -33,10 +32,12 @@ function onPlayHandle(text: string, audioInfo: AudioInfo, managementAudio: useEa
         audioInfo.isSpeaking = false;
         audioInfo.isPause = true;
 
-        audioInfo.refToAudio.current?.classList.remove("icon-pause");
+        audioInfo.refToAudio.current?.classList.remove("bi-pause-fill");
+        audioInfo.refToAudio.current?.classList.add("bi-play-fill");
     }
     else {
-        audioInfo.refToAudio.current?.classList.add("icon-pause");
+        audioInfo.refToAudio.current?.classList.add("bi-pause-fill");
+        audioInfo.refToAudio.current?.classList.remove("bi-play-fill");
 
         if (audioInfo.isPause) {
             EasySpeech.resume();

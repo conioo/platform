@@ -1,0 +1,13 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.base-icon-button {
+    box-shadow: $box-shadow-lg;
+    width: 2.8rem;
+    height: 2.4rem;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    border-width: 2px !important;
+    font-size: 1.6rem !important;
+}

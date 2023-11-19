@@ -1,6 +1,6 @@
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import OptionsModuleForm from './OptionsModuleForm';
-import '../../../css/Forms/OptionsModuleFormik.css';
+import '../../../styles/Forms/OptionsModuleFormik.css';
 import { useStore, useSelector } from 'react-redux';
 import { ModuleOptionsState, selectAllOptions, setVoiceName } from '../../../redux/slices/moduleOptions';
 import { useCookies } from 'react-cookie';
@@ -24,7 +24,7 @@ export default function OptionsModuleFormik({ closeModal, defaultVoiceName }: Op
             .max(2, "Must be less than 2")
             .required('Required'),
         displayMode: Yup.string()
-            .oneOf(["classic", "vertical"], "Must be classic or vertical")
+            .oneOf(["classic", "vertical", "overlay"], "Must be classic or vertical")
             .required('Required'),
         voiceName: Yup.string()
             .min(1, "Must be at least 1 sign")

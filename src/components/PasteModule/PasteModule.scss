@@ -1,0 +1,15 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.paste-module {
+    background-color: $blue-100;
+    border: 1px solid $blue-700;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+}

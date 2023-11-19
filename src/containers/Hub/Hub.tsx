@@ -46,8 +46,8 @@ export default function Hub() {
         <>
             <Header></Header>
 
-            <section className='sections-container'>
-                <section className='left-section'>
+            <section className='hub__sections'>
+                <section className='hub__left-section'>
                 </section>
 
                 <section className='hub__main-section'>
@@ -55,7 +55,7 @@ export default function Hub() {
                     <Outlet />
                 </section>
 
-                <section className='right-section'>
+                <section className='hub__right-section'>
                 </section>
             </section>
 

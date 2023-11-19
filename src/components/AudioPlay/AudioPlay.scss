@@ -1,25 +1,18 @@
 .audio-play {
-    width: 2em;
-    height: 2em;
-    text-align: center;
-    /* position: relative;
-    overflow: hidden; */
-    border-radius: 50%;
-    cursor: pointer;
-    display: block;
-    /* font-size: 60%; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.3s;
-    grid-row-end: auto;
+  max-width: 1.5em !important;
+  max-height: 1.5em !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s !important;
+  font-size: inherit !important;
+
+  &:active {
+    background-color: #d6e6f0;
   }
-  
-  .audio-play:active {
-    background-color: #d6e6f0; /* Kolor tła po naciśnięciu */
-  }
-  
-  .audio-play:hover {
+
+  &:hover {
     transform: scale(1.1);
   }
-  
+}

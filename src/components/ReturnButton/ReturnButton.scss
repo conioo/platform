@@ -1,0 +1,9 @@
+@use "../../styles/common.scss" as *;
+
+.return-button {
+    @extend .base-icon-button;
+
+    position: absolute !important;
+    top: 0;
+    left: 0;
+}
