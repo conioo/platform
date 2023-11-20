@@ -9,7 +9,8 @@
     z-index: 1;
     display: flex;
     flex-direction: row;
-
+    background-color: $white;
+    
     &__navbar {
         padding: 0.5rem;
     }

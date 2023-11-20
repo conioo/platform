@@ -13,10 +13,10 @@ export default function Header() {
     const navigate = useNavigate();
     const language = useSelector(selectLanguage);
 
-    const dropDownItems = Object.values(Language).map((languageOption: Language) => {
+    const dropDownItems = Object.values(Language).map((languageOption: Language, index: number) => {
 
         return (
-            <NavDropdown.Item className='header__dropdown-item' onClick={() => {
+            <NavDropdown.Item className='header__dropdown-item' key={index} onClick={() => {
                 if (languageOption !== language) {
                     navigate(`/${languageOption}/browser/home`);
                 }

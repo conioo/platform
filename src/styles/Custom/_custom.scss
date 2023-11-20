@@ -16,12 +16,13 @@ $badge-padding-y: 0.35rem;
 $list-group-item-color-scale: 100%;
 $list-group-border-width: 2px;
 
-$tooltip-bg: $orange-400;
+$tooltip-bg: none;
 $tooltip-font-size: none;
 $tooltip-opacity: 1;
 $tooltip-color: black;
 $tooltip-max-width: none;
-// $zindex-tooltip: 2;
+$tooltip-padding-x: 0.4rem;
+$tooltip-padding-y: 0.1rem;
 
 // // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
 @import "~bootstrap/scss/variables";
@@ -31,7 +32,7 @@ $tooltip-max-width: none;
 
 $custom-colors: (
   "secondary": $gray-700,
-  "blue": $blue-500,
+  "blue": $blue-500
 );
 
 $theme-colors: map-merge($theme-colors, $custom-colors);

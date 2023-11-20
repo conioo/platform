@@ -45,7 +45,10 @@ export default function OverlayView({ module, setText, audioHub }: OverlayViewPr
                 return (
                     <OverlayTrigger
                         placement="top"
-                        trigger="hover"
+                        trigger={["hover", "focus"]}
+                        delay={{ show: 120, hide: 80 }}
+                        // key={segmentIndex}
+                        key={`${sectionIndex} ${segmentIndex}`}
                         overlay={
                             <Tooltip className="overlay-view__tooltip">
                                 {allMeanings}
@@ -62,11 +65,11 @@ export default function OverlayView({ module, setText, audioHub }: OverlayViewPr
 
             return (
                 <>
-                    <section key={sectionIndex} className='audioplay-container'>
-                        {segments.length > 0 && <AudioPlay text={fullSentence} managementAudio={audioHub}></AudioPlay>}
+                    <section className='audioplay-container' key={`a${sectionIndex}`}>
+                        {segments.length > 0 && <AudioPlay text={fullSentence} managementAudio={audioHub} key={`a${sectionIndex}`}></AudioPlay>}
                     </section>
 
-                    <section className="overlay-view__segments">
+                    <section className="overlay-view__segments" key={`o${sectionIndex}`}>
                         {segments}
                     </section>
                 </>

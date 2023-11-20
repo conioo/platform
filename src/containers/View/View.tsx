@@ -104,9 +104,9 @@ export default function View(): JSX.Element {
             <AudioPlay key={"fullText"} text={text} managementAudio={audioHub}></AudioPlay>
 
             <section className='view__options'>
-                    {isLogin && <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => { navigate(basePath + "/modify/" + fileId) }}><i className="bi bi-gear-fill"></i></Button>}
-                    <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => setShowModal(true)}><i className="bi bi-sliders"></i></Button>
-                    <SettingsModal defaultVoiceName={module.voiceName} handleClose={closeModal} show={showModal}></SettingsModal>
+                {isLogin && <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => { navigate(basePath + "/modify/" + fileId) }}><i className="bi bi-gear-fill"></i></Button>}
+                <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => setShowModal(true)}><i className="bi bi-sliders"></i></Button>
+                <SettingsModal defaultVoiceName={module.voiceName} handleClose={closeModal} show={showModal}></SettingsModal>
             </section >
 
             {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub} getColoredSpan={getColoredSpan}></ClassicView>}
@@ -122,6 +122,7 @@ export default function View(): JSX.Element {
 
         if (viewSegment) {
             viewSegment.style.fontSize = `${newFontSize}rem`;
+            document.body.style.setProperty("--tooltip-font-size", `${parseFloat(newFontSize) - 0.6}rem`);
         }
 
         // if (viewTooltip) {

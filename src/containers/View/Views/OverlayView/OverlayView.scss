@@ -14,11 +14,11 @@
     }
 
     &__tooltip {
-        // font-size: inherit !important;
-        // background-color: $secondary !important;
-        // &:hover{
-        //     opacity: 0.5;
-        // }
+        font-size: var(--tooltip-font-size) !important;
+        background-color: $orange-200 !important;
+        border: 1px solid $orange-800 !important;
+        border-radius: 0.4rem;
+        font-weight: 500 !important;
     }
 
     &__segment {
