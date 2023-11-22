@@ -1,8 +1,7 @@
 import { Updater } from "use-immer";
-import classNames from 'classnames';
-import { Colors } from "../../../../types/Colors";
+import SpanElement from "../SpanElement";
 
-interface ElementProps {
+interface HoverElementProps {
     updateCurrentTranslationIndex: Updater<number[]>;
     updateIsHidden: Updater<boolean[]>;
     sectionIndex: number;
@@ -11,17 +10,12 @@ interface ElementProps {
     colorId: number;
 }
 
-export default function Element({ updateCurrentTranslationIndex, updateIsHidden, sectionIndex, segmentIndex, content, colorId }: ElementProps) {
-    const color = Colors[colorId];
+export default function HoverElement({ updateCurrentTranslationIndex, updateIsHidden, sectionIndex, segmentIndex, content, colorId }: HoverElementProps) {
 
     const segmentClassName = `${sectionIndex}-${segmentIndex}`;
-    const names = classNames('word', color, segmentClassName);
 
     return (
-        <span key={Math.random()} className={names} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            {content}
-            &nbsp;
-        </span>
+        <SpanElement content={content} colorId={colorId} className={segmentClassName} onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}></SpanElement>
     );
 
     function onClick() {

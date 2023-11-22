@@ -65,7 +65,7 @@ export default function OverlayView({ module, setText, audioHub }: OverlayViewPr
 
             return (
                 <>
-                    <section className='audioplay-container' key={`a${sectionIndex}`}>
+                    <section className='overlay-view__audioplay-container' key={`a${sectionIndex}`}>
                         {segments.length > 0 && <AudioPlay text={fullSentence} managementAudio={audioHub} key={`a${sectionIndex}`}></AudioPlay>}
                     </section>
 

@@ -16,7 +16,6 @@ interface VerticalViewProps {
     module: Module;
     audioHub?: useEasySpeechType;
     setText: (text: string) => void;
-    getColoredSpan: (content: string, colorId: number) => JSX.Element;
 }
 
 export default function VerticalView({ module, setText, audioHub }: VerticalViewProps) {

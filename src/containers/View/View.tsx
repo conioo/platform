@@ -109,8 +109,8 @@ export default function View(): JSX.Element {
                 <SettingsModal defaultVoiceName={module.voiceName} handleClose={closeModal} show={showModal}></SettingsModal>
             </section >
 
-            {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub} getColoredSpan={getColoredSpan}></ClassicView>}
-            {displayMode === "vertical" && <VerticalView module={module} setText={setText} audioHub={audioHub} getColoredSpan={getColoredSpan}></VerticalView>}
+            {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub}></ClassicView>}
+            {displayMode === "vertical" && <VerticalView module={module} setText={setText} audioHub={audioHub}></VerticalView>}
             {displayMode === "overlay" && <OverlayView module={module} setText={setText} audioHub={audioHub}></OverlayView>}
         </section>
     );
@@ -118,29 +118,10 @@ export default function View(): JSX.Element {
     function handleChangeFontSize(newFontSize: string) {
         const viewSegment = document.getElementsByClassName('view')[0] as HTMLElement;
 
-        // const viewTooltip = document.getElementsByClassName('overlay-view__tooltip')[0] as HTMLElement;
-
         if (viewSegment) {
             viewSegment.style.fontSize = `${newFontSize}rem`;
             document.body.style.setProperty("--tooltip-font-size", `${parseFloat(newFontSize) - 0.6}rem`);
         }
-
-        // if (viewTooltip) {
-        //     viewTooltip.style.fontSize = `${newFontSize}rem`;
-        // }
-    }
-
-    function getSpan(content: string, additionalClassName: string): JSX.Element {
-        return (
-            <span key={Math.random()} className={additionalClassName} data-type={1}>{content}&nbsp;</span>
-        );
-    }
-
-    function getColoredSpan(content: string, colorId: number): JSX.Element {
-
-        let color = Colors[colorId];
-
-        return getSpan(content, color);
     }
 
     function closeModal() {
