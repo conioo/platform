@@ -9,7 +9,7 @@ export default class Segment {
         this.sentence = sentence;
         this.translation = translation;
 
-        this.sentenceColors = new Array<number>();
-        this.translationColors = new Array<number>();
+        this.sentenceColors = new Array<number>(sentence.split(" ").length).fill(0);
+        this.translationColors = new Array<number>(translation.split(" ").length).fill(0);
     }
 }

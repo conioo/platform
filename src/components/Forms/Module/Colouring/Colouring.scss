@@ -1,0 +1,88 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.colouring {
+    &__colors {
+        position: fixed;
+        bottom: 0;
+        margin: 5%;
+        padding: 0.4rem;
+        background-color: $gray-500;
+        border-radius: 0.8rem;
+    }
+
+    &__color-button {
+        width: 3rem;
+        height: 3rem;
+        border: none !important;
+        filter: brightness(0.7);
+        margin: 0.05rem;
+
+        &--selected {
+            filter: brightness(1.6);
+            transform: scale(0.94);
+            transition: transform 0.15s ease-in-out;
+            transition: filter 0.2s ease-in-out;
+        }
+    }
+
+    &__word {
+        cursor: pointer;
+
+        &:hover {
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+    }
+
+    &__sections {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__sentences {
+        padding: 0.1rem;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    &__translations {
+        @extend .colouring__sentences;
+
+        margin-bottom: 0.2rem;
+        padding-bottom: 0.2rem;
+        border-bottom: 1px $dark solid;
+
+        &:last-child {
+            border: none;
+        }
+    }
+
+    &__button-group{
+        margin: 1rem;
+    }
+}
+
+.black {
+    color: black;
+}
+
+.orange {
+    color: darkorange;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.navy {
+    color: navy;
+}
+
+.purple {
+    color: purple;
+}

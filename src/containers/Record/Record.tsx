@@ -1,6 +1,6 @@
 import { FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik';
+import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik/ModuleFormik';
 import { saveModuleToGoogleDrive } from '../../google/GoogleDriveService';
 import { authorizedAccess } from '../../google/services/AuhorizationService';
 import Module from '../../models/Module';

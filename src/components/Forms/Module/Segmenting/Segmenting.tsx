@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import { ReactSortable } from "react-sortablejs";
 import Section from '../../../../models/Section';
 import Segment from '../../../../models/Segment';
-import { FormikValuesType } from '../ModuleFormik';
+import { FormikValuesType } from '../ModuleFormik/ModuleFormik';
 import SortableSection from '../SortableSection';
 import './Segmenting.scss';
 import Button from 'react-bootstrap/esm/Button';
@@ -259,8 +259,8 @@ export default function Segmenting({ goBack, goNext }: SegmentingProps) {
 
             for (let i = 0; i < values.module.sections[sectionIndex].segments.length; ++i) {
 
-                sentenceColors.push(values.module.sections[sectionIndex].segments[i].sentenceColors);
-                translationColors.push(values.module.sections[sectionIndex].segments[i].translationColors);
+                // sentenceColors.push(values.module.sections[sectionIndex].segments[i].sentenceColors);
+                // translationColors.push(values.module.sections[sectionIndex].segments[i].translationColors);
             }
 
             let newSection = new Section();

@@ -1,0 +1,22 @@
+.saving {
+    &__voice-select {
+        margin-top: 2rem;
+        margin-bottom: 0.6rem;
+    }
+
+    &__save-button {
+        margin-top: 0.6rem;
+        margin-bottom: 1.6rem;
+    }
+
+    &__filename {
+        margin-top: 0.6rem;
+    }
+
+    &__fields {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+}

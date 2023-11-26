@@ -1,5 +1,3 @@
-import { LanguagePathName } from "../router/Paths";
-
 enum Language {
     English = "en",
     German = "de",

@@ -1,20 +1,17 @@
 import { useFormikContext } from 'formik';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { selectLanguage } from "../../../redux/slices/language";
-import store from "../../../redux/store";
-import ErrorAlerts from "../../../services/FormikErrorsAlert";
-import Language from "../../../types/Language";
-import Buttons from "./Buttons";
-import Colouring from "./Colouring";
-import Content from './Content';
-import { FormikValuesType } from "./ModuleFormik";
-import Saving from './Saving';
-import Segmenting from './Segmenting/Segmenting';
-import './css/Buttons.css';
-import './css/Colouring.css';
-import './css/ModuleForm.css';
+import { selectLanguage } from "../../../../redux/slices/language";
+import store from "../../../../redux/store";
+import ErrorAlerts from "../../../../services/FormikErrorsAlert";
+import Language from "../../../../types/Language";
+import TargetLanguage from '../../../../types/TargetLanguage';
+import Buttons from "../Buttons";
+import Colouring from "../Colouring";
+import Content from '../Content';
+import { FormikValuesType } from "../ModuleFormik/ModuleFormik";
+import Saving from '../Saving';
+import './ModuleForm.scss';
 
 export default function ModuleForm() {
     const [FormState, setFormState] = useState<string>("content");
@@ -22,10 +19,11 @@ export default function ModuleForm() {
     const { values, errors, isSubmitting, setFieldValue } = useFormikContext<FormikValuesType>();
 
     const language = useSelector(selectLanguage);
-    const navigate = useNavigate();
 
     useEffect(() => {
         let state = store.getState();
+
+        setFieldValue("module.targetLanguage", TargetLanguage.Polish);
 
         if (language === Language.English) {
             if (state.language.englishVoices !== undefined && state.language.englishVoices.length > 0) {
@@ -62,17 +60,14 @@ export default function ModuleForm() {
     }, [isSubmitting]);
 
     return (
-        <>
-            <button className='icon-reply options-button return-button' onClick={() => navigate(-1)} type="button"></button>
-
-            <section className="main-modify-section">
-                {FormState === "content" && <Content goNext={goToButtons}></Content>}
-                {FormState === "buttons" && <Buttons goNext={goToSegmeting} goBack={goToContent}></Buttons>}
-                {FormState === "segmeting" && <Segmenting goNext={goToColouring} goBack={goToButtons}></Segmenting>}
-                {FormState === "colouring" && <Colouring goNext={goToSaving} goBack={goToSegmeting}></Colouring>}
-                {FormState === "saving" && <Saving></Saving>}
-            </section>
-        </>
+        <section className="module-form">
+            {FormState === "content" && <Content goNext={goToColouring}></Content>}
+            {FormState === "colouring" && <Colouring goNext={goToButtons} goBack={goToContent}></Colouring>}
+            {FormState === "buttons" && <Buttons goNext={goToSaving} goBack={goToColouring}></Buttons>}
+            {/* {FormState === "segmeting" && <Segmenting goNext={goToColouring} goBack={goToButtons}></Segmenting>} */}
+            {/* {FormState === "colouring" && <Colouring goNext={goToSaving} goBack={goToColouring}></Colouring>} */}
+            {FormState === "saving" && <Saving goBack={goToButtons}></Saving>}
+        </section>
     );
 
     function goToButtons() {
@@ -94,24 +89,4 @@ export default function ModuleForm() {
     function goToSaving() {
         setFormState("saving");
     }
-
-    // function setUpdatedModule() {
-    //     let newModule = JSON.parse(JSON.stringify(values.module)) as Module;
-
-    //     for (let i = 0; i < values.module.segments.length; ++i) {
-    //         let sentenceLength = values.module.segments[i].sentence.split(" ").length;
-
-    //         if (newModule.segments[i].sentenceColors.length != sentenceLength) {
-    //             newModule.segments[i].sentenceColors = new Array(sentenceLength).fill(0);
-    //         }
-
-    //         let translationLength = values.module.segments[i].translation.split(" ").length;
-
-    //         if (newModule.segments[i].translationsColors.length != translationLength) {
-    //             newModule.segments[i].translationsColors = new Array(translationLength).fill(0);
-    //         }
-    //     }
-
-    //     setFieldValue("module", newModule);
-    // }
 }

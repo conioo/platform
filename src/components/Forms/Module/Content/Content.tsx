@@ -1,14 +1,18 @@
 import { Field, useFormikContext } from 'formik';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/esm/Button';
+import Stack from 'react-bootstrap/esm/Stack';
 import { useSelector } from 'react-redux';
-import Module from '../../../models/Module';
-import Section from '../../../models/Section';
-import Segment from '../../../models/Segment';
-import { selectDeeplToken } from '../../../redux/slices/authentication';
-import { selectLanguage } from '../../../redux/slices/language';
-import { TranslateSentences } from '../../../services/TranslatorService';
-import Language from '../../../types/Language';
-import { FormikValuesType } from './ModuleFormik';
-import './css/Content.css';
+import Module from '../../../../models/Module';
+import Section from '../../../../models/Section';
+import Segment from '../../../../models/Segment';
+import { selectDeeplToken } from '../../../../redux/slices/authentication';
+import { selectLanguage } from '../../../../redux/slices/language';
+import { TranslateSentences } from '../../../../services/TranslatorService';
+import TargetLanguage, { getTargetLanguageName } from '../../../../types/TargetLanguage';
+import { FormikValuesType } from '../ModuleFormik/ModuleFormik';
+import './Content.scss';
+import { useMemo, useState } from 'react';
 
 interface ContentProps {
     goNext: () => void;
@@ -17,35 +21,44 @@ interface ContentProps {
 export default function Content({ goNext }: ContentProps) {
 
     const { values, setFieldValue } = useFormikContext<FormikValuesType>();
+    const [changed, setChanged] = useState(false);
 
     const language = useSelector(selectLanguage);
     const deeplToken = useSelector(selectDeeplToken);
 
-    const targetLanguageOptions = Object.values(Language).map((language: Language, index: number) => {
-        const keyOfValue = Object.values(Language).indexOf(language);
-        const keyName = Object.keys(Language)[keyOfValue];
+    const targetLanguageOptions = useMemo(() => {
+        return Object.values(TargetLanguage).map((language: TargetLanguage, index: number) => {
+            //const keyOfValue = Object.values(TargetLanguage).indexOf(language);
+            // const keyName = Object.keys(TargetLanguage)[keyOfValue];
+            const name = getTargetLanguageName(language);
 
-        return (<option value={language} key={index}>{keyName}</option>);
-    });
+            return (<option value={language} key={index}>{name}</option>);
+        });
+    }, []);
+
+    console.log(changed);
 
     return (<>
-        <h1>Tworzenie</h1>
+        <h2>Tworzenie</h2>
 
-        <span>Język docelowy</span>
-        <Field name="module.targetLanguage" as="select" className="voice-select-field">
-            {targetLanguageOptions}
-        </Field>
+        <Form.Group className=' content__target-language-group' onChange={() => setChanged(true)}>
+            <Form.Label>Język docelowy</Form.Label>
+            <Field name="module.targetLanguage" as="select" className="form-select content__target-language">
+                {targetLanguageOptions}
+            </Field>
+        </Form.Group>
 
-        <section className='textarea-section' style={{ width: 1000 }}>
-            <Field as="textarea" name="content" id="record-textarea"></Field>
-        </section>
+        <Form.Group className='content__content-group'>
+            <Form.Label></Form.Label>
+            <Field as="textarea" name="content" id="record-textarea" className="form-control content__content"></Field>
+        </Form.Group>
 
-        <section>
-            <button type="button" className='generate-segments-button' onClick={() => { goNextWithGenerating(); }} >Wygeneruj Kafelki</button>
-            <button type="button" className='separate-dots-button' onClick={() => { SeparateDots(); }} >Oddziel kropki</button>
-        </section>
+        <Stack direction='horizontal' gap={2} className='content__buttons-stack'>
+            <Button type="button" variant='outline-secondary' onClick={() => { goNextWithGenerating(); }} >Wygeneruj Kafelki</Button>
+            <Button type="button" variant='outline-secondary' onClick={() => { SeparateDots(); }} >Oddziel kropki</Button>
+        </Stack>
 
-        <button type="button" className='separate-dots-button' onClick={() => { goNext(); }} disabled={values.module.sections.length === 0}>Dalej</button>
+        <Button type="button" className='separate-dots-button' variant='outline-secondary' onClick={() => { goNext(); }} disabled={values.module.sections.length === 0}>Dalej</Button>
     </>);
 
     async function goNextWithGenerating() {
@@ -84,7 +97,7 @@ export default function Content({ goNext }: ContentProps) {
         for (let i = 0; i < values.module.sections.length; ++i) {
             let sentence = "";
             for (let k = 0; k < values.module.sections[i].segments.length; ++k) {
-                sentence += values.module.sections[i].segments[k].sentense;
+                sentence += values.module.sections[i].segments[k].sentence;
             }
 
             oldSentences.set(sentence, i)
@@ -92,7 +105,8 @@ export default function Content({ goNext }: ContentProps) {
 
         let newModule = new Module();
 
-        newModule.language = language;
+        newModule.language = values.module.language;
+        newModule.targetLanguage = values.module.targetLanguage;
         newModule.name = values.module.name;
         newModule.voiceName = values.module.voiceName;
         newModule.sections = new Array<Section>(newSections.length);
@@ -103,7 +117,7 @@ export default function Content({ goNext }: ContentProps) {
         for (let i = 0; i < newSections.length; ++i) {
             let index = oldSentences.get(newSections[i]);
 
-            if (index === undefined) {
+            if (index === undefined || changed) {
                 sentencesToTranslation.push(newSections[i]);
                 indexSentencesToTranslation.push(i);
             }

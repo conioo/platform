@@ -1,33 +1,37 @@
-.remove-file-button {
-    background-color: red;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    margin: 1%;
-}
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
 
-.modify-filename {
-    margin: 1%;
-}
-
-.additional-button {
-    cursor: pointer;
-    margin: 1%;
-    margin-right: 10px;
-    margin-left: 10px;
-    background-color: lightblue;
-    border-radius: 10px;
-    font-weight: 600;
-}
-
-.additional-modify-options-section
-{
+.modify-module {
+    width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex-direction: row;
-}
 
-.common-modify-button{
-    margin: 20px;
+    &__filename {
+        margin-top: 1rem;
+        margin-bottom: 4rem;
+    }
+
+    &__buttons-section {
+        background-color: $blue-100;
+        border: 1px solid $blue-700;
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        align-items: center;
+        min-width: 60%;
+        padding: 0.6rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+    }
+
+    &__button {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    &__remove-button {
+        margin-top: 1rem;
+    }
 }

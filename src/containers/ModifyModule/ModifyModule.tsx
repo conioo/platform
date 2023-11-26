@@ -2,7 +2,7 @@ import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik';
+import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik/ModuleFormik';
 import { getModule, removeModule, updateModuleInGoogleDrive } from '../../google/GoogleDriveService';
 import { authorizedAccess } from '../../google/services/AuhorizationService';
 import Module from '../../models/Module';
@@ -10,6 +10,11 @@ import { selectLanguage } from '../../redux/slices/language';
 import { setModuleIdToMove, setModuleInfoToCopy } from '../../redux/slices/module';
 import Paths from '../../router/Paths';
 import './ModifyModule.scss';
+import Button from 'react-bootstrap/esm/Button';
+import Spinner from 'react-bootstrap/Spinner';
+
+//usuwanie nie wraca w dobre miejsce
+//spinner do wklejania
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -46,30 +51,49 @@ export default function ModifyModule() {
     const store = useStore();
     const language = useSelector(selectLanguage);
     const [isRemovingModule, setIsRemovingModule] = useState(false);
+    const [showForm, setShowForm] = useState(false);
 
     let module = loaderData.module;
 
     if (isRemovingModule) {
         removeModule(loaderData.moduleId).then(() => {
-            navigate(-1);
             setIsRemovingModule(false);
+            navigate(-1);
         }).catch((exception: any) => console.log(exception));
     }
 
-    return (
-        <>
-            <h2 className='modify-filename'>{module.name}</h2>
-
+    if (showForm) {
+        return (
             <ModuleFormik module={module} initialContent={getContentFromModule(module)} onSubmit={updateModule}></ModuleFormik>
+        );
+    }
 
-            <section className='additional-mudule-options-section'>
-                <button className='move-file-button' onClick={() => onClickMoveButton()}>Przenieś plik</button>
-                <button className='copy-file-button' onClick={() => onClickCopyButton()}>Skopiuj plik</button>
+    return (
+        <section className='modify-module'>
+            <h1 className='modify-module__filename'>{module.name}</h1>
+
+            <Button onClick={() => setShowForm(true)} variant='outline-secondary'>Modyfikowanie</Button>
+
+            <section className='modify-module__buttons-section'>
+                <Button className='modify-module__button' variant='blue' onClick={() => onClickMoveButton()}>Przenieś plik</Button>
+                <Button className='modify-module__button' variant='blue' onClick={() => onClickCopyButton()}>Skopiuj plik</Button>
             </section>
 
-            <button className='remove-file-button' onClick={() => onClickRemoveButton()}>Usuń plik</button>
-            {isRemovingModule && <span>Usuwanie...</span>}
-        </>
+            {!isRemovingModule &&
+                <Button className='modify-module__remove-button' variant='danger' onClick={() => onClickRemoveButton()}>
+                    Usuń plik
+                </Button>
+            }
+
+            {isRemovingModule &&
+                <Button className='modify-module__remove-button' variant='danger' disabled>
+                    <Spinner animation="border" size='sm' as="span" role='status' aria-hidden="true">
+                        <span className="visually-hidden">Usuwanie...</span>
+                    </Spinner>
+                    Usuwanie...
+                </Button>
+            }
+        </section>
     );
 
     function onClickRemoveButton() {
@@ -83,8 +107,6 @@ export default function ModifyModule() {
     function onClickMoveButton() {
         store.dispatch(setModuleIdToMove(loaderData.moduleId));
 
-        //nazwa
-
         navigate(`/${language}/browser/home`);
     }
 
@@ -93,8 +115,6 @@ export default function ModifyModule() {
 
         navigate(`/${language}/browser/home`);
     }
-
-    // na glowna strone -> w stai
 
     async function updateModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
         console.log("savings");
@@ -107,18 +127,6 @@ export default function ModifyModule() {
             console.error("Error occured:", error);
         }
     }
-
-    // async function moveModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
-    //     console.log("savings");
-
-    //     try {
-    //         await updateModuleInGoogleDrive(loaderData.fileId, values.module, module.name);
-    //         console.log("updated all correctly");
-    //         navigate(-1);
-    //     } catch (error: any) {
-    //         console.error("Error occured:", error);
-    //     }
-    // }
 
     function getContentFromModule(module: Module) {
         let content = "";
