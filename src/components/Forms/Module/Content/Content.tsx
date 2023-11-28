@@ -90,7 +90,14 @@ export default function Content({ goNext }: ContentProps) {
     }
 
     async function generateModuleFromContent() {
-        const newSections = values.content.split('\n');
+        let content = values.content;
+        let whiteRegex = new RegExp('\\s');
+
+        while (content.length > 0 && whiteRegex.test(content[-1])) {
+            content = content.slice(0, -1);
+        }
+
+        const newSections = content.split('\n');
 
         let oldSentences = new Map<string, number>();
 

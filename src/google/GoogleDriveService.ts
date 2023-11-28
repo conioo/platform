@@ -90,7 +90,23 @@ export async function getModule(moduleId: string): Promise<Module> {
         // });
         //const files = fileListResponse.data.files;
 
-        const response = await fetch(fileListUrl);
+        // const options: RequestInit = {
+        //     method: 'GET',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         // Dodaj nagłówki CORS, jeśli to konieczne
+        //         'Access-Control-Allow-Origin': '*',  // Nie używaj tego w produkcji, to tylko przykład!
+        //         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+        //         'Access-Control-Allow-Headers': 'Content-Type',
+        //     },
+        // };
+
+        const options: RequestInit = {
+            // method: 'GET',
+            // mode: 'no-cors',  // Ustawienie trybu no-cors
+        };
+
+        const response = await fetch(fileListUrl, options);
         const fileListResponse = await response.json();
         const files = fileListResponse.files;
 
@@ -100,7 +116,7 @@ export async function getModule(moduleId: string): Promise<Module> {
 
         const getModuleUrl = `https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media&key=${process.env.REACT_APP_API_KEY}`;
 
-        const fileResponse = await fetch(getModuleUrl);
+        const fileResponse = await fetch(getModuleUrl, options);
         const jsonData = await fileResponse.json();
         // const fileResponse = await gapi.client.drive.files.get({
         //     fileId: files[0].id,

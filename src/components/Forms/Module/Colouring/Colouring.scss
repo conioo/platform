@@ -48,17 +48,23 @@
 
     &__translations {
         @extend .colouring__sentences;
+    }
 
+    &__section {
         margin-bottom: 0.2rem;
         padding-bottom: 0.2rem;
         border-bottom: 1px $dark solid;
+
+        &--error {
+            background-color: $orange-200;
+        }
 
         &:last-child {
             border: none;
         }
     }
 
-    &__button-group{
+    &__button-group {
         margin: 1rem;
     }
 }

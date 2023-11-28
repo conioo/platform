@@ -8,6 +8,7 @@ import './Colouring.scss';
 import Button from 'react-bootstrap/esm/Button';
 import ButtonGroup from 'react-bootstrap/esm/ButtonGroup';
 import SpanElement from '../../../../containers/View/Views/Common/SpanElement';
+import classNames from 'classnames';
 
 interface ColouringProps {
     goNext: () => void;
@@ -20,6 +21,8 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
 
     const { values, setFieldValue } = useFormikContext<FormikValuesType>();
+
+    const [errors, setErrors] = useState(Array<boolean>(values.module.sections.length).fill(false));
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
 
@@ -76,15 +79,17 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
             translations.push(...translationElements);
         }
 
+        let names = classNames('colouring__section', { 'colouring__section--error': errors[sectionIndex] });
+
         return (
-            <>
+            <section className={names}>
                 <span key={sectionIndex + "s"} className='colouring__sentences'>
                     {sentences}
                 </span>
                 <span key={sectionIndex + "m"} className='colouring__translations'>
                     {translations}
                 </span>
-            </>
+            </section>
         );
     });
 
@@ -109,38 +114,147 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
 
             <ButtonGroup className='colouring__button-group'>
                 <Button type='button' variant='outline-secondary' onClick={() => { generateContentFromModule(); goBack(); }}>Wstecz</Button>
-                <Button type='button' variant='outline-secondary' onClick={() => { goNext(); }}>Dalej</Button>
+                <Button type='button' variant='outline-secondary' onClick={() => {
+                    if (generateSegments()) {
+                        goNext();
+                    }
+                }}>Dalej</Button>
             </ButtonGroup>
         </>
     );
 
-    function generateSegments() {
+    function generateSegments(): boolean {
+        let errors = new Array<boolean>(values.module.sections.length).fill(false);
+        let newSections = new Array<Section>();
+
+        let sentenceWords = new Array<string>();
+        let translationWords = new Array<string>();
+
+        let sentenceColors = new Array<number>();
+        let translationColors = new Array<number>();
+        let indexSection = 0;
+
         for (let section of values.module.sections) {
+            sentenceWords = new Array<string>();
+            translationWords = new Array<string>();
 
-            for (let i = 0; i < section.segments.length; ++i) {
+            sentenceColors = new Array<number>();
+            translationColors = new Array<number>();
 
-                let translationColorIndex = 0;
+            for (let segment of section.segments) {
+                sentenceWords.push(...segment.sentence.split(" "));
+                translationWords.push(...segment.translation.split(" "));
 
-                for (let j = 0; j < section.segments[i].sentenceColors.length; ++j) {
+                sentenceColors.push(...segment.sentenceColors);
+                translationColors.push(...segment.translationColors);
+            }
 
-                    let color = section.segments[i].sentenceColors[j];
+            // console.log(sentenceWords, translationWords, sentenceColors, translationColors);
 
-                    if (color !== section.segments[i].translationColors[translationColorIndex]) {
-                        //błąd
-                    }
+            //nowe moga nie dzialaja
 
-                    translationColorIndex = section.segments[i].translationColors.findIndex(currentColor => currentColor !== color);
+            if (sentenceWords.length !== sentenceColors.length || translationWords.length !== translationColors.length) {
+                console.log("dlugosc");
+                return false;
+            }
 
-                    //nowe indeksy
+            let newSection = new Section();
 
+            let sentenceIndex = 0;
+            let translationIndex = 0;
+
+            while (sentenceIndex < sentenceWords.length) {
+                //kolejny segment, idx 1 elementu
+
+                if (sentenceColors[sentenceIndex] !== translationColors[translationIndex]) {
+                    errors[indexSection] = true;
+                    break;
                 }
 
-                //1
-                //2
+                let color = sentenceColors[sentenceIndex];
 
-                //podzielic
-                //
+                let [sentence, nextSentenceIndex] = getNextSentence(sentenceIndex, color);
+
+                sentenceIndex = nextSentenceIndex;
+
+                let [translation, nextTranslationIndex] = getNextTranslation(translationIndex, color);
+
+                translationIndex = nextTranslationIndex;
+
+                let segment = new Segment(sentence, translation, color);
+
+                newSection.segments.push(segment);
+
+                if (sentenceIndex === -1 || translationIndex === -1) {
+                    if (sentenceIndex === -1 && translationIndex === -1) {
+                        break;
+                    } else {
+                        errors[indexSection] = true;
+                        break;
+                    }
+                }
             }
+
+            if (errors[indexSection]) {
+                ++indexSection;
+                continue;
+            }
+
+            newSections.push(newSection);
+            ++indexSection;
+        }
+
+        console.log(newSections);
+
+        let hasErrors = errors.some((error) => error);
+
+        if (hasErrors) {
+            setErrors(errors);
+            return false;
+        }
+
+        setFieldValue(`module.sections`, newSections);
+
+        return true;
+
+        function getNextSentence(firstIndex: number, currentValue: number): [string, number] {
+            let sentence = "";
+
+            for (let i = firstIndex; i < sentenceColors.length; i++) {
+                if (sentenceColors[i] !== currentValue) {
+                    if (sentence.length > 0) {
+                        sentence = sentence.slice(0, -1);
+                    }
+                    return [sentence, i];
+                } else {
+                    sentence += sentenceWords[i] += " ";
+                }
+            }
+            if (sentence.length > 0) {
+                sentence = sentence.slice(0, -1);
+            }
+
+            return [sentence, -1];
+        }
+
+        function getNextTranslation(firstIndex: number, currentValue: number): [string, number] {
+            let translation = "";
+
+            for (let i = firstIndex; i < translationColors.length; i++) {
+                if (translationColors[i] !== currentValue) {
+                    if (translation.length > 0) {
+                        translation = translation.slice(0, -1);
+                    }
+                    return [translation, i];
+                } else {
+                    translation += translationWords[i] += " ";
+                }
+            }
+            if (translation.length > 0) {
+                translation = translation.slice(0, -1);
+            }
+
+            return [translation, -1];
         }
     }
 

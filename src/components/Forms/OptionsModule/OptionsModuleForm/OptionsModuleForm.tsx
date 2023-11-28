@@ -1,11 +1,11 @@
 import { Field, useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectLanguageState } from '../../../redux/slices/language';
-import { ModuleOptionsState } from '../../../redux/slices/moduleOptions';
-import ErrorAlerts from '../../../services/FormikErrorsAlert';
-import Language from '../../../types/Language';
-import '../../../styles/Forms/OptionsModuleForm.css';
+import { selectLanguageState } from '../../../../redux/slices/language';
+import { ModuleOptionsState } from '../../../../redux/slices/moduleOptions';
+import ErrorAlerts from '../../../../services/FormikErrorsAlert';
+import Language from '../../../../types/Language';
+import './OptionsModuleForm.scss';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
@@ -36,7 +36,7 @@ export default function OptionsModuleForm({ closeModal, defaultVoiceName }: Opti
                 return <option value={voice.name} key={index + "vo"}>{voice.name}</option>
             });
         }
-    }else if (languageState.language === Language.Spanish) {
+    } else if (languageState.language === Language.Spanish) {
         if (languageState.spanishVoices !== undefined) {
             voiceOptions = languageState.spanishVoices.map((voice, index) => {
                 return <option value={voice.name} key={index + "vo"}>{voice.name}</option>

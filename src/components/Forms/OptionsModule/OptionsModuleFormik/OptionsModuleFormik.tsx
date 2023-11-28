@@ -1,16 +1,15 @@
-import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
-import OptionsModuleForm from './OptionsModuleForm';
-import '../../../styles/Forms/OptionsModuleFormik.css';
-import { useStore, useSelector } from 'react-redux';
-import { ModuleOptionsState, selectAllOptions, setVoiceName } from '../../../redux/slices/moduleOptions';
+import { Form, Formik, FormikHelpers } from 'formik';
 import { useCookies } from 'react-cookie';
+import { useSelector, useStore } from 'react-redux';
 import * as Yup from 'yup';
+import { ModuleOptionsState, selectAllOptions } from '../../../../redux/slices/moduleOptions';
+import OptionsModuleForm from '../OptionsModuleForm';
+import './OptionsModuleFormik.scss';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
     defaultVoiceName: string;
 }
-
 export default function OptionsModuleFormik({ closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
     const store = useStore();
 

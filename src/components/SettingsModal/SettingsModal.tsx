@@ -1,7 +1,7 @@
 import './SettingsModal.scss';
 import ReactModal from "react-modal";
 import { useState } from "react";
-import OptionsModuleFormik from '../Forms/OptionsModule/OptionsModuleFormik';
+import OptionsModuleFormik from '../Forms/OptionsModule/OptionsModuleFormik/OptionsModuleFormik';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/esm/Button';
 

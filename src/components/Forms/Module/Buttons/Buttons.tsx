@@ -63,11 +63,25 @@ export default function Buttons({ goNext, goBack }: ButtonsProps) {
     function handleSentenceSegmentChanged(innerHTML: string, sectionIndex: number, segmentIndex: number) {
         let newValue = sanitizeHtml(innerHTML);
 
+        let newLength = newValue.split(" ").length;
+
+        if (newLength !== values.module.sections[sectionIndex].segments[segmentIndex].sentenceColors.length) {
+            let newColors = new Array<number>(newLength).fill(values.module.sections[sectionIndex].segments[segmentIndex].sentenceColors[0]);
+            setFieldValue(`module.sections[${sectionIndex}].segments[${segmentIndex}].sentenceColors`, newColors);
+        }
+
         setFieldValue(`module.sections[${sectionIndex}].segments[${segmentIndex}].sentence`, newValue);
     }
 
     function handleTranslationSegmentChanged(innerHTML: string, sectionIndex: number, segmentIndex: number) {
         let newValue = sanitizeHtml(innerHTML);
+
+        let newLength = newValue.split(" ").length;
+
+        if (newLength !== values.module.sections[sectionIndex].segments[segmentIndex].translationColors.length) {
+            let newColors = new Array<number>(newLength).fill(values.module.sections[sectionIndex].segments[segmentIndex].translationColors[0]);
+            setFieldValue(`module.sections[${sectionIndex}].segments[${segmentIndex}].translationColors`, newColors);
+        }
 
         setFieldValue(`module.sections[${sectionIndex}].segments[${segmentIndex}].translation`, newValue);
     }
