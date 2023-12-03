@@ -1,4 +1,4 @@
-import View, { loader as viewLoader } from './View';
+import View, { loader as viewLoader } from './ViewSuspense';
 
 export default View;
 export { viewLoader};

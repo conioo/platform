@@ -10,13 +10,13 @@ interface RowOfModuleProps {
 }
 
 export default function RowOfModule({ file, isLogin, basePath }: RowOfModuleProps) {
-    let Navigate = useNavigate();
+    let navigate = useNavigate();
 
     return (
-        <ListGroup.Item as="li" variant='light' className='file-browser__list-group-item' action onClick={() => { Navigate(basePath + "/view/" + file.id) }}>
+        <ListGroup.Item as="li" variant='light' className='file-browser__list-group-item' action onClick={() => { navigate(basePath + "/view/" + file.id) }}>
             <span className='file-browser__filename'>{file.name}</span>
 
-            {isLogin && <Button className='file-browser__button' variant='warning' onClick={(event) => { event.stopPropagation(); Navigate(basePath + "/modify/" + file.id) }}><i className="bi bi-gear-fill"></i></Button>}
+            {isLogin && <Button className='file-browser__button' variant='warning' onClick={(event) => { event.stopPropagation(); navigate(basePath + "/modify/" + file.id, { state: { fromFileBrowser: true } }) }}><i className="bi bi-gear-fill"></i></Button>}
         </ListGroup.Item>
     );
 }

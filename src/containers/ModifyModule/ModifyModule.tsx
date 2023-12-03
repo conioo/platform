@@ -1,7 +1,7 @@
 import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik/ModuleFormik';
 import { getModule, removeModule, updateModuleInGoogleDrive } from '../../google/GoogleDriveService';
 import { authorizedAccess } from '../../google/services/AuhorizationService';
@@ -12,9 +12,8 @@ import Paths from '../../router/Paths';
 import './ModifyModule.scss';
 import Button from 'react-bootstrap/esm/Button';
 import Spinner from 'react-bootstrap/Spinner';
-
-//usuwanie nie wraca w dobre miejsce
-//spinner do wklejania
+import useBackNavigate from '../../hooks/BackNavigate';
+import ReturnButton from '../../components/ReturnButton';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;
@@ -53,12 +52,15 @@ export default function ModifyModule() {
     const [isRemovingModule, setIsRemovingModule] = useState(false);
     const [showForm, setShowForm] = useState(false);
 
+    const backNavigate = useBackNavigate();
+
     let module = loaderData.module;
 
     if (isRemovingModule) {
         removeModule(loaderData.moduleId).then(() => {
             setIsRemovingModule(false);
-            navigate(-1);
+
+            backNavigate();
         }).catch((exception: any) => console.log(exception));
     }
 
@@ -71,6 +73,8 @@ export default function ModifyModule() {
     return (
         <section className='modify-module'>
             <h1 className='modify-module__filename'>{module.name}</h1>
+
+            <ReturnButton></ReturnButton>
 
             <Button onClick={() => setShowForm(true)} variant='outline-secondary'>Modyfikowanie</Button>
 

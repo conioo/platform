@@ -4,7 +4,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/esm/Button';
 import { useSelector } from 'react-redux';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
+import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import Pastemodule from '../../components/PasteModule/PasteModule';
 import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
 import RowOfModule from '../../components/RowOfModule/RowOfModule';
@@ -61,6 +61,9 @@ export default function FileBrowser() {
 
     let dispatch = useAppDispatch();
     const language = useSelector(selectLanguage);
+
+    const loc = useLocation();
+    console.log(loc);
 
     useEffect(() => {
         getFilesInfo(loaderData).then(filesInfo => {
