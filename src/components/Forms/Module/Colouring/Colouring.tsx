@@ -149,8 +149,6 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
                 translationColors.push(...segment.translationColors);
             }
 
-            // console.log(sentenceWords, translationWords, sentenceColors, translationColors);
-
             //nowe moga nie dzialaja
 
             if (sentenceWords.length !== sentenceColors.length || translationWords.length !== translationColors.length) {

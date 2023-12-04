@@ -1,9 +1,5 @@
-import './SettingsModal.scss';
-import ReactModal from "react-modal";
-import { useState } from "react";
 import OptionsModuleFormik from '../Forms/OptionsModule/OptionsModuleFormik/OptionsModuleFormik';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/esm/Button';
+import './SettingsModal.scss';
 
 interface SettingsModal {
     defaultVoiceName: string;
@@ -15,24 +11,6 @@ export default function SettingsModal({ defaultVoiceName, show, handleClose }: S
     console.log("SettingsModal")
 
     return (
-        <>
-            {/* <Modal show={showModal} onHide={closeModal}>
-                <Modal.Header>
-                    <Modal.Title>Opcje przeglądania</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-
-                </Modal.Body>
-                <Modal.Footer>
-
-                </Modal.Footer>
-            </Modal> */}
-
-            <ReactModal isOpen={show} className="view-settings-modal" appElement={document.getElementsByClassName("view-segments")}>
-                <OptionsModuleFormik closeModal={handleClose} defaultVoiceName={defaultVoiceName}></OptionsModuleFormik>
-            </ReactModal>
-        </>
+        <OptionsModuleFormik closeModal={handleClose} show={show} defaultVoiceName={defaultVoiceName}></OptionsModuleFormik>
     );
-
-
 }

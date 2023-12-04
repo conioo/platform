@@ -2,15 +2,18 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { useCookies } from 'react-cookie';
 import { useSelector, useStore } from 'react-redux';
 import * as Yup from 'yup';
-import { ModuleOptionsState, selectAllOptions } from '../../../../redux/slices/moduleOptions';
+import { ModuleOptionsState, selectAllOptions, setOptions } from '../../../../redux/slices/moduleOptions';
 import OptionsModuleForm from '../OptionsModuleForm';
 import './OptionsModuleFormik.scss';
+import ViewModes from '../../../../types/ViewModes';
 
 interface OptionsModuleFormikProps {
     closeModal: () => void;
     defaultVoiceName: string;
+    show: boolean;
 }
-export default function OptionsModuleFormik({ closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
+
+export default function OptionsModuleFormik({ show, closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
     const store = useStore();
 
     let allOptions = useSelector(selectAllOptions);
@@ -22,8 +25,8 @@ export default function OptionsModuleFormik({ closeModal, defaultVoiceName }: Op
             .min(0.1, "Must be at least 0.1")
             .max(2, "Must be less than 2")
             .required('Required'),
-        displayMode: Yup.string()
-            .oneOf(["classic", "vertical", "overlay"], "Must be classic or vertical")
+        displayMode: Yup.mixed<ViewModes>()
+            .oneOf(Object.values(ViewModes), "invalid view mode")
             .required('Required'),
         voiceName: Yup.string()
             .min(1, "Must be at least 1 sign")
@@ -38,13 +41,16 @@ export default function OptionsModuleFormik({ closeModal, defaultVoiceName }: Op
             validateOnChange={false}
             validateOnBlur={false}
         >
-            <Form className="options-module-form">
-                <OptionsModuleForm closeModal={closeModal} defaultVoiceName={defaultVoiceName}></OptionsModuleForm>
+            <Form className="options-module-formik">
+                <OptionsModuleForm show={show} closeModal={closeModal} defaultVoiceName={defaultVoiceName}></OptionsModuleForm>
             </Form>
         </Formik>
     );
 
     function onSubmit(values: ModuleOptionsState, formikHelpers: FormikHelpers<ModuleOptionsState>) {
+        console.log("koniec");
+
+        store.dispatch(setOptions(values));
         setCookie('view-options', values);
 
         closeModal();
