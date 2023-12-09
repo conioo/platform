@@ -17,6 +17,7 @@ export default function OptionsModuleFormik({ show, closeModal, defaultVoiceName
     const store = useStore();
 
     let allOptions = useSelector(selectAllOptions);
+    console.log(allOptions);
 
     const [cookie, setCookie] = useCookies(['view-options']);
 
@@ -48,7 +49,6 @@ export default function OptionsModuleFormik({ show, closeModal, defaultVoiceName
     );
 
     function onSubmit(values: ModuleOptionsState, formikHelpers: FormikHelpers<ModuleOptionsState>) {
-        console.log("koniec");
 
         store.dispatch(setOptions(values));
         setCookie('view-options', values);

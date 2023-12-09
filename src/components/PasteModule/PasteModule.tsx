@@ -5,13 +5,16 @@ import { copyModule, moveModule } from "../../google/GoogleDriveService";
 import { selectCurrentParentFolderId, selectfolderIdToMove, selectfolderInfoToCopy, setFolderIdToMove, setFolderInfoToCopy } from "../../redux/slices/folder";
 import { selectModuleIdToMove, selectModuleInfoToCopy, setModuleIdToMove, setModuleInfoToCopy } from "../../redux/slices/module";
 import Button from "react-bootstrap/esm/Button";
+import { useEffect, useState } from "react";
+import Spinner from "react-bootstrap/esm/Spinner";
 
 interface PasteModuleProps {
     updateListOfFiles: () => void;
 }
 
-export default function Pastemodule({ updateListOfFiles }: PasteModuleProps) {
-    console.log("Pastemodule")
+export default function PasteModule({ updateListOfFiles }: PasteModuleProps) {
+    console.log("PasteModule")
+    const [isPasting, setIsPasting] = useState(false);
 
     let moduleInfoToCopy = useSelector(selectModuleInfoToCopy);
     let moduleIdToMove = useSelector(selectModuleIdToMove);
@@ -21,13 +24,29 @@ export default function Pastemodule({ updateListOfFiles }: PasteModuleProps) {
     const currentParentFolderId = useSelector(selectCurrentParentFolderId);
     const store = useStore();
 
+    useEffect(() => {
+        if (!isPasting) {
+            return;
+        }
+
+        onClickPasteButton();
+
+    }, [isPasting]);
+
     if (moduleIdToMove === null && moduleInfoToCopy === null && folderInfoToCopy === null && folderIdToMove === null) {
         return null;
     }
 
     return (
         <section className="paste-module">
-            <Button variant="blue" onClick={() => onClickPasteButton()}>Wklej</Button>
+            {isPasting && <Button variant='blue' disabled>
+                <Spinner animation="border" size='sm' as="span" role='status' aria-hidden="true">
+                    <span className="visually-hidden">Wklejanie...</span>
+                </Spinner>
+                Wklejanie...
+            </Button>}
+
+            {!isPasting && <Button variant="blue" onClick={() => setIsPasting(true)}>Wklej</Button>}
         </section>
     );
 

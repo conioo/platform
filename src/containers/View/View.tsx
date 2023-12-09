@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/esm/Button';
-import { useCookies } from 'react-cookie';
 import { useSelector, useStore } from 'react-redux';
 import { useAsyncValue, useNavigate } from 'react-router-dom';
 import AudioPlay from '../../components/AudioPlay/AudioPlay';
@@ -9,7 +8,7 @@ import SettingsModal from '../../components/SettingsModal/SettingsModal';
 import Module from '../../models/Module';
 import { selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath, selectIsEasySpeech } from '../../redux/slices/language';
-import { ModuleOptionsState, selectAllOptions, setOptions, setVoiceName } from '../../redux/slices/moduleOptions';
+import { selectAllOptions, setVoiceName } from '../../redux/slices/moduleOptions';
 import ChangeVoice, { ChangeVoiceRate, getEasySpeech } from '../../services/EasySpeechHandlers';
 import '../../styles/fontello/css/fontello.css';
 // import './View.scss';
@@ -35,21 +34,9 @@ export default function View({ fileId }: ViewProps): JSX.Element {
 
     let store = useStore();
 
-    const [cookies] = useCookies(['view-options']);
     const navigate = useNavigate();
     const basePath = useSelector(selectBasePath);
     const isLogin = useSelector(selectIsLogin);
-
-    useEffect(() => {
-        let viewOptions = cookies['view-options'] as ModuleOptionsState;
-
-        if (viewOptions === undefined) {
-            return;
-        }
-
-        store.dispatch(setOptions(viewOptions));
-
-    }, [cookies['view-options']]);
 
     useEffect(() => {
         store.dispatch(setVoiceName(module.voiceName));
@@ -78,7 +65,7 @@ export default function View({ fileId }: ViewProps): JSX.Element {
             <section className='view__options'>
                 {isLogin && <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => { navigate(basePath + "/modify/" + fileId, { state: { toMainPage: true } }) }}><i className="bi bi-gear-fill"></i></Button>}
                 <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => setShowModal(true)}><i className="bi bi-sliders"></i></Button>
-                <SettingsModal defaultVoiceName={module.voiceName} handleClose={closeModal} show={showModal}></SettingsModal>
+                {showModal && <SettingsModal defaultVoiceName={module.voiceName} handleClose={closeModal} show={showModal}></SettingsModal>}
             </section >
 
             {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub}></ClassicView>}

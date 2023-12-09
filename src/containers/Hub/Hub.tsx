@@ -8,6 +8,9 @@ import Language from '../../types/Language';
 import Header from '../Header';
 import './Hub.scss';
 import Footer from '../Footer';
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { ModuleOptionsState, setOptions } from '../../redux/slices/moduleOptions';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.hub>>;
@@ -41,6 +44,17 @@ async function FirstLoaded() {
 
 export default function Hub() {
     console.log("Hub");
+    //data-bs-theme="dark"
+    const [cookies] = useCookies(['view-options']);
+
+    useEffect(() => {
+        console.log("coooooooooooooooooooooooooooooooooooooooo");
+        const viewOptionsCookie = cookies['view-options'] as ModuleOptionsState | undefined;
+        
+        if (viewOptionsCookie) {
+            store.dispatch(setOptions(cookies['view-options']));
+        }
+    }, []);
 
     return (
         <>

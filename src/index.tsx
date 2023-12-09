@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { Navigate, RouterProvider, createHashRouter } from "react-router-dom";
 import ErrorPage from './components/ErrorPage/ErrorPage';
 import NoAuthorization from './components/NoAuthorization';
-import FileBrowser, { loader as fileBrowserLoader } from './containers/FileBrowser/FileBrowser';
+import FileBrowser, {fileBrowserLoader } from './containers/FileBrowser';
 import Hub, { hubLoader } from './containers/Hub';
 import ModifyFolder, { modifyFolderLoader } from './containers/ModifyFolder';
 import ModifyModule, { modifyModuleLoader } from './containers/ModifyModule';

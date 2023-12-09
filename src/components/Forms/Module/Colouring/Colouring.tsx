@@ -149,11 +149,28 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
                 translationColors.push(...segment.translationColors);
             }
 
-            //nowe moga nie dzialaja
+            //nowe moga nie dzialaja -> tymczasowe dla nowych
 
-            if (sentenceWords.length !== sentenceColors.length || translationWords.length !== translationColors.length) {
-                console.log("dlugosc");
-                return false;
+            if (sentenceWords.length !== sentenceColors.length) {
+
+                if (sentenceColors.length < sentenceWords.length) {
+                    for (let i = sentenceColors.length; i < sentenceWords.length; i++) {
+                        sentenceColors.push(0);
+                    }
+                } else if (sentenceColors.length > sentenceWords.length) {
+                    sentenceColors = sentenceColors.slice(0, sentenceWords.length);
+                }
+            }
+
+            if (translationWords.length !== translationColors.length) {
+
+                if (translationColors.length < translationWords.length) {
+                    for (let i = translationColors.length; i < translationWords.length; i++) {
+                        translationColors.push(0);
+                    }
+                } else if (translationColors.length > translationWords.length) {
+                    translationColors = translationColors.slice(0, translationWords.length);
+                }
             }
 
             let newSection = new Section();

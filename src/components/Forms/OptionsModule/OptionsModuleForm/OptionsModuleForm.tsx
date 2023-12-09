@@ -1,5 +1,5 @@
 import { Field, useFormikContext } from 'formik';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/esm/Button';
 import Modal from 'react-bootstrap/esm/Modal';
@@ -22,7 +22,7 @@ export default function OptionsModuleForm({ show, closeModal, defaultVoiceName }
 
     let languageState = useSelector(selectLanguageState);
     let voiceOptions: (JSX.Element | undefined)[] = new Array<undefined>();
-
+    
     useEffect(() => {
         if (isSubmitting === false) {
             ErrorAlerts(errors);
@@ -86,7 +86,7 @@ export default function OptionsModuleForm({ show, closeModal, defaultVoiceName }
                     <section className='options-module-form__voices'>
                         <h6>Wybierz głos: </h6>
                         <Form.Label className='options-module-form__voices-label'>
-                            <Field as="select" name="voiceName" className="form-select options-module-form__voices-field">
+                            <Field as="select" name="voiceName" className="form-select options-module-form__voices-field" default={values.voiceName}>
                                 {voiceOptions}
                             </Field>
                         </Form.Label>

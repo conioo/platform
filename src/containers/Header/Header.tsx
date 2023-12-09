@@ -7,7 +7,6 @@ import GoogleLogin from '../../google/components/GoogleLogin';
 import { selectLanguage } from '../../redux/slices/language';
 import Language, { getLanguageName } from '../../types/Language';
 import './Header.scss';
-import Container from 'react-bootstrap/Container';
 
 export default function Header() {
 
@@ -27,25 +26,27 @@ export default function Header() {
 
     return (
         <header className='header'>
-                <Navbar className='header__navbar' expand="sm">
-                    <Navbar.Brand className='header__brand'>Platform</Navbar.Brand>
+            <Navbar className='header__navbar' expand="sm">
+                <Navbar.Brand className='header__brand'>Platform</Navbar.Brand>
 
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
 
-                            <NavDropdown className='header__dropdown' id="basic-nav-dropdown" title={getLanguageName(language)}>
-                                {dropDownItems}
-                            </NavDropdown>
+                        <NavDropdown className='header__dropdown' id="basic-nav-dropdown" title={getLanguageName(language)}>
+                            {dropDownItems}
+                        </NavDropdown>
 
-                            <Nav.Link className='header__link' onClick={() => navigate(`/${language}/browser/home`)}>Strona Główna</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Navbar>
-            
-            <section className='header__search'>
-                <GoogleLogin></GoogleLogin>
-            </section>
+                        <Nav.Link eventKey="2" className='header__link' onClick={() => navigate(`/${language}/browser/home`)}>Strona Główna</Nav.Link>
+                    </Nav>
+                    
+                    <section className='header__search'>
+                        <GoogleLogin></GoogleLogin>
+                    </section>
+                </Navbar.Collapse>
+            </Navbar>
+
+
         </header>
     );
 }

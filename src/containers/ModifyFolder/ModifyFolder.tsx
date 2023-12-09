@@ -1,62 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/esm/Button';
+import Spinner from 'react-bootstrap/esm/Spinner';
 import { useSelector } from 'react-redux';
-import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useNavigate } from 'react-router-dom';
-import { changeFolderName, getFolderName, removeFolder } from '../../google/GoogleDriceAuthorizeService';
+import { useNavigate } from 'react-router-dom';
+import { changeFolderName, removeFolder } from '../../google/GoogleDriceAuthorizeService';
 import { isEmptyFolder } from '../../google/GoogleDriveService';
-import { authorizedAccess } from '../../google/services/AuhorizationService';
 import useLogoutRedirect from '../../hooks/LogoutRedirect';
 import { useAppDispatch } from '../../redux/hook';
 import { setFolderIdToMove, setFolderInfoToCopy } from '../../redux/slices/folder';
 import { selectLanguage } from '../../redux/slices/language';
-import Paths from '../../router/Paths';
 import './ModifyFolder.scss';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
-interface Args extends ActionFunctionArgs {
-    params: Params<ParamParseKey<typeof Paths.modifyFolder>>;
-}
 
 interface loaderReturnType {
     folderNamePromise: Promise<string>;
     folderId: string;
 }
 
-export async function loader({ params }: Args): Promise<loaderReturnType | Response> {
-    const folderId = params.folderid;
-
-    if (!folderId) {
-        throw new Error("missing folder id");
-    }
-
-    let authorizedResponse = await authorizedAccess();
-
-    if (authorizedResponse !== undefined) {
-        return authorizedResponse;
-    }
-
-    let folderNamePromise = getFolderName(folderId);
-
-    return { folderNamePromise, folderId };
+interface ModifyFolderProps {
+    folderId: string;
+    folderName: string;
 }
 
-export default function ModifyFolder() {
+export default function ModifyFolder({ folderId, folderName }: ModifyFolderProps) {
     console.log("ModifyFolder");
 
-    const loaderData = useLoaderData() as loaderReturnType;
-    const [folderName, setFolderName] = useState("\u200B");
-    const [folderNameForm, setFolderNameForm] = useState("");
-
-    useEffect(() => {
-        loaderData.folderNamePromise.then(folderName => {
-            setFolderName(folderName);
-            setFolderNameForm(folderName)
-        });
-    }, [loaderData]);
-
+    const [folderNameForm, setFolderNameForm] = useState(folderName);
+    const [isRemovingFolder, setIsRemovingFolder] = useState(false);
 
     const navigate = useNavigate();
     const language = useSelector(selectLanguage);
-    const [isRemovingFolder, setIsRemovingFolder] = useState(false);
     const dispatch = useAppDispatch();
 
     useLogoutRedirect();
@@ -68,25 +43,34 @@ export default function ModifyFolder() {
 
     return (
         <>
-            <button className='icon-reply options-button return-button' onClick={() => navigate(-1)} type="button"></button>
+            <h1 className='modify-folder__filename'>{folderName}</h1>
 
-            <h2 className='modify-filename'>{folderName}</h2>
+            <Form.Label>
+                <Form.Control type="text" placeholder={folderName} defaultValue={folderName} onChange={(e) => setFolderNameForm(e.currentTarget.value)} />
+            </Form.Label>
 
-            <input value={folderNameForm} onChange={(e) => setFolderNameForm(e.currentTarget.value)}></input>
-            <button className='common-button common-modify-button' onClick={() => onClickSaveButton()}>Zapisz</button>
+            <Button variant='outline-secondary' onClick={() => onClickSaveButton()}>Zapisz</Button>
 
-            <section className='additional-modify-options-section'>
-                <button className='additional-button' onClick={() => onClickMoveButton()}>Przenieś folder</button>
-                <button className='additional-button' onClick={() => onClickCopyButton()}>Skopiuj folder</button>
+            <section className='modify-folder__buttons-section'>
+                <Button className='modify-folder__button' variant='blue' onClick={() => onClickMoveButton()}>Przenieś folder</Button>
+                <Button className='modify-folder__button' variant='blue' onClick={() => onClickCopyButton()}>Skopiuj folder</Button>
             </section>
 
-            <button className='remove-file-button' onClick={() => onClickRemoveButton()}>Usuń folder</button>
-            {isRemovingFolder && <span>Loading...</span>}
+            <Button className='modify-folder__remove-button' variant='danger' onClick={() => onClickRemoveButton()}>Usuń folder</Button>
+
+            {isRemovingFolder &&
+                <Button className='modify-folder__remove-button' variant='danger' disabled>
+                    <Spinner animation="border" size='sm' as="span" role='status' aria-hidden="true">
+                        <span className="visually-hidden">Usuwanie...</span>
+                    </Spinner>
+                    Usuwanie...
+                </Button>
+            }
         </>
     );
 
     async function remove() {
-        let isEmpty = await isEmptyFolder(loaderData.folderId);
+        let isEmpty = await isEmptyFolder(folderId);
 
         if (!isEmpty) {
             let result = window.confirm("Folder zawiera zawartość czy napewno usunąć wraz z zawartością?")
@@ -96,13 +80,13 @@ export default function ModifyFolder() {
             }
         }
 
-        await removeFolder(loaderData.folderId);
+        await removeFolder(folderId);
         navigate(-1);
     }
 
     async function onClickSaveButton() {
-        await changeFolderName(loaderData.folderId, folderNameForm);
-        setFolderName(folderNameForm);
+        await changeFolderName(folderId, folderNameForm);
+        setFolderNameForm(folderNameForm);
     }
 
     function onClickRemoveButton() {
@@ -114,13 +98,13 @@ export default function ModifyFolder() {
     }
 
     function onClickMoveButton() {
-        dispatch(setFolderIdToMove(loaderData.folderId));
+        dispatch(setFolderIdToMove(folderId));
 
         navigate(`/${language}/browser/home`);
     }
 
     function onClickCopyButton() {
-        dispatch(setFolderInfoToCopy({ folderId: loaderData.folderId, folderName: folderName }));
+        dispatch(setFolderInfoToCopy({ folderId, folderName }));
 
         navigate(`/${language}/browser/home`);
     }

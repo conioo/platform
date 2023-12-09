@@ -1,4 +1,4 @@
-import ModifyFolder, { loader as modifyFolderLoader } from './ModifyFolder';
+import ModifyFolder, { loader as modifyFolderLoader } from './ModifyFolderSuspense';
 
 export default ModifyFolder;
 export { modifyFolderLoader};

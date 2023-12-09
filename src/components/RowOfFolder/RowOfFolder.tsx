@@ -8,16 +8,16 @@ interface RowOfFolderProps {
     isLogin: boolean;
     basePath: string;
     fullPath: string;
-    setFolderOpenId: (folderId: string) => void;
 }
 
-export default function RowOfFolder({ folder, fullPath, isLogin, basePath, setFolderOpenId }: RowOfFolderProps) {
-    let Navigate = useNavigate();
+export default function RowOfFolder({ folder, fullPath, isLogin, basePath }: RowOfFolderProps) {
+    let navigate = useNavigate();
+
     return (
-        <ListGroup.Item as="li" variant='primary' className='file-browser__list-group-item' action onClick={() => { setFolderOpenId(folder.id); Navigate(basePath + "/browser/" + fullPath + "/" + folder.name) }}>
+        <ListGroup.Item as="li" variant='primary' className='file-browser__list-group-item' action onClick={() => { navigate(basePath + "/browser/" + fullPath + "/" + folder.name + "?folder-id=" + folder.id) }}>
             <span className='file-browser__filename'>{folder.name}</span>
 
-            {isLogin && <Button className='file-browser__button' variant='danger' onClick={(event) => { event.stopPropagation(); Navigate(basePath + "/modify-folder/" + folder.id) }}><i className="bi bi-gear-fill"></i></Button>}
+            {isLogin && <Button className='file-browser__button' variant='danger' onClick={(event) => { event.stopPropagation(); navigate(basePath + "/modify-folder/" + folder.id) }}><i className="bi bi-gear-fill"></i></Button>}
         </ListGroup.Item>
     );
 }
