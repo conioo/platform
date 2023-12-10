@@ -1,4 +1,4 @@
-import FileBrowserSuspense, { loader } from './FileBrowserSuspense';
+import FileBrowserSuspense, { loader, FilesInfo } from './FileBrowserSuspense';
 
 export default FileBrowserSuspense;
-export { loader };
+export { loader, type FilesInfo };

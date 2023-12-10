@@ -1,17 +1,17 @@
 import React from 'react';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
+import ListGroup from 'react-bootstrap/ListGroup';
+import { useSelector } from 'react-redux';
 import { ActionFunctionArgs, Await, ParamParseKey, Params, defer, useLoaderData, useNavigate } from 'react-router-dom';
 import { findFolderIdByPath, getListOfFiles } from '../../../google/GoogleDriveService';
+import { selectBasePath } from '../../../redux/slices/language';
 import store from '../../../redux/store';
 import Paths from '../../../router/Paths';
 import FileBrowser from '../FileBrowser';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import { useSelector } from 'react-redux';
-import { selectBasePath } from '../../../redux/slices/language';
-import Placeholder from 'react-bootstrap/Placeholder';
-import ListGroup from 'react-bootstrap/ListGroup';
+import File from '../../../models/File';
 
-interface FilesInfo {
-    parentFolderId: string;
+export interface FilesInfo {
+    folderId: string;
     fullPath: string;
     files: File[];
     folders: File[];
@@ -42,7 +42,6 @@ export async function loader({ params, request }: Args): Promise<any> {
     }
 
     const folderId = new URL(request.url).searchParams.get('folder-id');
-
     const filesPromise = getFilesInfo({ path, folderNames, folderId });
 
     //folderNames.shift();
@@ -50,7 +49,7 @@ export async function loader({ params, request }: Args): Promise<any> {
     return defer({ filesInfo: filesPromise, folderNames })
 }
 
-async function getFilesInfo({ path, folderNames, folderId }: any) {
+async function getFilesInfo({ path, folderNames, folderId }: any): Promise<FilesInfo> {
 
     if (!folderId) {
         folderId = await findFolderIdByPath(folderNames.slice(1), store.getState().language.language);
@@ -61,7 +60,7 @@ async function getFilesInfo({ path, folderNames, folderId }: any) {
     }
 
     let listOfFiles = await getListOfFiles(folderId) as unknown as FilesInfo;
-    listOfFiles.parentFolderId = folderId;
+    listOfFiles.folderId = folderId;
     listOfFiles.fullPath = path;
 
     return listOfFiles;
@@ -71,6 +70,7 @@ export default function FileBrowserSuspense() {
     console.log("FileBrowserSuspense");
 
     let loaderData = useLoaderData() as loaderReturnType;
+    console.log(loaderData);
 
     const navigate = useNavigate();
 
@@ -82,7 +82,7 @@ export default function FileBrowserSuspense() {
         let path = currentPath;
 
         return (
-            <Breadcrumb.Item onClick={() => navigate(path)} active={index + 1 === loaderData.folderNames.length}>{segmentPath}</Breadcrumb.Item>
+            <Breadcrumb.Item key={index} onClick={() => navigate(path)} active={index + 1 === loaderData.folderNames.length}>{segmentPath}</Breadcrumb.Item>
         );
     });
 

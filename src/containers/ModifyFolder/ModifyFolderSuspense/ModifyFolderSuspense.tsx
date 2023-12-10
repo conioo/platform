@@ -11,8 +11,8 @@ interface Args extends ActionFunctionArgs {
 }
 
 interface loaderReturnType {
-    folderNamePromise: Promise<string>;
     folderId: string;
+    folderName: Promise<string>;
 }
 
 export async function loader({ params }: Args): Promise<any> {
@@ -34,9 +34,9 @@ export async function loader({ params }: Args): Promise<any> {
 }
 
 export default function ModifyFolderSuspense(): JSX.Element {
-    console.log("ViewSuspense");
+    console.log("ModifyFolderSuspense");
 
-    let data = useLoaderData() as any;
+    let data = useLoaderData() as loaderReturnType;
 
     return (
         <section className='modify-folder'>
@@ -49,7 +49,7 @@ export default function ModifyFolderSuspense(): JSX.Element {
                     errorElement={
                         <p>Error loading module</p>
                     }>
-                    <ModifyFolder folderId={data.folderId} folderName={data.folderName}></ModifyFolder>
+                    <ModifyFolder folderId={data.folderId}></ModifyFolder>
                 </Await>
             </React.Suspense>
         </section>

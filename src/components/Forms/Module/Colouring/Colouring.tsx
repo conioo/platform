@@ -142,15 +142,16 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
             translationColors = new Array<number>();
 
             for (let segment of section.segments) {
-                sentenceWords.push(...segment.sentence.split(" "));
-                translationWords.push(...segment.translation.split(" "));
+                sentenceWords.push(...segment.sentence.split(" ").filter(word => word !== ""));
+                translationWords.push(...segment.translation.split(" ").filter(word => word !== ""));
 
                 sentenceColors.push(...segment.sentenceColors);
                 translationColors.push(...segment.translationColors);
             }
 
             //nowe moga nie dzialaja -> tymczasowe dla nowych
-
+            // console.log(sentenceWords);
+            // console.log(sentenceColors);
             if (sentenceWords.length !== sentenceColors.length) {
 
                 if (sentenceColors.length < sentenceWords.length) {
@@ -209,6 +210,9 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
                     }
                 }
             }
+
+            // console.log(newSection);
+            // console.log(errors[indexSection]);
 
             if (errors[indexSection]) {
                 ++indexSection;

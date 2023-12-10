@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/esm/Button';
 import Spinner from 'react-bootstrap/esm/Spinner';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useAsyncValue, useNavigate } from 'react-router-dom';
 import { changeFolderName, removeFolder } from '../../google/GoogleDriceAuthorizeService';
 import { isEmptyFolder } from '../../google/GoogleDriveService';
 import useLogoutRedirect from '../../hooks/LogoutRedirect';
@@ -13,22 +13,18 @@ import { selectLanguage } from '../../redux/slices/language';
 import './ModifyFolder.scss';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
-
-interface loaderReturnType {
-    folderNamePromise: Promise<string>;
-    folderId: string;
-}
-
 interface ModifyFolderProps {
     folderId: string;
-    folderName: string;
 }
 
-export default function ModifyFolder({ folderId, folderName }: ModifyFolderProps) {
+export default function ModifyFolder({ folderId }: ModifyFolderProps) {
     console.log("ModifyFolder");
 
-    const [folderNameForm, setFolderNameForm] = useState(folderName);
+    const folderName = useAsyncValue() as string
+
+    const [folderNameForm, setFolderNameForm] = useState<string>(folderName);
     const [isRemovingFolder, setIsRemovingFolder] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const navigate = useNavigate();
     const language = useSelector(selectLanguage);
@@ -38,7 +34,11 @@ export default function ModifyFolder({ folderId, folderName }: ModifyFolderProps
 
     if (isRemovingFolder) {
         remove();
-        setIsRemovingFolder(false);
+        // setIsRemovingFolder(false);
+    }
+
+    if (isSaving) {
+        onClickSaveButton();
     }
 
     return (
@@ -49,14 +49,23 @@ export default function ModifyFolder({ folderId, folderName }: ModifyFolderProps
                 <Form.Control type="text" placeholder={folderName} defaultValue={folderName} onChange={(e) => setFolderNameForm(e.currentTarget.value)} />
             </Form.Label>
 
-            <Button variant='outline-secondary' onClick={() => onClickSaveButton()}>Zapisz</Button>
+            {!isSaving && <Button className='modify-folder__save-button' variant='outline-secondary' onClick={() => setIsSaving(true)}>Zapisz</Button>}
+
+            {isSaving &&
+                <Button className='modify-folder__save-button' variant='outline-secondary' disabled>
+                    <Spinner animation="border" size='sm' as="span" role='status' aria-hidden="true">
+                        <span className="visually-hidden">Zapisywanie...</span>
+                    </Spinner>
+                    Zapisywanie...
+                </Button>
+            }
 
             <section className='modify-folder__buttons-section'>
                 <Button className='modify-folder__button' variant='blue' onClick={() => onClickMoveButton()}>Przenieś folder</Button>
                 <Button className='modify-folder__button' variant='blue' onClick={() => onClickCopyButton()}>Skopiuj folder</Button>
             </section>
 
-            <Button className='modify-folder__remove-button' variant='danger' onClick={() => onClickRemoveButton()}>Usuń folder</Button>
+            {!isRemovingFolder && <Button className='modify-folder__remove-button' variant='danger' onClick={() => onClickRemoveButton()}>Usuń folder</Button>}
 
             {isRemovingFolder &&
                 <Button className='modify-folder__remove-button' variant='danger' disabled>
@@ -86,7 +95,7 @@ export default function ModifyFolder({ folderId, folderName }: ModifyFolderProps
 
     async function onClickSaveButton() {
         await changeFolderName(folderId, folderNameForm);
-        setFolderNameForm(folderNameForm);
+        navigate(-1);
     }
 
     function onClickRemoveButton() {

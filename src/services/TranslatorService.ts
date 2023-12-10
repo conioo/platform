@@ -29,7 +29,7 @@ export async function TranslateSentences(sentences: Array<string>, language: Lan
                 apiUrl += "&text=" + sentences[mainCounter];
                 ++mainCounter;
 
-                if (mainCounter == sentences.length) {
+                if (mainCounter === sentences.length) {
                     break;
                 }
             }

@@ -1,16 +1,16 @@
-import { ActionFunctionArgs, Outlet, ParamParseKey, Params, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { ActionFunctionArgs, Outlet, ParamParseKey, Params } from 'react-router-dom';
 import { HandleGapiLoad } from '../../google/services/AuhorizationService';
 import { setLanguage } from '../../redux/slices/language';
+import { ModuleOptionsState, setOptions } from '../../redux/slices/moduleOptions';
 import store from '../../redux/store';
 import Paths from '../../router/Paths';
 import { EasySpeechInit } from '../../services/EasySpeechHandlers';
 import Language from '../../types/Language';
+import Footer from '../Footer';
 import Header from '../Header';
 import './Hub.scss';
-import Footer from '../Footer';
-import { useEffect } from 'react';
-import { useCookies } from 'react-cookie';
-import { ModuleOptionsState, setOptions } from '../../redux/slices/moduleOptions';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.hub>>;
@@ -48,9 +48,8 @@ export default function Hub() {
     const [cookies] = useCookies(['view-options']);
 
     useEffect(() => {
-        console.log("coooooooooooooooooooooooooooooooooooooooo");
         const viewOptionsCookie = cookies['view-options'] as ModuleOptionsState | undefined;
-        
+
         if (viewOptionsCookie) {
             store.dispatch(setOptions(cookies['view-options']));
         }

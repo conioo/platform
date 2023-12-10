@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/esm/Button';
@@ -7,29 +6,18 @@ import { useAsyncValue, useNavigate } from 'react-router-dom';
 import Pastemodule from '../../components/PasteModule/PasteModule';
 import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
 import RowOfModule from '../../components/RowOfModule/RowOfModule';
-import { createFolderInGoogleDrive, getListOfFiles } from '../../google/GoogleDriveService';
-import File from '../../models/File';
-import { useAppDispatch, useAppSelector } from '../../redux/hook';
+import { createFolderInGoogleDrive } from '../../google/GoogleDriveService';
+import { useAppSelector } from '../../redux/hook';
 import { selectIsLogin } from '../../redux/slices/authentication';
-import { selectBasePath, selectLanguage } from '../../redux/slices/language';
+import { selectBasePath } from '../../redux/slices/language';
 import './FileBrowser.scss';
-
-interface FilesInfo {
-    parentFolderId: string;
-    fullPath: string;
-    files: File[];
-    folders: File[];
-}
-
+import { FilesInfo } from './FileBrowserSuspense';
 
 interface FileBrowserProps {
-    // filesInfo: FilesInfo;
 }
 
 export default function FileBrowser({ }: FileBrowserProps) {
     console.log("FileBrowser");
-
-    const language = useSelector(selectLanguage);
 
     const filesInfo = useAsyncValue() as FilesInfo;
 
@@ -40,7 +28,6 @@ export default function FileBrowser({ }: FileBrowserProps) {
 
     let listOfNameFiles: Array<JSX.Element> | undefined;
     let listOfNameFolders: Array<JSX.Element> | undefined;
-    let paths: JSX.Element[] | undefined;
 
     // if (language === Language.Spanish) {
     //     return (
@@ -73,7 +60,7 @@ export default function FileBrowser({ }: FileBrowserProps) {
                 {listOfNameFiles}
             </ListGroup>
 
-            <Pastemodule updateListOfFiles={updateListOfFiles}></Pastemodule>
+            <Pastemodule updateListOfFiles={updateListOfFiles} targetFolderId={filesInfo.folderId}></Pastemodule>
 
             {isLogin &&
                 <section className='file-browser__button-group-section'>
@@ -88,21 +75,22 @@ export default function FileBrowser({ }: FileBrowserProps) {
     );
 
     async function updateListOfFiles() {
-        if (filesInfo === undefined) {
-            return;
-        }
+        navigate(0);
+        // if (filesInfo === undefined) {
+        //     return;
+        // }
 
-        let listOfFiles = await getListOfFiles(filesInfo.parentFolderId);
+        // let listOfFiles = await getListOfFiles(filesInfo.parentFolderId);
 
-        if (!listOfFiles) {
-            return;
-        }
+        // if (!listOfFiles) {
+        //     return;
+        // }
 
-        let newFilesInfo = { ...filesInfo };
-        newFilesInfo.files = listOfFiles.files;
-        newFilesInfo.folders = listOfFiles.folders;
+        // let newFilesInfo = { ...filesInfo };
+        // newFilesInfo.files = listOfFiles.files;
+        // newFilesInfo.folders = listOfFiles.folders;
 
-        console.log(newFilesInfo);
+        // console.log(newFilesInfo);
         // setFilesInfo(newFilesInfo);
     }
 
@@ -116,19 +104,8 @@ export default function FileBrowser({ }: FileBrowserProps) {
             return;
         }
 
-        await createFolderInGoogleDrive(folderName, filesInfo.parentFolderId);
+        await createFolderInGoogleDrive(folderName, filesInfo.folderId);
 
         await updateListOfFiles();
     }
-
-    // async function removeFolder(folder: File) {
-    //     if (!await isEmptyFolder(folder.id)) {
-    //         alert("folder nie jest pusty");
-    //         return;
-    //     }
-
-    //     await removeFolderFromGoogleDrive(folder.id);
-    //     await updateListOfFiles();
-    // }
-
 }
