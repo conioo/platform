@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { useSelector } from 'react-redux';
@@ -44,12 +44,15 @@ export async function loader({ params, request }: Args): Promise<any> {
     const folderId = new URL(request.url).searchParams.get('folder-id');
     const filesPromise = getFilesInfo({ path, folderNames, folderId });
 
-    //folderNames.shift();
+    //folderNames.shift();s
+    console.log("FB loader");
+
+    // let listOfFiles: FilesInfo = { folderId: "folderId", fullPath: path, folders: new Array<File>(), files: new Array<File>() };
 
     return defer({ filesInfo: filesPromise, folderNames })
 }
 
-async function getFilesInfo({ path, folderNames, folderId }: any): Promise<FilesInfo> {
+export async function getFilesInfo({ path, folderNames, folderId }: any): Promise<FilesInfo> {
 
     if (!folderId) {
         folderId = await findFolderIdByPath(folderNames.slice(1), store.getState().language.language);
@@ -69,22 +72,24 @@ async function getFilesInfo({ path, folderNames, folderId }: any): Promise<Files
 export default function FileBrowserSuspense() {
     console.log("FileBrowserSuspense");
 
-    let loaderData = useLoaderData() as loaderReturnType;
-    console.log(loaderData);
-
     const navigate = useNavigate();
 
     let basePath = useSelector(selectBasePath);
+    let loaderData = useLoaderData() as loaderReturnType;
+    console.log(loaderData);
+
     let currentPath = basePath + "/browser";
 
-    const paths = loaderData.folderNames.map((segmentPath, index) => {
-        currentPath += "/" + segmentPath;
-        let path = currentPath;
+    const paths = useMemo(() => {
+        return loaderData.folderNames.map((segmentPath, index) => {
+            currentPath += "/" + segmentPath;
+            let path = currentPath;
 
-        return (
-            <Breadcrumb.Item key={index} onClick={() => navigate(path)} active={index + 1 === loaderData.folderNames.length}>{segmentPath}</Breadcrumb.Item>
-        );
-    });
+            return (
+                <Breadcrumb.Item key={index} onClick={() => navigate(path)} active={index + 1 === loaderData.folderNames.length}>{segmentPath}</Breadcrumb.Item>
+            );
+        });
+    }, [loaderData.folderNames]);
 
     return (
         <section className='file-browser'>
@@ -94,17 +99,18 @@ export default function FileBrowserSuspense() {
 
             <React.Suspense
                 fallback={<>
-                    <ListGroup as="ul" className='file-browser__list-group'>
-                        {/* <Placeholder as={ListGroup.Item} animation="glow">&nbsp;</Placeholder>
-                        <Placeholder as={ListGroup.Item} animation="glow">&nbsp;</Placeholder> */}
-                    </ListGroup>
+                    {/* <ListGroup as="ul" className='file-browser__list-group'>
+                        <Placeholder as={ListGroup.Item} animation="glow">&nbsp;</Placeholder>
+                        <Placeholder as={ListGroup.Item} animation="glow">&nbsp;</Placeholder>
+                    </ListGroup> */}
                 </>} >
                 <Await
                     resolve={loaderData.filesInfo}
                     errorElement={
                         <p>Error loading module</p>
                     }>
-                    <FileBrowser></FileBrowser>
+                    {/* <FileBrowser></FileBrowser> */}
+                    <FileBrowser key={Math.random()}></FileBrowser>
                 </Await>
             </React.Suspense>
         </section>

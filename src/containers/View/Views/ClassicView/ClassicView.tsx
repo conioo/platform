@@ -10,6 +10,9 @@ import { useAppSelector } from "../../../../redux/hook";
 import HoverElement from "../Common/HoverElement";
 import SpanElement from "../Common/SpanElement";
 import "./ClassicView.scss";
+import Container from "react-bootstrap/esm/Container";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
 
 interface ClassicViewProps {
     module: Module;
@@ -76,15 +79,20 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
 
             fullText += fullSentence;
 
+            if (fullSentence.length === 1) {
+                return ([]);
+                // console.log(fullSentence.length);
+            }
+
             return (
-                <>
-                    <section key={sectionIndex} className='classic-view__audioplay-container'>
-                        {segments.length > 0 && <AudioPlay text={fullSentence} managementAudio={audioHub}></AudioPlay>}
-                    </section>
-                    <section className="classic-view__sentence-segment">
+                [
+                    (<section key={sectionIndex} className='classic-view__audioplay-container'>
+                        <AudioPlay text={fullSentence} managementAudio={audioHub}></AudioPlay>
+                    </section>),
+                    (<section className="classic-view__sentence-segment">
                         {segments}
-                    </section>
-                </>
+                    </section>)
+                ]
             );
         });
 
@@ -95,22 +103,39 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
 
     }, [module]);
 
-    const sections = sectionsParts.map((sectionPart: JSX.Element, index: number) => {
+    const sections = sectionsParts.map((sectionParts: JSX.Element[], index: number) => {
+
+        if (sectionParts.length === 0) {
+            return (
+                <Row>
+                    <Col sm={12} md={6} className="classic-view__column-segment">
+                        &nbsp;
+                    </Col>
+                    <Col sm={12} md={6}>
+                    </Col>
+                </Row>
+            );
+        }
+
         return (
-            <>
-                {sectionPart}
-                <section className="classic-view__translation-segment">
-                    {translations && currentTranslationIndex[index] === -1 && translations[index]}
-                    {translations && currentTranslationIndex[index] !== -1 && translations[index][currentTranslationIndex[index]]}
-                    {isHiddenOptions && <Button className={`classic-view__visible-button ${isHidden[index] ? "hidden" : ""}`} onClick={() => updateIsHidden(state => { state[index] = !state[index] })}><i className="bi bi-arrow-left-right"></i></Button>}
-                </section >
-            </>
+            <Row>
+                <Col sm={12} md={6} className="classic-view__column-segment">
+                    {sectionParts}
+                </Col>
+                <Col sm={12} md={6}>
+                    <section className="classic-view__translation-segment">
+                        {translations && currentTranslationIndex[index] === -1 && translations[index]}
+                        {translations && currentTranslationIndex[index] !== -1 && translations[index][currentTranslationIndex[index]]}
+                        {isHiddenOptions && <Button className={`classic-view__visible-button ${isHidden[index] ? "hidden" : ""}`} onClick={() => updateIsHidden(state => { state[index] = !state[index] })}><i className="bi bi-arrow-left-right"></i></Button>}
+                    </section >
+                </Col>
+            </Row>
         );
     });
 
     return (
-        <section className={"classic-view"}>
+        <Container fluid className={"classic-view"}>
             {sections}
-        </section>
+        </Container>
     );
 }

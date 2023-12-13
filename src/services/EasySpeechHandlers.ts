@@ -80,7 +80,6 @@ export function getEasySpeech(): useEasySpeechType | undefined {
     let audioInfoArray = new Array<AudioInfo>();//zewnatrz
 
     const addAudioInfo = (audioInfo: AudioInfo): void => {
-        console.log(audioInfo);
         audioInfoArray.push(audioInfo);
     };
 

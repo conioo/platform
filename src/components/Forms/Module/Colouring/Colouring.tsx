@@ -223,7 +223,7 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
             ++indexSection;
         }
 
-        console.log(newSections);
+        // console.log(newSections);
 
         let hasErrors = errors.some((error) => error);
 

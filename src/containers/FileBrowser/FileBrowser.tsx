@@ -6,12 +6,14 @@ import { useAsyncValue, useNavigate } from 'react-router-dom';
 import Pastemodule from '../../components/PasteModule/PasteModule';
 import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
 import RowOfModule from '../../components/RowOfModule/RowOfModule';
-import { createFolderInGoogleDrive } from '../../google/GoogleDriveService';
+import { createFolderInGoogleDrive, getListOfFiles } from '../../google/GoogleDriveService';
 import { useAppSelector } from '../../redux/hook';
 import { selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath } from '../../redux/slices/language';
 import './FileBrowser.scss';
 import { FilesInfo } from './FileBrowserSuspense';
+import { useState } from 'react';
+import { getFilesInfo } from './FileBrowserSuspense/FileBrowserSuspense';
 
 interface FileBrowserProps {
 }
@@ -19,12 +21,13 @@ interface FileBrowserProps {
 export default function FileBrowser({ }: FileBrowserProps) {
     console.log("FileBrowser");
 
-    const filesInfo = useAsyncValue() as FilesInfo;
+    const [filesInfo, setFilesInfo] = useState<FilesInfo>(useAsyncValue() as FilesInfo);
 
     let isLogin = useAppSelector(selectIsLogin);
 
     const navigate = useNavigate();
     let basePath = useSelector(selectBasePath);
+
 
     let listOfNameFiles: Array<JSX.Element> | undefined;
     let listOfNameFolders: Array<JSX.Element> | undefined;
@@ -75,12 +78,13 @@ export default function FileBrowser({ }: FileBrowserProps) {
     );
 
     async function updateListOfFiles() {
-        navigate(0);
+        // navigate(0);
         // if (filesInfo === undefined) {
         //     return;
         // }
 
-        // let listOfFiles = await getListOfFiles(filesInfo.parentFolderId);
+        // let newFilesInfo = await getFilesInfo({  filesInfo.fullPath, null , filesInfo.folderId });
+        let newFilesInfo = await getFilesInfo({ path: filesInfo.fullPath, folderNames: null, folderId: filesInfo.folderId});
 
         // if (!listOfFiles) {
         //     return;
@@ -91,7 +95,7 @@ export default function FileBrowser({ }: FileBrowserProps) {
         // newFilesInfo.folders = listOfFiles.folders;
 
         // console.log(newFilesInfo);
-        // setFilesInfo(newFilesInfo);
+        setFilesInfo(newFilesInfo);
     }
 
     async function createNewFolder() {

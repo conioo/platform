@@ -35,6 +35,7 @@ export default function ViewSuspense(): JSX.Element {
     console.log("ViewSuspense");
 
     let data = useLoaderData() as any;
+    console.log(data);
 
     return (
         <section className='view'>

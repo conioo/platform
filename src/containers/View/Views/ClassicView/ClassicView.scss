@@ -2,9 +2,15 @@
 @import "~bootstrap/scss/variables";
 
 .classic-view {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    max-width: 100%;
+    // display: grid;
+    // grid-template-columns: auto auto auto;
+    // max-width: 100%;
+
+    &__column-segment
+    {
+        display: flex;
+        flex-direction: row;
+    }
 
     &__sentence-segment {
         cursor: pointer;
@@ -20,6 +26,7 @@
         padding: 0.1rem;
         display: flex;
         flex-wrap: wrap;
+        height: 100%;
     }
 
     &__audioplay-container {
