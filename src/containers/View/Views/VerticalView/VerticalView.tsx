@@ -54,7 +54,7 @@ export default function VerticalView({ module, setText, audioHub }: VerticalView
                         <section className="vertical-view__span-group" ref={r}>
                             {sentenceSpans}
                         </section>
-                        <Textfit mode="single" forceSingleModeWidth={false}>
+                        <Textfit mode="single" forceSingleModeWidth={false} className="vertical-view__translation">
                             {translationSpans}
                         </Textfit>
                         {/* <section className="vertical-view__span-groupa translation-section">

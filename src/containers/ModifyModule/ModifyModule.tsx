@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { ActionFunctionArgs, ParamParseKey, Params, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik/ModuleFormik';
-import { getModule, removeModule, updateModuleInGoogleDrive } from '../../google/GoogleDriveService';
 import { authorizedAccess } from '../../google/services/AuhorizationService';
 import Module from '../../models/Module';
 import { selectLanguage } from '../../redux/slices/language';
@@ -14,6 +13,8 @@ import Button from 'react-bootstrap/esm/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import useBackNavigate from '../../hooks/BackNavigate';
 import ReturnButton from '../../components/ReturnButton';
+import { getModule } from '../../google/GoogleDriveService';
+import { removeModule, updateModuleInGoogleDrive } from '../../google/GoogleDriveAuthorizeService';
 
 interface Args extends ActionFunctionArgs {
     params: Params<ParamParseKey<typeof Paths.modify>>;

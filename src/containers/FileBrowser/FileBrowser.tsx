@@ -6,14 +6,14 @@ import { useAsyncValue, useNavigate } from 'react-router-dom';
 import Pastemodule from '../../components/PasteModule/PasteModule';
 import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
 import RowOfModule from '../../components/RowOfModule/RowOfModule';
-import { createFolderInGoogleDrive, getListOfFiles } from '../../google/GoogleDriveService';
 import { useAppSelector } from '../../redux/hook';
 import { selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath } from '../../redux/slices/language';
 import './FileBrowser.scss';
 import { FilesInfo } from './FileBrowserSuspense';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getFilesInfo } from './FileBrowserSuspense/FileBrowserSuspense';
+import { createFolderInGoogleDrive } from '../../google/GoogleDriveAuthorizeService';
 
 interface FileBrowserProps {
 }
@@ -22,6 +22,8 @@ export default function FileBrowser({ }: FileBrowserProps) {
     console.log("FileBrowser");
 
     const [filesInfo, setFilesInfo] = useState<FilesInfo>(useAsyncValue() as FilesInfo);
+    const [hidingMode, setHidingMode] = useState(false);
+    const [previousisLogin, setPreviousIsLogin] = useState(false);
 
     let isLogin = useAppSelector(selectIsLogin);
 
@@ -41,16 +43,20 @@ export default function FileBrowser({ }: FileBrowserProps) {
     //     )
     // }
 
+    useEffect(() => {
+        updateListOfFiles();
+    }, [isLogin]);
+
     if (filesInfo !== undefined) {
         listOfNameFiles = filesInfo.files.map((file, index) => {
             return (
-                <RowOfModule isLogin={isLogin ? isLogin : false} file={file} basePath={basePath} key={index + "mod"}></RowOfModule>
+                <RowOfModule isLogin={isLogin ? isLogin : false} file={file} basePath={basePath} key={index + "mod"} hidingMode={hidingMode} updateListOfFiles={updateListOfFiles}></RowOfModule>
             );
         });
 
         listOfNameFolders = filesInfo.folders.map((folder, index) => {
             return (
-                <RowOfFolder isLogin={isLogin ? isLogin : false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} key={index + "fol"}></RowOfFolder>
+                <RowOfFolder isLogin={isLogin ? isLogin : false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} key={index + "fol"} hidingMode={hidingMode} updateListOfFiles={updateListOfFiles}></RowOfFolder>
             );
         });
     }
@@ -71,6 +77,8 @@ export default function FileBrowser({ }: FileBrowserProps) {
                         <Button variant='warning' onClick={() => { navigate(basePath + "/record") }}>Nowy plik</Button>
                         <Button variant='warning' onClick={() => { createNewFolder() }}>Nowy folder</Button>
                     </ButtonGroup>
+                    {hidingMode && <Button variant='secondary' className='file-browser__hiding-button' onClick={() => setHidingMode(!hidingMode)}>Ukryj moduły</Button>}
+                    {!hidingMode && <Button variant='outline-secondary' className='file-browser__hiding-button' onClick={() => setHidingMode(!hidingMode)}>Ukryj moduły</Button>}
                 </section>
             }
 
@@ -78,23 +86,8 @@ export default function FileBrowser({ }: FileBrowserProps) {
     );
 
     async function updateListOfFiles() {
-        // navigate(0);
-        // if (filesInfo === undefined) {
-        //     return;
-        // }
+        let newFilesInfo = await getFilesInfo({ path: filesInfo.fullPath, folderNames: null, folderId: filesInfo.folderId });
 
-        // let newFilesInfo = await getFilesInfo({  filesInfo.fullPath, null , filesInfo.folderId });
-        let newFilesInfo = await getFilesInfo({ path: filesInfo.fullPath, folderNames: null, folderId: filesInfo.folderId});
-
-        // if (!listOfFiles) {
-        //     return;
-        // }
-
-        // let newFilesInfo = { ...filesInfo };
-        // newFilesInfo.files = listOfFiles.files;
-        // newFilesInfo.folders = listOfFiles.folders;
-
-        // console.log(newFilesInfo);
         setFilesInfo(newFilesInfo);
     }
 

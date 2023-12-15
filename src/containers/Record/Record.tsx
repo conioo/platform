@@ -1,12 +1,12 @@
 import { FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import ModuleFormik, { FormikValuesType } from '../../components/Forms/Module/ModuleFormik/ModuleFormik';
-import { saveModuleToGoogleDrive } from '../../google/GoogleDriveService';
 import { authorizedAccess } from '../../google/services/AuhorizationService';
 import Module from '../../models/Module';
 import { useAppSelector } from '../../redux/hook';
 import { selectCurrentParentFolderId } from '../../redux/slices/folder';
 import './Record.scss';
+import { saveModuleToGoogleDrive } from '../../google/GoogleDriveAuthorizeService';
 
 export async function loader(): Promise<boolean | Response> {
     let authorizedResponse = await authorizedAccess();

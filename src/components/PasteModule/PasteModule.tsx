@@ -1,7 +1,6 @@
 import { useSelector, useStore } from "react-redux";
 import './PasteModule.scss';
-import { copyFolder, moveFolder } from "../../google/GoogleDriceAuthorizeService";
-import { copyModule, moveModule } from "../../google/GoogleDriveService";
+import { copyFolder, copyModule, moveFolder, moveModule } from "../../google/GoogleDriveAuthorizeService";
 import { selectCurrentParentFolderId, selectfolderIdToMove, selectfolderInfoToCopy, setFolderIdToMove, setFolderInfoToCopy } from "../../redux/slices/folder";
 import { selectModuleIdToMove, selectModuleInfoToCopy, setModuleIdToMove, setModuleInfoToCopy } from "../../redux/slices/module";
 import Button from "react-bootstrap/esm/Button";
@@ -58,7 +57,6 @@ export default function PasteModule({ updateListOfFiles, targetFolderId }: Paste
             updateListOfFiles();
 
         } else if (moduleInfoToCopy !== null) {
-            console.log(targetFolderId);
             await copyModule(moduleInfoToCopy.moduleName, moduleInfoToCopy.moduleId, targetFolderId);
             store.dispatch(setModuleInfoToCopy(null));
             updateListOfFiles();

@@ -2,7 +2,7 @@ import React from 'react';
 import { ActionFunctionArgs, Await, ParamParseKey, Params, defer, useLoaderData } from 'react-router-dom';
 import Paths from '../../../router/Paths';
 import { authorizedAccess } from '../../../google/services/AuhorizationService';
-import { getFolderName } from '../../../google/GoogleDriceAuthorizeService';
+import { getFolderName } from '../../../google/GoogleDriveAuthorizeService';
 import ReturnButton from '../../../components/ReturnButton';
 import ModifyFolder from '../ModifyFolder';
 

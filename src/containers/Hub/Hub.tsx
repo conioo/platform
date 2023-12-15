@@ -65,7 +65,7 @@ export default function Hub() {
 
                 <section className='hub__main-section'>
                     {/* <button onClick={() => cast()}>Zamieniamy</button> */}
-                    <Outlet />
+                    <Outlet/>
                 </section>
 
                 <section className='hub__right-section'>

@@ -1,6 +1,6 @@
 enum ViewModes {
     Classic = "classic",
-    // Vertical = "vertical",
+    Vertical = "vertical",
     Overlay = "overlay",
 }
 

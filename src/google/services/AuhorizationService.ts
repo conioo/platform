@@ -1,4 +1,4 @@
-import { getSecrets } from "../GoogleDriveService";
+import { getSecrets } from "../GoogleDriveAuthorizeService";
 import store from "../../redux/store";
 import { login, logout, setIsLogin } from "../../redux/slices/authentication";
 import { redirect } from "react-router-dom";
