@@ -2,10 +2,6 @@
 @import "~bootstrap/scss/variables";
 
 .classic-view {
-    // display: grid;
-    // grid-template-columns: auto auto auto;
-    // max-width: 100%;
-
     &__column-segment
     {
         display: flex;
@@ -34,97 +30,8 @@
         justify-content: flex-end;
         align-items: flex-start;
     }
-
-    &__visible-button {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 0 !important;
-        border: 2px solid $orange-700 !important;
-        display: flex !important;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-    }
 }
-
-// .view-visible-button:hover {
-//     transform: scale(1.005);
-//     transition: cubic-bezier(0.075, 0.82, 0.165, 1);
-// }
-
-// .classic-segments {
-//     grid-template-columns: auto 1.1fr 0.9fr;
-//     /* line-height: 5px; */
-//     max-width: 100%;
-// }
 
 .hovered {
     opacity: 0.5;
-}
-
-// .view-segments {
-//     width: auto;
-//     max-width: 100%;
-//     display: grid;
-//     /* grid-template-columns: repeat(3, minmax(0, 1fr)); */
-//     /* grid-template-columns: minmax(0, 10%) 45% 45%; */
-//     gap: 1px;
-//     margin: 1%;
-//     font-size: inherit;
-// }
-
-// .vertical-segments {
-//     grid-template-columns: auto auto;
-// }
-
-// .sentence {
-//     width: auto;
-//     height: auto;
-//     margin-right: 1%;
-//     transition: font-size 0.3s ease;
-//     font-weight: 600;
-//     padding-left: 1%;
-// }
-
-// .translation {
-//     width: auto;
-//     height: auto;
-//     margin-right: 1%;
-//     transition: font-size 0.3s ease;
-//     font-weight: 600;
-// }
-
-// .font-size-slider {
-//     cursor: pointer;
-//     min-width: 150px;
-//     width: 10%;
-// }
-
-// .view-options-section {
-//     display: flex;
-//     justify-content: space-between;
-//     flex-direction: row;
-//     width: 100%;
-//     margin: 5px;
-// }
-
-// .view-options-right {
-//     display: flex;
-//     justify-content: flex-end;
-//     align-items: center;
-//     flex-direction: row;
-// }
-
-// .view-options-left {
-//     display: flex;
-//     justify-content: flex-start;
-//     align-items: center;
-//     flex-direction: row;
-// }
-
-.hidden {
-    opacity: 1 !important;
 }

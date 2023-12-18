@@ -81,6 +81,8 @@ export default function View({ fileId }: ViewProps): JSX.Element {
             viewSegment.style.fontSize = `${newFontSize}rem`;
             document.body.style.setProperty("--tooltip-font-size", `${parseFloat(newFontSize) - 0.6}rem`);
         }
+
+        // console.log(document.body.style.getPropertyValue("--tooltip-font-size"));
     }
 
     function closeModal() {

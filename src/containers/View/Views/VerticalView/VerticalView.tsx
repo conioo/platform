@@ -1,16 +1,16 @@
-import React, { useMemo, useState } from "react";
-import { useImmer } from "use-immer";
-import './VerticalView.scss';
+import { useEffect, useMemo, useState } from "react";
+import Button from "react-bootstrap/esm/Button";
 import Container from "react-bootstrap/esm/Container";
-import Row from "react-bootstrap/esm/Row";
 import { Textfit } from 'react-textfit';
-import Module from "../../../../models/Module";
-import { useEasySpeechType } from "../../../../hooks/EasySpeech";
-import { useAppSelector } from "../../../../redux/hook";
+import { useImmer } from "use-immer";
 import AudioPlay from "../../../../components/AudioPlay";
-import { Colors } from "../../../../types/Colors";
+import { useEasySpeechType } from "../../../../hooks/EasySpeech";
+import Module from "../../../../models/Module";
 import Section from "../../../../models/Section";
 import Segment from "../../../../models/Segment";
+import { useAppSelector } from "../../../../redux/hook";
+import SpanElement from "../Common/SpanElement";
+import './VerticalView.scss';
 
 interface VerticalViewProps {
     module: Module;
@@ -21,13 +21,36 @@ interface VerticalViewProps {
 export default function VerticalView({ module, setText, audioHub }: VerticalViewProps) {
     console.log("VerticalView");
     const isHiddenOptions = useAppSelector((state) => state.moduleOptions.isHidden);
+    const [isHidden, updateIsHidden] = useImmer<Array<Array<boolean>>>(() => {
 
-    const [translations, setTranslations] = useState<Array<Array<JSX.Element>>>();
-    const [currentTranslationIndex, updateCurrentTranslationIndex] = useImmer<Array<number>>(new Array<number>(module.sections.length).fill(0));
-    const [isHidden, updateIsHidden] = useImmer<Array<boolean>>(new Array<boolean>(module.sections.length).fill(isHiddenOptions));
+        let array = new Array<Array<boolean>>(module.sections.length);
+
+        for (let i = 0; i < module.sections.length; ++i) {
+            array[i] = new Array<boolean>(module.sections[i].segments.length).fill(true);
+        }
+
+        return array;
+    });
+
+    const [widthSegments, setWidthSegments] = useState<Array<number>>();
+    console.log(isHidden);
+
+    useEffect(() => {
+        const elements = document.getElementsByClassName("vertical-view__sentence") as HTMLCollectionOf<HTMLElement>;
+
+        const arrayWidths = new Array<number>();
+
+        for (let i = 0; i < elements.length; ++i) {
+            console.log(elements[i].offsetHeight);
+            arrayWidths.push(elements[i].offsetWidth);
+        }
+
+        setWidthSegments(arrayWidths);
+    }, [document.body.style.getPropertyValue("--tooltip-font-size")]);
 
     const sections = useMemo(() => {
         let fullText = "";
+        let widthIndex = 0;
 
         const sections = module.sections.map((section: Section, sectionIndex: number) => {
 
@@ -40,26 +63,36 @@ export default function VerticalView({ module, setText, audioHub }: VerticalView
                 let translationPiecies = segment.translation.split(" ");
 
                 let sentenceSpans = sentencePiecies.map((word: string, internalIndex: number) => {
-                    return getColoredSpan(word, segment.sentenceColors[internalIndex], sectionIndex, segmentIndex);
+                    return (
+                        <SpanElement
+                            content={word}
+                            colorId={segment.sentenceColors[internalIndex]}
+                            onClick={() => {
+                                updateIsHidden(state => { state[sectionIndex][segmentIndex] = false });
+                            }}></SpanElement>
+                    );
                 })
 
                 let translationSpans = translationPiecies.map((word: string, internalIndex: number) => {
-                    return getColoredSpan(word, segment.translationColors[internalIndex], sectionIndex, segmentIndex);
+                    return (
+                        <SpanElement
+                            content={word}
+                            colorId={segment.translationColors[internalIndex]}></SpanElement>
+                    );
                 })
 
-                let r = React.createRef<HTMLElement>();
-                // style={{width: console.log(r.current?.offsetWidth)}}
                 return (
                     <section className="vertical-view__segment">
-                        <section className="vertical-view__span-group" ref={r}>
+                        <section className="vertical-view__sentence">
                             {sentenceSpans}
                         </section>
-                        <Textfit mode="single" forceSingleModeWidth={false} className="vertical-view__translation">
-                            {translationSpans}
-                        </Textfit>
-                        {/* <section className="vertical-view__span-groupa translation-section">
-                            {translationSpans}
-                        </section> */}
+
+                        {widthSegments &&
+                            <Textfit mode="single" forceSingleModeWidth={false} className="vertical-view__translation" style={{ width: widthSegments[widthIndex++] }} max={22.4}>
+                                {translationSpans}
+                                {isHiddenOptions && <Button className={`view__visible-button ${isHidden[sectionIndex][segmentIndex] ? "hidden" : ""}`} onClick={() => updateIsHidden(state => { state[sectionIndex][segmentIndex] = !state[sectionIndex][segmentIndex] })}><i className="bi bi-arrow-left-right"></i></Button>}
+                            </Textfit>
+                        }
                     </section>
                 );
             });
@@ -80,20 +113,7 @@ export default function VerticalView({ module, setText, audioHub }: VerticalView
         setText(fullText);
 
         return sections;
-    }, [module]);
-
-
-    // const sections = sectionsParts.map((sectionPart: JSX.Element, index: number) => {
-    //     return (
-    //         <>
-    //             {sectionPart}
-    //             <section className="sentence translation-section">
-    //                 {translations && currentTranslationIndex[index] !== -1 && translations[index][currentTranslationIndex[index]]}
-    //                 {isHiddenOptions && <button className={`icon-exchange view-visible-button ${isHidden[index] ? "hidden" : ""}`} onClick={() => updateIsHidden(state => { state[index] = !state[index] })}></button>}
-    //             </section >
-    //         </>
-    //     );
-    // });
+    }, [module, widthSegments, isHidden]);
 
     return (
         <section className="vertical-view view-segments">
@@ -101,28 +121,5 @@ export default function VerticalView({ module, setText, audioHub }: VerticalView
                 {sections}
             </Container>
         </section>
-
-
-        // <section className={"classic-segments view-segments"}>
-        //     {sections}
-        // </section>
     );
-
-    function getSpan(content: string, additionalClassName: string, sectionIndex: number, segmentIndex: number): JSX.Element {
-        return (
-            <span key={Math.random()} className={"word " + additionalClassName} data-type="1" onClick={() => {
-                updateCurrentTranslationIndex(indexes => {
-                    indexes[sectionIndex] = segmentIndex
-                });
-                updateIsHidden(state => { state[sectionIndex] = false });
-            }}>{content}&nbsp;</span>
-        );
-    }
-
-    function getColoredSpan(content: string, colorId: number, sectionIndex: number, segmentIndex: number): JSX.Element {
-
-        let color = Colors[colorId];
-
-        return getSpan(content, color, sectionIndex, segmentIndex);
-    }
 }

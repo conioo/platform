@@ -27,4 +27,22 @@
         width: 100%;
         margin-bottom: 0.2rem;
     }
+
+    &__visible-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0 !important;
+        border: 2px solid $orange-700 !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+    }
+}
+
+.hidden {
+    opacity: 1 !important;
 }

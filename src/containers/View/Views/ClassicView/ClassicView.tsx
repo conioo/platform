@@ -126,7 +126,7 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
                     <section className="classic-view__translation-segment">
                         {translations && currentTranslationIndex[index] === -1 && translations[index]}
                         {translations && currentTranslationIndex[index] !== -1 && translations[index][currentTranslationIndex[index]]}
-                        {isHiddenOptions && <Button className={`classic-view__visible-button ${isHidden[index] ? "hidden" : ""}`} onClick={() => updateIsHidden(state => { state[index] = !state[index] })}><i className="bi bi-arrow-left-right"></i></Button>}
+                        {isHiddenOptions && <Button className={`view__visible-button ${isHidden[index] ? "hidden" : ""}`} onClick={() => updateIsHidden(state => { state[index] = !state[index] })}><i className="bi bi-arrow-left-right"></i></Button>}
                     </section >
                 </Col>
             </Row>
