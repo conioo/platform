@@ -1,9 +1,7 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+@use "../../../../styles/main";
 
 .classic-view {
-    &__column-segment
-    {
+    &__column-segment {
         display: flex;
         flex-direction: row;
     }
@@ -18,7 +16,7 @@
     &__translation-segment {
         position: relative;
         border: 1px solid black;
-        background-color: $gray-200;
+        background-color: main.$translation-segment;
         padding: 0.1rem;
         display: flex;
         flex-wrap: wrap;
@@ -34,4 +32,12 @@
 
 .hovered {
     opacity: 0.5;
+}
+
+@include main.color-mode(dark) {
+    .classic-view {
+        &__translation-segment {
+            background-color: main.$translation-segment-dark;
+        }
+    }
 }

@@ -1,7 +1,5 @@
 $orange: #fd7e14;
 
-$ee: var(--bs-orange);
-
 $orange-100: tint-color($orange, 80%);
 $orange-200: tint-color($orange, 60%);
 $orange-300: tint-color($orange, 40%);
@@ -11,6 +9,27 @@ $orange-600: shade-color($orange, 20%);
 $orange-700: shade-color($orange, 40%);
 $orange-800: shade-color($orange, 60%);
 $orange-900: shade-color($orange, 80%);
+
+$gray: #adb5bd;
+
+$gray-100: tint-color($gray, 80%);
+$gray-200: tint-color($gray, 60%);
+$gray-300: tint-color($gray, 40%);
+$gray-400: tint-color($gray, 20%);
+$gray-500: $gray;
+$gray-600: shade-color($gray, 20%);
+$gray-700: shade-color($gray, 40%);
+$gray-800: shade-color($gray, 60%);
+$gray-900: shade-color($gray, 80%);
+
+$hub-bg: whitesmoke;
+$hub-bg-dark: $gray-600;
+
+$frame-bg: white;
+$frame-bg-dark: $gray-800;
+
+$translation-segment: $gray-200;
+$translation-segment-dark: $gray-400;
 
 $primary: $orange-600;
 // $secondary: $gray-700;

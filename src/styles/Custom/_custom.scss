@@ -1,4 +1,5 @@
 // Option B: Include parts of Bootstrap
+
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 //1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "~bootstrap/scss/functions";
@@ -6,6 +7,8 @@
 // // 2. Include any default variable overrides here
 
 @import "./colors.scss";
+
+// $d: $gray-400;
 $navbar-padding-x: 2rem;
 
 $badge-font-size: 1rem;
@@ -14,7 +17,7 @@ $badge-padding-x: 0.35rem;
 $badge-padding-y: 0.35rem;
 
 $list-group-item-color-scale: 100%;
-$list-group-border-width: 2px;
+// $list-group-border-width: 2px;
 
 $tooltip-bg: none;
 $tooltip-font-size: none;

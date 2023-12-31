@@ -4,6 +4,7 @@ import languageReducer from './slices/language';
 import moduleReducer from './slices/module';
 import moduleOptionsReducer from './slices/moduleOptions';
 import folderReducer from './slices/folder';
+import application from './slices/application';
 
 const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
         language: languageReducer,
         module: moduleReducer,
         moduleOptions: moduleOptionsReducer,
-        folder: folderReducer
+        folder: folderReducer,
+        application: application
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

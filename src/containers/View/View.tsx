@@ -10,7 +10,6 @@ import { selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath, selectIsEasySpeech } from '../../redux/slices/language';
 import { selectAllOptions, setVoiceName } from '../../redux/slices/moduleOptions';
 import ChangeVoice, { ChangeVoiceRate, getEasySpeech } from '../../services/EasySpeechHandlers';
-import '../../styles/fontello/css/fontello.css';
 // import './View.scss';
 import ClassicView from './Views/ClassicView/ClassicView';
 import OverlayView from './Views/OverlayView';

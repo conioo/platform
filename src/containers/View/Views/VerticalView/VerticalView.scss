@@ -1,5 +1,4 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+@use "../../../../styles/main";
 
 .vertical-view {
     max-width: 100%;
@@ -28,7 +27,7 @@
         height: 50%;
         padding: 2px;
         border: 1px solid black;
-        background-color: $gray-200;
+        background-color: main.$translation-segment;
     }
 
     &__sentence {
@@ -36,9 +35,17 @@
         padding: 2px;
         align-items: center;
         cursor: pointer;
-
+   
         &:hover{
             opacity: 0.5;
+        }
+    }
+}
+
+@include main.color-mode(dark) {
+    .vertical-view {
+        &__translation {
+            background-color: main.$translation-segment-dark;
         }
     }
 }

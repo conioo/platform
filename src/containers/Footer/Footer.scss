@@ -1,9 +1,18 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+// @import "~bootstrap/scss/functions";
+// @import "~bootstrap/scss/variables";
+// @import "~bootstrap/scss/mixins";
+@use "../../styles/main";
 
-.footer{
+
+.footer {
     width: 100%;
     min-height: 10vh;
-    box-shadow: $box-shadow;
-    z-index: 10;
+    box-shadow: main.$box-shadow;
+    background-color: main.$frame-bg;
+}
+
+@include main.color-mode(dark) {
+    .footer {
+        background-color: main.$frame-bg-dark;
+    }
 }

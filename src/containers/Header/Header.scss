@@ -1,13 +1,15 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+// @import "~bootstrap/scss/functions";
+// @import "~bootstrap/scss/variables";
+// @import "~bootstrap/scss/mixins";
+@use "../../styles/main";
 
 .header {
     width: 100%;
     min-height: 8vh;
-    box-shadow: $box-shadow;
+    box-shadow: main.$box-shadow;
     display: flex;
     flex-direction: row;
-    background-color: $white;
+    background-color: main.$frame-bg;
     
     &__navbar {
         padding-bottom: 1rem !important;
@@ -40,6 +42,15 @@
         align-items: center;
         margin-left: auto;
         padding: 0.5rem;
-        margin-left: auto;
+    }
+
+    &__theme-icon{
+        margin-right: 1.2rem;
+    }
+}
+
+@include main.color-mode(dark) {
+    .header {
+        background-color: main.$frame-bg-dark;
     }
 }

@@ -12,7 +12,7 @@ import Record, { recordLoader } from './containers/Record';
 import View, { viewLoader } from './containers/View';
 import store from './redux/store';
 import Paths from './router/Paths';
-import './styles/main.scss';
+// import './styles/main.scss';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

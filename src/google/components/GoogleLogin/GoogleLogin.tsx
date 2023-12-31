@@ -4,9 +4,11 @@ import { useAppSelector } from '../../../redux/hook';
 import { selectIsLogin } from '../../../redux/slices/authentication';
 import { googleLogin, googleLogout } from '../../services/AuhorizationService';
 import './GoogleLogin.scss';
+import { selectDataTheme } from '../../../redux/slices/application';
 
 export default function GoogleLogin() {
     const isLogin = useAppSelector(selectIsLogin);
+    const dataTheme = useAppSelector(selectDataTheme);
 
     const handleLogin = () => {
         console.log(gapi.auth2.getAuthInstance());
@@ -22,13 +24,29 @@ export default function GoogleLogin() {
     }
 
     if (isLogin) {
-        return (
-            <Button className="" variant="outline-dark" onClick={handleLogout}>Wyloguj</Button>
-        );
+        if (dataTheme === "dark") {
+            return (
+                <Button className="" variant="outline-light" onClick={handleLogout}>Wyloguj</Button>
+            );
+        } else if (dataTheme === "light") {
+            return (
+                <Button className="" variant="outline-dark" onClick={handleLogout}>Wyloguj</Button>
+            );
+        }
+
+        return null;
     }
     else {
-        return (
-            <Button className="" variant="outline-dark" onClick={handleLogin}>Zaloguj</Button>
-        )
+        if (dataTheme === "dark") {
+            return (
+                <Button className="" variant="outline-light" onClick={handleLogin}>Zaloguj</Button>
+            )
+        } else if (dataTheme === "light") {
+            return (
+                <Button className="" variant="outline-dark" onClick={handleLogin}>Zaloguj</Button>
+            )
+        }
+        return null;
+
     }
 };
