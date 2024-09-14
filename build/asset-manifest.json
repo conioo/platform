@@ -1,19 +1,14 @@
 {
   "files": {
-    "main.css": "/platform/static/css/main.9bcec88b.css",
-    "main.js": "/platform/static/js/main.bfa1feb2.js",
-    "static/media/fontello.eot?38909909": "/platform/static/media/fontello.e47728109450349a414b.eot",
-    "static/media/fontello.ttf?38909909": "/platform/static/media/fontello.7d83cc6c4d29db3477b7.ttf",
-    "static/media/fontello.svg?38909909": "/platform/static/media/fontello.7b496e94ef337ef7fccc.svg",
-    "static/media/fontello.woff?38909909": "/platform/static/media/fontello.74269b5abdbced998685.woff",
-    "static/media/fontello.woff2?38909909": "/platform/static/media/fontello.7f9770ef65ca5cfcd984.woff2",
+    "main.css": "/platform/static/css/main.8f8368c2.css",
+    "main.js": "/platform/static/js/main.ed824ae3.js",
     "index.html": "/platform/index.html",
     "static/media/index.cjs": "/platform/static/media/index.cd351d7c31d0d3fccf96.cjs",
-    "main.9bcec88b.css.map": "/platform/static/css/main.9bcec88b.css.map",
-    "main.bfa1feb2.js.map": "/platform/static/js/main.bfa1feb2.js.map"
+    "main.8f8368c2.css.map": "/platform/static/css/main.8f8368c2.css.map",
+    "main.ed824ae3.js.map": "/platform/static/js/main.ed824ae3.js.map"
   },
   "entrypoints": [
-    "static/css/main.9bcec88b.css",
-    "static/js/main.bfa1feb2.js"
+    "static/css/main.8f8368c2.css",
+    "static/js/main.ed824ae3.js"
   ]
 }

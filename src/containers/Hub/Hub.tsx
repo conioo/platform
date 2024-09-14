@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useCookies } from 'react-cookie';
 import { ActionFunctionArgs, Outlet, ParamParseKey, Params } from 'react-router-dom';
 import { HandleGapiLoad } from '../../google/services/AuhorizationService';
@@ -55,6 +55,24 @@ export default function Hub() {
         }
     }, []);
 
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    // Funkcja do odtwarzania dźwięku
+    const playAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.play();
+            console.log('Odtwarzanie rozpoczęte.');
+        }
+    };
+
+    // Funkcja do pauzowania dźwięku
+    const pauseAudio = () => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            console.log('Odtwarzanie zatrzymane.');
+        }
+    };
+
     return (
         <>
             <Header></Header>
@@ -65,7 +83,28 @@ export default function Hub() {
 
                 <section className='hub__main-section'>
                     {/* <button onClick={() => cast()}>Zamieniamy</button> */}
-                    <Outlet/>
+
+                    <div>
+                        <h1>Odtwarzanie MP3 z Google Drive</h1>
+
+                        {/* Ukryty element audio */}
+                        {/* style={{ display: 'none' }} */}
+                        <audio ref={audioRef} controls>
+                            <source
+                                src="https://docs.google.com/uc?export=open&id=1u_ZA-KHrcnLZPriPVbRyGf1t-7X-HTYh"
+                                type="audio/mpeg"
+                            />
+                            Twoja przeglądarka nie obsługuje elementu audio.
+                        </audio>
+
+                        {/* Przycisk do odtwarzania */}
+                        <button onClick={playAudio}>Odtwórz</button>
+
+                        {/* Przycisk do zatrzymywania */}
+                        <button onClick={pauseAudio}>Pauza</button>
+                    </div>
+
+                    <Outlet />
                 </section>
 
                 <section className='hub__right-section'>

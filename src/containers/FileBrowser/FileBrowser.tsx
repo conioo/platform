@@ -6,7 +6,7 @@ import { useAsyncValue, useNavigate } from 'react-router-dom';
 import Pastemodule from '../../components/PasteModule/PasteModule';
 import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
 import RowOfModule from '../../components/RowOfModule/RowOfModule';
-import { useAppSelector } from '../../redux/hook';
+import { useAppDispatch, useAppSelector } from '../../redux/hook';
 import { selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath } from '../../redux/slices/language';
 import './FileBrowser.scss';
@@ -14,6 +14,7 @@ import { FilesInfo } from './FileBrowserSuspense';
 import { useEffect, useState } from 'react';
 import { getFilesInfo } from './FileBrowserSuspense/FileBrowserSuspense';
 import { createFolderInGoogleDrive } from '../../google/GoogleDriveAuthorizeService';
+import { setParentFolderId } from '../../redux/slices/folder';
 
 interface FileBrowserProps {
 }
@@ -26,6 +27,7 @@ export default function FileBrowser({ }: FileBrowserProps) {
     const [previousisLogin, setPreviousIsLogin] = useState(false);
 
     let isLogin = useAppSelector(selectIsLogin);
+    let dispatch = useAppDispatch();
 
     const navigate = useNavigate();
     let basePath = useSelector(selectBasePath);
@@ -74,7 +76,7 @@ export default function FileBrowser({ }: FileBrowserProps) {
             {isLogin &&
                 <section className='file-browser__button-group-section'>
                     <ButtonGroup className='file-browser__button-group'>
-                        <Button variant='warning' onClick={() => { navigate(basePath + "/record") }}>Nowy plik</Button>
+                        <Button variant='warning' onClick={() => { dispatch(setParentFolderId(filesInfo.folderId)); navigate(basePath + "/record"); }}>Nowy plik</Button>
                         <Button variant='warning' onClick={() => { createNewFolder() }}>Nowy folder</Button>
                     </ButtonGroup>
                     {hidingMode && <Button variant='secondary' className='file-browser__hiding-button' onClick={() => setHidingMode(!hidingMode)}>Ukryj moduły</Button>}

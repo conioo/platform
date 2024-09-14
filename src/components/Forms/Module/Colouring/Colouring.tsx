@@ -115,13 +115,14 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
             <ButtonGroup className='colouring__button-group'>
                 <Button type='button' variant='outline-secondary' onClick={() => { generateContentFromModule(); goBack(); }}>Wstecz</Button>
                 <Button type='button' variant='outline-secondary' onClick={() => {
-                    if (generateSegments()) {
+                    //if (generateSegments()) {
                         goNext();
-                    }
+                    //}
                 }}>Dalej</Button>
             </ButtonGroup>
         </>
     );
+//tutaj na 1 segment zmienic
 
     function generateSegments(): boolean {
         let errors = new Array<boolean>(values.module.sections.length).fill(false);
