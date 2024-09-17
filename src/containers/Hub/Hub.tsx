@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { ActionFunctionArgs, Outlet, ParamParseKey, Params } from 'react-router-dom';
 import { HandleGapiLoad } from '../../google/services/AuhorizationService';
@@ -11,160 +11,250 @@ import Language from '../../types/Language';
 import Footer from '../Footer';
 import Header from '../Header';
 import './Hub.scss';
+import { useAudioPlayer } from 'react-use-audio-player';
+
+//npm start
+//npm run deploy
 
 interface Args extends ActionFunctionArgs {
-    params: Params<ParamParseKey<typeof Paths.hub>>;
+  params: Params<ParamParseKey<typeof Paths.hub>>;
 }
 
 let firstLoaded = true;
 
 export async function loader({ params }: Args): Promise<boolean> {
-    if (firstLoaded) {
-        firstLoaded = false;
-        await FirstLoaded();
-    }
+  if (firstLoaded) {
+    firstLoaded = false;
+    await FirstLoaded();
+  }
 
-    const languageName = params.language;
+  const languageName = params.language;
 
-    if (!languageName) {
-        throw new Error("missing language");
-    }
+  if (!languageName) {
+    throw new Error("missing language");
+  }
 
-    let language = languageName as Language;
+  let language = languageName as Language;
 
-    store.dispatch(setLanguage(language));
+  store.dispatch(setLanguage(language));
 
-    return true;
+  return true;
 }
 
 async function FirstLoaded() {
-    HandleGapiLoad();
-    await EasySpeechInit();
+  HandleGapiLoad();
+  await EasySpeechInit();
 }
 
 export default function Hub() {
-    console.log("Hub");
-    //data-bs-theme="dark"
-    const [cookies] = useCookies(['view-options']);
+  console.log("Hub");
+  //data-bs-theme="dark"
+  const [cookies] = useCookies(['view-options']);
 
-    useEffect(() => {
-        const viewOptionsCookie = cookies['view-options'] as ModuleOptionsState | undefined;
+  // const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+  // const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const sourceRef = useRef<AudioBufferSourceNode | null>(null);
 
-        if (viewOptionsCookie) {
-            store.dispatch(setOptions(cookies['view-options']));
-        }
-    }, []);
+  //const { load } = useAudioPlayer();
 
-    const audioRef = useRef<HTMLAudioElement>(null);
+  //const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
-    // Funkcja do odtwarzania dźwięku
-    const playAudio = () => {
-        if (audioRef.current) {
-            audioRef.current.play();
-            console.log('Odtwarzanie rozpoczęte.');
-        }
-    };
+  // useEffect(() => {
+  //   fetchAudio();
+  // }, []);
 
-    // Funkcja do pauzowania dźwięku
-    const pauseAudio = () => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            console.log('Odtwarzanie zatrzymane.');
-        }
-    };
 
-    return (
-        <>
-            <Header></Header>
+  // useEffect(() => {
+  //   console.log("laaaaaaaaaaaaaaaaaaaaaaaaaaddddddddd");
+  //   load("https://docs.google.com/uc?export=download&id=13s1pwgpWZAbpwYgaFa_MgdxiKGOILCtX", {
+  //     autoplay: true,
+  //     onend: () => {console.log("konie")}
+  //   });
+  // }, [load]);
 
-            <section className='hub__sections'>
-                <section className='hub__left-section'>
-                </section>
+  // const loadAudio = async () => {
+  //   //if (audioContext) {
+  //   console.log("loadddd");
+  //   const response = await fetch('https://docs.google.com/uc?export=download&id=13s1pwgpWZAbpwYgaFa_MgdxiKGOILCtX', {
+  //     mode: 'no-cors'
+  //   }); // Podaj tutaj swój plik audio
+  //   console.log(response);
+  //   const arrayBuffer = await response.arrayBuffer();
+  //   //const buffer = await audioContext.decodeAudioData(arrayBuffer);
+  //   //setAudioBuffer(buffer);
+  //   //}
+  // };
 
-                <section className='hub__main-section'>
-                    {/* <button onClick={() => cast()}>Zamieniamy</button> */}
+  // // Odtwarzanie dźwięku
+  // const playAudio = () => {
+  //   if (audioContext && audioBuffer && !isPlaying) {
+  //     const source = audioContext.createBufferSource();
+  //     source.buffer = audioBuffer;
+  //     source.connect(audioContext.destination);
+  //     source.start(0);
+  //     sourceRef.current = source;
+  //     setIsPlaying(true);
 
-                    <div>
-                        <h1>Odtwarzanie MP3 z Google Drive</h1>
+  //     source.onended = () => {
+  //       setIsPlaying(false);
+  //       sourceRef.current = null;
+  //     };
+  //   }
+  // };
 
-                        {/* Ukryty element audio */}
-                        {/* style={{ display: 'none' }} */}
-                        <audio ref={audioRef} controls>
-                            <source
-                                src="https://docs.google.com/uc?export=open&id=1u_ZA-KHrcnLZPriPVbRyGf1t-7X-HTYh"
-                                type="audio/mpeg"
-                            />
-                            Twoja przeglądarka nie obsługuje elementu audio.
-                        </audio>
+  // // Pauza
+  // const pauseAudio = () => {
+  //   if (sourceRef.current && isPlaying) {
+  //     sourceRef.current.stop();
+  //     setIsPlaying(false);
+  //   }
+  // };
 
-                        {/* Przycisk do odtwarzania */}
-                        <button onClick={playAudio}>Odtwórz</button>
+  // const initializeAudioContext = () => {
+  //   console.log("iniyyyyyyyy");
 
-                        {/* Przycisk do zatrzymywania */}
-                        <button onClick={pauseAudio}>Pauza</button>
-                    </div>
+  //   //if (!audioContext) {
+  //   const context = new AudioContext();
+  //   setAudioContext(context);
+  //   loadAudio();
+  //   //}
+  // };
 
-                    <Outlet />
-                </section>
 
-                <section className='hub__right-section'>
-                </section>
-            </section>
+  useEffect(() => {
+    const viewOptionsCookie = cookies['view-options'] as ModuleOptionsState | undefined;
 
-            <Footer></Footer>
-        </>
-    );
+    if (viewOptionsCookie) {
+      store.dispatch(setOptions(cookies['view-options']));
+    }
+  }, []);
 
-    // async function cast() {
-    //     let res = await gapi.client.drive.files.list({
-    //         q: "name='module.json'",
-    //     });
-    //     let files = res.result.files;
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-    //     console.log(files);
-    //     if (!files) return;
+  // Funkcja do odtwarzania dźwięku
+  // const playAudio = () => {
+  //     if (audioRef.current) {
+  //         audioRef.current.play();
+  //         console.log('Odtwarzanie rozpoczęte.');
+  //     }
+  // };
 
-    //     for (let info of files) {
+  // // Funkcja do pauzowania dźwięku
+  // const pauseAudio = () => {
+  //     if (audioRef.current) {
+  //         audioRef.current.pause();
+  //         console.log('Odtwarzanie zatrzymane.');
+  //     }
+  // };
 
-    //         if (!info.id) { console.log("blaad"); break; }
+  return (
+    <>
+      <Header></Header>
 
-    //         let con = await gapi.client.drive.files.get({
-    //             fileId: info.id,
-    //             alt: "media"
-    //         });
+      <section className='hub__sections'>
+        <section className='hub__left-section'>
+        </section>
 
-    //         const jsonData = JSON.parse(con.body) as OldModule;
+        <section className='hub__main-section'>
+          {/* <button onClick={() => cast()}>Zamieniamy</button> */}
+          {/* <div>
+            {audioUrl ? (
+              <audio controls>
+                <source src={audioUrl} type="audio/mpeg" />
+                Twoja przeglądarka nie obsługuje elementu audio.
+              </audio>
+            ) : (
+              <p>Ładowanie pliku audio...</p>
+            )}
+          </div>
 
-    //         if (jsonData["segments"] === undefined) {
-    //             alert(jsonData);
-    //         }
+          <div>
+            <h1>Odtwarzanie MP3 z Google Drive</h1>
 
-    //         let newData = change(jsonData);
-    //         console.log(newData);
+            {/* Ukryty element audio }
+            {/* style={{ display: 'none' }} }
+            <audio ref={audioRef} controls>
+              <source
+                src="https://1drv.ms/u/c/58a52d47c2693eff/EYgBR0S8zvFOgAijEhYP1P0BAUJXTuzCgVK30Gn3dbEIEw?e=gHOV2g"
+                type="audio/mpeg"
+              />
+              Twoja przeglądarka nie obsługuje elementu audio.
+              https://docs.google.com/uc?export=download&id=13s1pwgpWZAbpwYgaFa_MgdxiKGOILCtX
 
-    //         await updateFileInGoogleDrive(info.id, newData);
-    //     }
-    // }
+            </audio>
 
-    // function change(old: OldModule): Module {
-    //     let nof = new Module();
+            <button onClick={() => { initializeAudioContext(); }}>
+              Załaduj i zainicjuj odtwarzacz
+            </button>
+            {/* Przycisk do odtwarzania }
+            <button onClick={playAudio}>Odtwórz</button>
 
-    //     nof.language = old.language;
-    //     nof.name = old.name;
-    //     nof.voiceName = old.voiceName;
-    //     nof.targetLanguage = TargetLanguage.Polish;
+            {/* Przycisk do zatrzymywania}
+            <button onClick={pauseAudio}>Pauza</button>
+          </div> */}
 
-    //     let sec = new Array<Section>();
+          <Outlet />
+        </section>
 
-    //     for (let seg of old.segments) {
-    //         let one = seg as any;
-    //         seg.translationColors = one['translationsColors'];
+        <section className='hub__right-section'>
+        </section>
+      </section>
 
-    //         sec.push(new Section([seg]));
-    //     }
+      <Footer></Footer>
+    </>
+  );
 
-    //     nof.sections = sec;
+  // async function cast() {
+  //     let res = await gapi.client.drive.files.list({
+  //         q: "name='module.json'",
+  //     });
+  //     let files = res.result.files;
 
-    //     return nof;
-    // }
+  //     console.log(files);
+  //     if (!files) return;
+
+  //     for (let info of files) {
+
+  //         if (!info.id) { console.log("blaad"); break; }
+
+  //         let con = await gapi.client.drive.files.get({
+  //             fileId: info.id,
+  //             alt: "media"
+  //         });
+
+  //         const jsonData = JSON.parse(con.body) as OldModule;
+
+  //         if (jsonData["segments"] === undefined) {
+  //             alert(jsonData);
+  //         }
+
+  //         let newData = change(jsonData);
+  //         console.log(newData);
+
+  //         await updateFileInGoogleDrive(info.id, newData);
+  //     }
+  // }
+
+  // function change(old: OldModule): Module {
+  //     let nof = new Module();
+
+  //     nof.language = old.language;
+  //     nof.name = old.name;
+  //     nof.voiceName = old.voiceName;
+  //     nof.targetLanguage = TargetLanguage.Polish;
+
+  //     let sec = new Array<Section>();
+
+  //     for (let seg of old.segments) {
+  //         let one = seg as any;
+  //         seg.translationColors = one['translationsColors'];
+
+  //         sec.push(new Section([seg]));
+  //     }
+
+  //     nof.sections = sec;
+
+  //     return nof;
+  // }
 }

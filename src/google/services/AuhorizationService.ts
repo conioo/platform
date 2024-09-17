@@ -16,7 +16,7 @@ async function initClient() {
         scope: process.env.REACT_APP_SCOPES
     });
 
-    if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+    if (gapi.auth2?.getAuthInstance()?.isSignedIn?.get()) {
         await googleLogin();
     }
     else {

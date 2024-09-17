@@ -46,7 +46,7 @@ export async function getModule(moduleId: string): Promise<Module> {
         if (!files || !files[0].id) {
             throw new Error('No files in directory');
         }
-
+//correct, all
         const getModuleUrl = `https://www.googleapis.com/drive/v3/files/${files[0].id}?alt=media&key=${process.env.REACT_APP_API_KEY}`;
 
         const fileResponse = await fetch(getModuleUrl, options);
@@ -63,6 +63,37 @@ export async function getModule(moduleId: string): Promise<Module> {
         throw error;
     }
 }
+
+export async function getAudio(audioId: string): Promise<string> {
+    try {
+      // const moduleId = 'ID_FOLDERU'; // ID folderu w Google Drive
+      // const fileListUrl = `https://www.googleapis.com/drive/v3/files?q='${moduleId}'+in+parents+and+mimeType='audio/mpeg'&key=${process.env.REACT_APP_API_KEY}&fields=files(name,id)`;
+
+      // // Pobranie listy plików z Google Drive
+      // const fileListResponse = await fetch(fileListUrl);
+      // const fileListData = await fileListResponse.json();
+      // const files = fileListData.files;
+
+      // if (!files || !files[0]?.id) {
+      //     throw new Error('Plik audio nie został znaleziony');
+      // }
+
+      // URL do pobrania pliku audio
+      const getAudioUrl = `https://www.googleapis.com/drive/v3/files/1u_ZA-KHrcnLZPriPVbRyGf1t-7X-HTYh?alt=media&key=${process.env.REACT_APP_API_KEY}`;
+
+      // Pobranie pliku audio jako blob
+      const response = await fetch(getAudioUrl);
+      const audioBlob = await response.blob();
+
+      // Stworzenie URL do bloba
+      const blobUrl = URL.createObjectURL(audioBlob);
+
+      return blobUrl;
+    } catch (error) {
+      console.error('Błąd podczas pobierania pliku audio:', error);
+      throw error;
+    }
+  }
 
 export async function getListOfFiles(folderId: string): Promise<{ files: Array<File>, folders: Array<File> } | undefined> {
 

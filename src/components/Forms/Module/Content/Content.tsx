@@ -93,12 +93,14 @@ export default function Content({ goNext }: ContentProps) {
         let content = values.content;
         let whiteRegex = new RegExp('\\s');
 
+        //remove last white signs
         while (content.length > 0 && whiteRegex.test(content[-1])) {
             content = content.slice(0, -1);
         }
 
         const newSections = content.split('\n');
 
+        //calculate old sections
         let oldSentences = new Map<string, number>();
 
         for (let i = 0; i < values.module.sections.length; ++i) {
@@ -110,6 +112,7 @@ export default function Content({ goNext }: ContentProps) {
             oldSentences.set(sentence, i)
         }
 
+        //create new(updated) module
         let newModule = new Module();
 
         newModule.language = values.module.language;
@@ -125,14 +128,17 @@ export default function Content({ goNext }: ContentProps) {
             let index = oldSentences.get(newSections[i]);
 
             if (index === undefined || changed) {
+                //new sentence
                 sentencesToTranslation.push(newSections[i]);
                 indexSentencesToTranslation.push(i);
             }
             else {
+                //old sentence
                 newModule.sections[i] = values.module.sections[index];
             }
         }
 
+        //translate new sentences
         if (sentencesToTranslation.length > 0) {
             const targetLanguage = values.module.targetLanguage;
 

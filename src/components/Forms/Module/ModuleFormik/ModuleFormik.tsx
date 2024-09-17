@@ -18,6 +18,9 @@ const segmentScheme = Yup.object({
         .required(),
     translationColors: Yup.array()
         .of(Yup.number().required())
+        .required(),
+    audioId: Yup.string()
+        .nullable()
         .required()
 });
 
