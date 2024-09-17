@@ -36,7 +36,7 @@ export default function Content({ goNext }: ContentProps) {
         });
     }, []);
 
-    console.log(changed);
+    //console.log(changed);
 
     return (<>
         <h2>Tworzenie</h2>
@@ -67,7 +67,10 @@ export default function Content({ goNext }: ContentProps) {
     }
 
     function SeparateDots() {
+        //separate dots
         let regex = new RegExp('[.]\\s+', 'g');
+        let regexQuestion = new RegExp('[?]\\s+', 'g');
+
         let textsArray = values.content.split(regex);
 
         let newContent = "";
@@ -80,6 +83,21 @@ export default function Content({ goNext }: ContentProps) {
             newContent = newContent.slice(0, -2);
         }
 
+        //separate question mark
+
+        textsArray = newContent.split(regexQuestion);
+
+        newContent = "";
+
+        for (let i = 0; i < textsArray.length; ++i) {
+            newContent += textsArray[i] + "?\n";
+        }
+
+        if (newContent) {
+            newContent = newContent.slice(0, -2);
+        }
+
+        //remowe last white signs
         let l = new RegExp('\\s');
 
         while (newContent.length > 0 && l.test(newContent[newContent.length - 1])) {
@@ -98,16 +116,24 @@ export default function Content({ goNext }: ContentProps) {
             content = content.slice(0, -1);
         }
 
-        const newSections = content.split('\n');
+        let newSections = content.split('\n');
+
+        //remove empty sections and trim white spaces
+        newSections = newSections
+            .map(str => str.trim())
+            .filter(str => str !== "");
 
         //calculate old sections
         let oldSentences = new Map<string, number>();
 
         for (let i = 0; i < values.module.sections.length; ++i) {
             let sentence = "";
+
             for (let k = 0; k < values.module.sections[i].segments.length; ++k) {
-                sentence += values.module.sections[i].segments[k].sentence;
+                sentence += values.module.sections[i].segments[k].sentence + " ";
             }
+
+            sentence = sentence.trim();
 
             oldSentences.set(sentence, i)
         }
