@@ -1,51 +1,116 @@
 import EasySpeech from 'easy-speech';
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useEasySpeechType } from "../../hooks/EasySpeech";
 import AudioInfo from "../../models/AudioInfo";
 import './AudioPlay.scss';
 import Button from 'react-bootstrap/esm/Button';
+import { useImmer } from 'use-immer';
 
 interface AudioPlayProps {
     text: string;
+    audioUrl?: string | undefined;
     managementAudio: useEasySpeechType | undefined;
 }
 
-export default function AudioPlay({ text, managementAudio }: AudioPlayProps) {
-    console.log("AudioPlay");
+export default function AudioPlay({ text, managementAudio, audioUrl }: AudioPlayProps) {
+    //const [audioElementRef, setAudioElementRef] = useState<React.RefObject<HTMLAudioElement> | undefined>(useRef<HTMLAudioElement>(null));
+    const [audioInfo, setAudioInfo] = useState<AudioInfo>(new AudioInfo(React.createRef(), !audioUrl ? undefined : React.createRef()));
+    //
+    // if (audioUrl) {
+    //     setAudioElementRef(useRef<HTMLAudioElement>(null));
+    // }
 
-    if (managementAudio === undefined) {
+    useEffect(() => {
+
+        if (audioUrl) {
+            audioInfo.audioElement = React.createRef();
+            setAudioInfo(audioInfo);
+
+            // setAudioInfo((prevState) => ({
+            //     ...prevState,
+            //     audioElement: React.createRef()
+            // }));
+
+            // setAudioInfo((draft) => {
+            //     draft.audioElement = React.createRef();
+            // });
+        }
+    }, [audioUrl]);
+
+    useEffect(() => {
+        if (managementAudio) {
+            managementAudio.addAudioInfo(audioInfo);
+        }
+    }, []);
+
+    if (managementAudio === undefined) {//zmienic wyzej
         return <div></div>
     }
 
-    let audioInfo = new AudioInfo(React.createRef());
-    managementAudio.addAudioInfo(audioInfo);
-
+    // style={{ display: 'none' }}
     return (
-        <Button className='audio-play' variant='outline-dark' onClick={() => onPlayHandle(text, audioInfo, managementAudio)}><i className="bi bi-play-fill" ref={audioInfo.refToAudio}></i></Button>
+        <>
+            {
+                audioInfo.audioElement &&
+                <audio ref={audioInfo.audioElement} controls style={{ display: 'none' }}>
+                    <source
+                        src={audioUrl}
+                        type="audio/mpeg"
+                    />
+                </audio>
+            }
+            <Button className='audio-play' variant='outline-dark' onClick={() => onPlayHandle(text, audioInfo, managementAudio)}><i className="bi bi-play-fill" ref={audioInfo.audioButton}></i></Button>
+        </>
     )
 }
 
 function onPlayHandle(text: string, audioInfo: AudioInfo, managementAudio: useEasySpeechType) {
+
+    var hasBetterAudio = audioInfo.audioElement ? true : false;
+
     if (audioInfo.isSpeaking) {
-        EasySpeech.pause();
+
+        if (hasBetterAudio) {
+
+            audioInfo.audioElement?.current?.pause();
+        } else {
+
+            EasySpeech.pause();
+        }
 
         audioInfo.isSpeaking = false;
         audioInfo.isPause = true;
 
-        audioInfo.refToAudio.current?.classList.remove("bi-pause-fill");
-        audioInfo.refToAudio.current?.classList.add("bi-play-fill");
+        audioInfo.audioButton.current?.classList.remove("bi-pause-fill");
+        audioInfo.audioButton.current?.classList.add("bi-play-fill");
     }
     else {
-        audioInfo.refToAudio.current?.classList.add("bi-pause-fill");
-        audioInfo.refToAudio.current?.classList.remove("bi-play-fill");
+        audioInfo.audioButton.current?.classList.add("bi-pause-fill");
+        audioInfo.audioButton.current?.classList.remove("bi-play-fill");
 
         if (audioInfo.isPause) {
-            EasySpeech.resume();
+
+            if (hasBetterAudio) {
+
+                audioInfo.audioElement?.current?.play();
+            } else {
+
+                EasySpeech.resume();
+            }
+
             audioInfo.isPause = false;
         }
         else {
             managementAudio.reset();
-            EasySpeech.speak({ text });
+
+            if (hasBetterAudio) {
+
+                audioInfo.audioElement?.current?.play();
+            } else {
+
+                //console.log(text);
+                EasySpeech.speak({ text });
+            }
         }
 
         audioInfo.isSpeaking = true;

@@ -19,10 +19,11 @@ import { getAudio } from '../../../../google/GoogleDriveService';
 interface ClassicViewProps {
     module: Module;
     audioHub?: useEasySpeechType;
+    audioUrl: Array<string | undefined>;
     setText: (text: string) => void;
 }
 
-export default function ClassicView({ module, setText, audioHub }: ClassicViewProps) {
+export default function ClassicView({ module, setText, audioHub, audioUrl }: ClassicViewProps) {
     console.log("ClassicView");
     const isHiddenOptions = useAppSelector((state) => state.moduleOptions.isHidden);
 
@@ -30,37 +31,21 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
     const [currentTranslationIndex, updateCurrentTranslationIndex] = useImmer<Array<number>>(new Array<number>(module.sections.length).fill(-1));
     const [isHidden, updateIsHidden] = useImmer<Array<boolean>>(new Array<boolean>(module.sections.length).fill(isHiddenOptions));
 
-    const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
+    // const audioRef = useRef<HTMLAudioElement>(null);
 
-    const audioRef = useRef<HTMLAudioElement>(null);
+    // const playAudio = () => {
+    //     if (audioRef.current) {
+    //         audioRef.current.play();
+    //         console.log('Odtwarzanie rozpoczęte.');
+    //     }
+    // };
 
-    const playAudio = () => {
-        if (audioRef.current) {
-            audioRef.current.play();
-            console.log('Odtwarzanie rozpoczęte.');
-        }
-    };
-  
-    const pauseAudio = () => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            console.log('Odtwarzanie zatrzymane.');
-        }
-    };
-    
-    useEffect(() => {
-        const fetchAudio = async () => {
-            try {
-                const url = await getAudio("d");
-                console.log(url);
-                setAudioUrl(url);
-            } catch (error) {
-                console.error('Błąd podczas pobierania pliku audio', error);
-            }
-        };
-
-        fetchAudio();
-    }, []);
+    // const pauseAudio = () => {
+    //     if (audioRef.current) {
+    //         audioRef.current.pause();
+    //         console.log('Odtwarzanie zatrzymane.');
+    //     }
+    // };
 
     const sectionsParts = useMemo(() => {
         let translations = new Array<Array<JSX.Element>>();
@@ -121,7 +106,7 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
             return (
                 [
                     (<section key={sectionIndex} className='classic-view__audioplay-container'>
-                        <AudioPlay text={fullSentence} managementAudio={audioHub}></AudioPlay>
+                        <AudioPlay text={fullSentence} managementAudio={audioHub} audioUrl={audioUrl[sectionIndex]}></AudioPlay>
                     </section>),
                     (<section className="classic-view__sentence-segment">
                         {segments}
@@ -135,7 +120,7 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
 
         return sections;
 
-    }, [module]);
+    }, [module, audioUrl]);
 
     const sections = sectionsParts.map((sectionParts: JSX.Element[], index: number) => {
 
@@ -179,7 +164,7 @@ export default function ClassicView({ module, setText, audioHub }: ClassicViewPr
             ) : (
               <p>Ładowanie pliku audio...</p>
             )} */}
- {/* style={{ display: 'none' }} */}
+            {/* style={{ display: 'none' }} */}
             {/* <div>
                 <h1>Odtwarzanie MP3 z Google Drive</h1>
 

@@ -61,9 +61,9 @@ export default function ModuleForm() {
 
     return (
         <section className="module-form">
-            {FormState === "content" && <Content goNext={goToColouring}></Content>}
-            {FormState === "colouring" && <Colouring goNext={goToButtons} goBack={goToContent}></Colouring>}
-            {FormState === "buttons" && <Buttons goNext={goToSaving} goBack={goToColouring}></Buttons>}
+            {FormState === "content" && <Content goNext={goToButtons}></Content>}
+            {FormState === "buttons" && <Buttons goNext={goToColouring} goBack={goToContent}></Buttons>}
+            {FormState === "colouring" && <Colouring goNext={goToSaving} goBack={goToButtons}></Colouring>}
             {/* {FormState === "segmeting" && <Segmenting goNext={goToColouring} goBack={goToButtons}></Segmenting>} */}
             {/* {FormState === "colouring" && <Colouring goNext={goToSaving} goBack={goToColouring}></Colouring>} */}
             {FormState === "saving" && <Saving goBack={goToButtons}></Saving>}

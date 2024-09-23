@@ -61,7 +61,7 @@ export default function Buttons({ goNext, goBack }: ButtonsProps) {
     );
 
     function handleSentenceSegmentChanged(innerHTML: string, sectionIndex: number, segmentIndex: number) {
-        let newValue = sanitizeHtml(innerHTML);
+        let newValue = sanitizeHtml(innerHTML).trim();
 
         let newLength = newValue.split(" ").length;
 
@@ -74,7 +74,7 @@ export default function Buttons({ goNext, goBack }: ButtonsProps) {
     }
 
     function handleTranslationSegmentChanged(innerHTML: string, sectionIndex: number, segmentIndex: number) {
-        let newValue = sanitizeHtml(innerHTML);
+        let newValue = sanitizeHtml(innerHTML).trim();
 
         let newLength = newValue.split(" ").length;
 

@@ -27,7 +27,7 @@ export default function RowOfModule({ file, isLogin, basePath, hidingMode, updat
                     hideFile(file.id).then(() => updateListOfFiles().then(() => setIsWorking(false)));
                 }
                 else {
-                    shareFile(file.id).then(() => updateListOfFiles().then(() => setIsWorking(false)));
+                    shareFile(file.id).then(() => updateListOfFiles().then(() => setIsWorking(false)));//correct
                 }
 
             } else {

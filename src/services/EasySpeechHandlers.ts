@@ -77,26 +77,35 @@ export async function ChangeVoiceRate(rate: number) {
 
 export function getEasySpeech(): useEasySpeechType | undefined {
 
-    let audioInfoArray = new Array<AudioInfo>();//zewnatrz
+    let audioInfoArray = new Array<AudioInfo>();
 
     const addAudioInfo = (audioInfo: AudioInfo): void => {
         audioInfoArray.push(audioInfo);
     };
 
     const reset = () => {
+        //EasySpeech.pause();
         EasySpeech.cancel();
 
         for (let audioInfo of audioInfoArray) {
             if (audioInfo.isSpeaking) {
-                audioInfo.refToAudio.current?.classList.remove("bi-pause-fill");
-                audioInfo.refToAudio.current?.classList.add("bi-play-fill");
+                audioInfo.audioButton.current?.classList.remove("bi-pause-fill");
+                audioInfo.audioButton.current?.classList.add("bi-play-fill");
                 audioInfo.isSpeaking = false;
+
+                if (audioInfo.audioElement) {
+                    audioInfo.audioElement?.current?.pause();
+
+                    if (audioInfo.audioElement?.current?.currentTime) {
+                        audioInfo.audioElement.current.currentTime = 0;
+                    }
+                }
             }
         }
     };
 
     const handleEnd = () => {
-        console.log(audioInfoArray);
+        //console.log(audioInfoArray);
         reset();
     };
 

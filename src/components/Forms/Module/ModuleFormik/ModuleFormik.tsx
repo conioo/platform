@@ -19,14 +19,14 @@ const segmentScheme = Yup.object({
     translationColors: Yup.array()
         .of(Yup.number().required())
         .required(),
-    audioId: Yup.string()
-        .nullable()
-        .required()
 });
 
 const sectionScheme = Yup.object().shape({
     segments: Yup.array()
         .of(segmentScheme)
+        .required(),
+    audioId: Yup.string()
+        .nullable()//.notRequired()l;
         .required()
 });
 

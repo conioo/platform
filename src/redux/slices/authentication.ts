@@ -3,7 +3,8 @@ import type { RootState } from '../store'
 
 class AuthenticationState {
     isLogin?: boolean = undefined;
-    deeplToken: string = "";
+    isAdmin: boolean = false;
+    deeplToken?: string = undefined;
 }
 
 export const authenticationSlice = createSlice({
@@ -11,34 +12,50 @@ export const authenticationSlice = createSlice({
     initialState: new AuthenticationState(),
     reducers: {
         login: {
-            reducer(state, action: PayloadAction<string>) {
-                return { ...state, isLogin: true, deeplToken: action.payload }
+            reducer(state, action: PayloadAction<{ deeplToken: string | undefined, isAdmin: boolean }>) {
+                return { ...state, isLogin: true, deeplToken: action.payload.deeplToken, isAdmin: action.payload.isAdmin }
             },
-            prepare(deeplToken: string) {
+            prepare(deeplToken: string | undefined = undefined, isAdmin: boolean = false) {
                 return {
-                    payload: deeplToken,
+                    payload: { deeplToken, isAdmin },
                 }
             }
         },
         logout: (state) => {
-            return { ...state, isLogin: false }
+            return { ...state, isLogin: false, isAdmin: false }
         },
         setIsLogin: {
             reducer(state, action: PayloadAction<boolean>) {
-                return { ...state, isLogin: action.payload}
+                if (action.payload) {
+                    return { ...state, isLogin: action.payload }
+
+                } else {
+                    return { ...state, isLogin: action.payload, isAdmin: false }
+                }
             },
             prepare(isLogin: boolean) {
                 return {
                     payload: isLogin,
                 }
             }
+        },
+        setIsAdmin: {
+            reducer(state, action: PayloadAction<boolean>) {
+                return { ...state, isAdmin: action.payload }
+            },
+            prepare(isAdmin: boolean) {
+                return {
+                    payload: isAdmin,
+                }
+            }
         }
     },
 })
 
-export const { login, logout, setIsLogin } = authenticationSlice.actions
+export const { login, logout, setIsLogin, setIsAdmin } = authenticationSlice.actions
 
 export const selectIsLogin = (state: RootState) => state.authentication.isLogin
+export const selectIsAdmin = (state: RootState) => state.authentication.isAdmin
 export const selectDeeplToken = (state: RootState) => state.authentication.deeplToken
 export const selectAuthentication = (state: RootState) => state.authentication
 

@@ -6,7 +6,7 @@ import { useAsyncValue, useNavigate } from 'react-router-dom';
 import AudioPlay from '../../components/AudioPlay/AudioPlay';
 import SettingsModal from '../../components/SettingsModal/SettingsModal';
 import Module from '../../models/Module';
-import { selectIsLogin } from '../../redux/slices/authentication';
+import { selectIsAdmin, selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath, selectIsEasySpeech } from '../../redux/slices/language';
 import { selectAllOptions, setVoiceName } from '../../redux/slices/moduleOptions';
 import ChangeVoice, { ChangeVoiceRate, getEasySpeech } from '../../services/EasySpeechHandlers';
@@ -14,6 +14,8 @@ import ChangeVoice, { ChangeVoiceRate, getEasySpeech } from '../../services/Easy
 import ClassicView from './Views/ClassicView/ClassicView';
 import OverlayView from './Views/OverlayView';
 import VerticalView from './Views/VerticalView';
+import { getAudio } from '../../google/GoogleDriveService';
+import { useImmer } from 'use-immer';
 
 interface ViewProps {
     fileId: string;
@@ -27,15 +29,19 @@ export default function View({ fileId }: ViewProps): JSX.Element {
     const module = useAsyncValue() as Module;
     const isEasySpeech = useSelector(selectIsEasySpeech);
 
-    const [audioHub, setAudioHub] = useState(isEasySpeech ? getEasySpeech : undefined);
+    const [audioHub, setAudioHub] = useState(isEasySpeech ? getEasySpeech : undefined);//change
     const [showModal, setShowModal] = useState(false);
     const [text, setText] = useState<string>("");
+
+    const [betterAudioUrl, setBetterAudioUrl] = useImmer<Array<string | undefined>>(Array<string | undefined>(module.sections.length));
 
     let store = useStore();
 
     const navigate = useNavigate();
     const basePath = useSelector(selectBasePath);
-    const isLogin = useSelector(selectIsLogin);
+    const isAdmin = useSelector(selectIsAdmin);
+
+    console.log(module);
 
     useEffect(() => {
         store.dispatch(setVoiceName(module.voiceName));
@@ -48,6 +54,18 @@ export default function View({ fileId }: ViewProps): JSX.Element {
     useEffect(() => {
         ChangeVoice(voiceName);
     }, [voiceName])
+
+    useEffect(() => {
+//
+        for (let i = 0; i < module.sections.length; ++i) {
+            //console.log(module.sections[i].audioId);
+            if (module.sections[i].audioId)// !== undefined && module.sections[i].audioId !== ""
+            {
+                setAudioUrl(module.sections[i].audioId, i);
+            }
+        }
+
+    }, []);
 
     return (
         <>
@@ -62,12 +80,12 @@ export default function View({ fileId }: ViewProps): JSX.Element {
             <AudioPlay key={"fullText"} text={text} managementAudio={audioHub}></AudioPlay>
 
             <section className='view__options'>
-                {isLogin && <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => { navigate(basePath + "/modify/" + fileId, { state: { toMainPage: true } }) }}><i className="bi bi-gear-fill"></i></Button>}
+                {isAdmin && <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => { navigate(basePath + "/modify/" + fileId, { state: { toMainPage: true } }) }}><i className="bi bi-gear-fill"></i></Button>}
                 <Button className='base-icon-button view__option-button' variant='outline-secondary' onClick={() => setShowModal(true)}><i className="bi bi-sliders"></i></Button>
                 {showModal && <SettingsModal defaultVoiceName={module.voiceName} handleClose={closeModal} show={showModal}></SettingsModal>}
             </section >
 
-            {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub}></ClassicView>}
+            {displayMode === "classic" && <ClassicView module={module} setText={setText} audioHub={audioHub} audioUrl={betterAudioUrl}></ClassicView>}
             {displayMode === "vertical" && <VerticalView module={module} setText={setText} audioHub={audioHub}></VerticalView>}
             {displayMode === "overlay" && <OverlayView module={module} setText={setText} audioHub={audioHub}></OverlayView>}
         </>
@@ -86,5 +104,19 @@ export default function View({ fileId }: ViewProps): JSX.Element {
 
     function closeModal() {
         setShowModal(false);
+    }
+
+    async function setAudioUrl(audioUrl: string, index: number) {
+        //console.log("urlssss");
+        const url = await getAudio(audioUrl);
+
+        //console.log(url);
+
+        //betterAudioUrl[index] = url;
+
+        setBetterAudioUrl(draft => {
+            draft[index] = url;  // Modyfikujesz stan bezpośrednio w draft
+        });
+        //setBetterAudioUrl((state) => { state[index] = url });
     }
 }

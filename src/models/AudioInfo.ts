@@ -1,10 +1,13 @@
 export default class AudioInfo{
     isSpeaking: boolean = false;
-    refToAudio: React.RefObject<HTMLButtonElement>;
+    audioButton: React.RefObject<HTMLButtonElement>;
+    audioElement: React.RefObject<HTMLAudioElement> | undefined;
+
     isPause: boolean = false;
 
-    constructor(refToAudio: React.RefObject<HTMLButtonElement>)
+    constructor(audioButton: React.RefObject<HTMLButtonElement>, audioElement: React.RefObject<HTMLAudioElement> | undefined  = undefined)
     {
-        this.refToAudio = refToAudio;
+        this.audioButton = audioButton;
+        this.audioElement = audioElement;
     }
 }

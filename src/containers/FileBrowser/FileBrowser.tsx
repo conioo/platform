@@ -7,7 +7,7 @@ import Pastemodule from '../../components/PasteModule/PasteModule';
 import RowOfFolder from '../../components/RowOfFolder/RowOfFolder';
 import RowOfModule from '../../components/RowOfModule/RowOfModule';
 import { useAppDispatch, useAppSelector } from '../../redux/hook';
-import { selectIsLogin } from '../../redux/slices/authentication';
+import { selectIsAdmin, selectIsLogin } from '../../redux/slices/authentication';
 import { selectBasePath } from '../../redux/slices/language';
 import './FileBrowser.scss';
 import { FilesInfo } from './FileBrowserSuspense';
@@ -26,7 +26,7 @@ export default function FileBrowser({ }: FileBrowserProps) {
     const [hidingMode, setHidingMode] = useState(false);
     const [previousisLogin, setPreviousIsLogin] = useState(false);
 
-    let isLogin = useAppSelector(selectIsLogin);
+    let isAdmin = useAppSelector(selectIsAdmin);
     let dispatch = useAppDispatch();
 
     const navigate = useNavigate();
@@ -39,26 +39,26 @@ export default function FileBrowser({ }: FileBrowserProps) {
     // if (language === Language.Spanish) {
     //     return (
     //         <>
-    //             <h2>Język Hiszpański dostępny dla użytkowników z subskrypcją premium </h2>
-    //             <button onClick={() => alert("Kartofle")}>Wykup Substrypcje</button>
+    //             <h2>Język Hiszpański dostępny dla użytkowników z usługą premium </h2>
+    //             <button onClick={() => alert("Kartofle")}>Wykup Subskrypcje</button>
     //         </>
     //     )
     // }
 
     useEffect(() => {
         updateListOfFiles();
-    }, [isLogin]);
+    }, [isAdmin]);
 
     if (filesInfo !== undefined) {
         listOfNameFiles = filesInfo.files.map((file, index) => {
             return (
-                <RowOfModule isLogin={isLogin ? isLogin : false} file={file} basePath={basePath} key={index + "mod"} hidingMode={hidingMode} updateListOfFiles={updateListOfFiles}></RowOfModule>
+                <RowOfModule isLogin={isAdmin ? isAdmin : false} file={file} basePath={basePath} key={index + "mod"} hidingMode={hidingMode} updateListOfFiles={updateListOfFiles}></RowOfModule>
             );
         });
 
         listOfNameFolders = filesInfo.folders.map((folder, index) => {
             return (
-                <RowOfFolder isLogin={isLogin ? isLogin : false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} key={index + "fol"} hidingMode={hidingMode} updateListOfFiles={updateListOfFiles}></RowOfFolder>
+                <RowOfFolder isLogin={isAdmin ? isAdmin : false} folder={folder} basePath={basePath} fullPath={filesInfo.fullPath} key={index + "fol"} hidingMode={hidingMode} updateListOfFiles={updateListOfFiles}></RowOfFolder>
             );
         });
     }
@@ -73,7 +73,7 @@ export default function FileBrowser({ }: FileBrowserProps) {
 
             <Pastemodule updateListOfFiles={updateListOfFiles} targetFolderId={filesInfo.folderId}></Pastemodule>
 
-            {isLogin &&
+            {isAdmin &&
                 <section className='file-browser__button-group-section'>
                     <ButtonGroup className='file-browser__button-group'>
                         <Button variant='warning' onClick={() => { dispatch(setParentFolderId(filesInfo.folderId)); navigate(basePath + "/record"); }}>Nowy plik</Button>

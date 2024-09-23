@@ -46,7 +46,7 @@ export default function ViewSuspense(): JSX.Element {
                 <Await
                     resolve={data.module}
                     errorElement={
-                        <p>Error loading module</p>
+                        <p>Error loading module (Log in to make work)</p>
                     }>
                     <View fileId={data.fileId}></View>
                 </Await>

@@ -135,6 +135,7 @@ export default function Content({ goNext }: ContentProps) {
 
             sentence = sentence.trim();
 
+
             oldSentences.set(sentence, i)
         }
 
