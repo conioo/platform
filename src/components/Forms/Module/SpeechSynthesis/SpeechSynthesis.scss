@@ -1,0 +1,69 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.synthesis {
+
+    &__voices-code {
+        margin: 1rem !important;
+    }
+
+    &__voices-name {
+        margin: 1rem !important;
+    }
+
+    &__voices-default {
+        margin: 1rem !important;
+    }
+
+    &__voices-generate {}
+
+    &__buttons {
+        margin-top: 1rem !important;
+    }
+
+    &__chars {
+        margin: 1rem !important;
+    }
+
+    &__info-table {
+        margin: 1rem !important;
+    }
+
+    // &__segment {
+    //     display: flex;
+    //     flex-direction: column;
+    //     margin: 0.2rem;
+    //     border: 1px $dark solid;
+    //     background-color: $gray-200;
+    //     border-radius: 0.1rem;
+    //     padding-left: 0.2rem;
+    //     padding-right: 0.2rem;
+    //     cursor: text;
+    // }
+
+    // &__modified{
+    //     background-color: $red-200;
+    // }
+
+
+
+    // &__section {
+    //     display: flex;
+    //     flex-direction: row;
+    //     flex-wrap: wrap;
+    // }
+
+    // &__sections {
+    //     max-width: 100%;
+    //     overflow: hidden;
+    // }
+
+    // &__editable {
+    //     padding: 0.1rem;
+    //     padding-left: 0.4rem;
+    //     padding-right: 0.4rem;
+    //     &:focus {
+    //         background-color: $orange-100;
+    //     }
+    // }
+}

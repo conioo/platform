@@ -11,7 +11,15 @@
         border-radius: 0.1rem;
         padding-left: 0.2rem;
         padding-right: 0.2rem;
-        cursor: pointer;
+        cursor: text;
+    }
+
+    &__modified{
+        background-color: $red-200;
+    }
+
+    &__buttons{
+        margin-top: 1rem !important;
     }
 
     &__section {
@@ -29,9 +37,8 @@
         padding: 0.1rem;
         padding-left: 0.4rem;
         padding-right: 0.4rem;
-
         &:focus {
-            background-color: $gray-100;
+            background-color: $orange-100;
         }
     }
 }

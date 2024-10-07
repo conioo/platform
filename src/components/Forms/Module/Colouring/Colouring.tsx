@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/esm/Button';
 import ButtonGroup from 'react-bootstrap/esm/ButtonGroup';
 import SpanElement from '../../../../containers/View/Views/Common/SpanElement';
 import classNames from 'classnames';
+import { synthesizeText } from '../../../../google/GoogleDriveAuthorizeService';
 
 interface ColouringProps {
     goNext: () => void;
@@ -112,17 +113,19 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
                 {sections}
             </section>
 
+
+
             <ButtonGroup className='colouring__button-group'>
-                <Button type='button' variant='outline-secondary' onClick={() => { generateContentFromModule(); goBack(); }}>Wstecz</Button>
+                <Button type='button' variant='outline-secondary' onClick={() => { goBack(); }}>Wstecz</Button>
                 <Button type='button' variant='outline-secondary' onClick={() => {
                     //if (generateSegments()) {
-                        goNext();
+                    goNext();
                     //}
                 }}>Dalej</Button>
             </ButtonGroup>
         </>
     );
-//tutaj na 1 segment zmienic
+    //tutaj na 1 segment zmienic
 
     function generateSegments(): boolean {
         let errors = new Array<boolean>(values.module.sections.length).fill(false);
@@ -278,21 +281,7 @@ export default function Colouring({ goNext, goBack }: ColouringProps) {
         }
     }
 
-    function generateContentFromModule() {
-        let newContent = "";
-
-        for (const section of values.module.sections) {
-            for (const segment of section.segments) {
-                newContent += segment.sentence;
-            }
-
-            newContent += "\n";
-        }
-
-        newContent = newContent.slice(0, -1);
-
-        setFieldValue(`content`, newContent);
-    }
+    
 
     function onSentenceColorChanged(sectionIndex: number, segmentIndex: number, wordIndex: number) {
         setFieldValue(`module.sections[${sectionIndex}].segments[${segmentIndex}].sentenceColors[${wordIndex}]`, currentColorIndex);

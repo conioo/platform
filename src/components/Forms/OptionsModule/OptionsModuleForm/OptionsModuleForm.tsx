@@ -15,19 +15,26 @@ interface OptionsModuleFormikProps {
     closeModal: () => void;
     defaultVoiceName: string;
     show: boolean;
+    betterVoiceName?: string;
 }
 
-export default function OptionsModuleForm({ show, closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
+export default function OptionsModuleForm({ show, closeModal, defaultVoiceName, betterVoiceName }: OptionsModuleFormikProps) {
     const { values, errors, submitForm, setFieldValue, isSubmitting } = useFormikContext<ModuleOptionsState>();
 
     let languageState = useSelector(selectLanguageState);
     let voiceOptions: (JSX.Element | undefined)[] = new Array<undefined>();
-    
+
     useEffect(() => {
         if (isSubmitting === false) {
             ErrorAlerts(errors);
         }
     }, [isSubmitting]);
+
+    useEffect(() => {
+        if (!values.voiceName) {
+            setFieldValue('voiceName', betterVoiceName ? betterVoiceName : defaultVoiceName);
+        }
+    }, []);
 
     if (languageState.language === Language.English) {
         if (languageState.englishVoices !== undefined) {
@@ -47,6 +54,10 @@ export default function OptionsModuleForm({ show, closeModal, defaultVoiceName }
                 return <option value={voice.name} key={index}>{voice.name}</option>
             });
         }
+    }
+
+    if (betterVoiceName) {
+        voiceOptions = [<option value={betterVoiceName} key={0}>{betterVoiceName}</option>];
     }
 
     const viewModes = useMemo(() => {
@@ -86,7 +97,7 @@ export default function OptionsModuleForm({ show, closeModal, defaultVoiceName }
                     <section className='options-module-form__voices'>
                         <h6>Wybierz głos: </h6>
                         <Form.Label className='options-module-form__voices-label'>
-                            <Field as="select" name="voiceName" className="form-select options-module-form__voices-field" default={values.voiceName}>
+                            <Field as="select" name="voiceName" className="form-select options-module-form__voices-field" default={betterVoiceName ? betterVoiceName : values.voiceName}>
                                 {voiceOptions}
                             </Field>
                         </Form.Label>
@@ -113,6 +124,6 @@ export default function OptionsModuleForm({ show, closeModal, defaultVoiceName }
         setFieldValue(`displayMode`, 'classic');
         setFieldValue(`playBackSpeed`, 1);
         setFieldValue('isHidden', true);
-        setFieldValue('voiceName', defaultVoiceName);
+        setFieldValue('voiceName', betterVoiceName ? betterVoiceName : defaultVoiceName);
     }
 }

@@ -18,8 +18,8 @@ import { getAudio } from '../../../../google/GoogleDriveService';
 
 interface ClassicViewProps {
     module: Module;
-    audioHub?: useEasySpeechType;
-    audioUrl: Array<string | undefined>;
+    audioHub: useEasySpeechType;
+    audioUrl?: Array<string | undefined>;
     setText: (text: string) => void;
 }
 
@@ -31,21 +31,6 @@ export default function ClassicView({ module, setText, audioHub, audioUrl }: Cla
     const [currentTranslationIndex, updateCurrentTranslationIndex] = useImmer<Array<number>>(new Array<number>(module.sections.length).fill(-1));
     const [isHidden, updateIsHidden] = useImmer<Array<boolean>>(new Array<boolean>(module.sections.length).fill(isHiddenOptions));
 
-    // const audioRef = useRef<HTMLAudioElement>(null);
-
-    // const playAudio = () => {
-    //     if (audioRef.current) {
-    //         audioRef.current.play();
-    //         console.log('Odtwarzanie rozpoczęte.');
-    //     }
-    // };
-
-    // const pauseAudio = () => {
-    //     if (audioRef.current) {
-    //         audioRef.current.pause();
-    //         console.log('Odtwarzanie zatrzymane.');
-    //     }
-    // };
 
     const sectionsParts = useMemo(() => {
         let translations = new Array<Array<JSX.Element>>();
@@ -57,11 +42,13 @@ export default function ClassicView({ module, setText, audioHub, audioUrl }: Cla
 
             let fullSentence = "";
 
+            //one segment
             const segments = section.segments.map((segment: Segment, segmentIndex: number) => {
                 fullSentence += segment.sentence + " ";
 
                 let wordPiecies = segment.sentence.split(" ");
 
+                //one word
                 let allWords = wordPiecies.map((word: string, internalIndex: number) => {
                     return <HoverElement
                         updateCurrentTranslationIndex={updateCurrentTranslationIndex}
@@ -79,6 +66,7 @@ export default function ClassicView({ module, setText, audioHub, audioUrl }: Cla
                     return (<SpanElement
                         content={meaning}
                         colorId={segment.translationColors[internalIndex]}
+                        key={internalIndex}
                         onClick={() => {
                             updateCurrentTranslationIndex(indexes => {
                                 indexes[sectionIndex] = segmentIndex
@@ -103,12 +91,15 @@ export default function ClassicView({ module, setText, audioHub, audioUrl }: Cla
                 // console.log(fullSentence.length);
             }
 
+            // console.log(sectionIndex);
+            // console.log(audioUrl);
+
             return (
                 [
                     (<section key={sectionIndex} className='classic-view__audioplay-container'>
-                        <AudioPlay text={fullSentence} managementAudio={audioHub} audioUrl={audioUrl[sectionIndex]}></AudioPlay>
+                        <AudioPlay id={sectionIndex} key={sectionIndex + "a"} text={fullSentence} managementAudio={audioHub} audioUrl={audioUrl ? audioUrl[sectionIndex] : undefined}></AudioPlay>
                     </section>),
-                    (<section className="classic-view__sentence-segment">
+                    (<section key={sectionIndex + "b"} className="classic-view__sentence-segment">
                         {segments}
                     </section>)
                 ]
@@ -126,7 +117,7 @@ export default function ClassicView({ module, setText, audioHub, audioUrl }: Cla
 
         if (sectionParts.length === 0) {
             return (
-                <Row>
+                <Row key={index}>
                     <Col sm={12} md={6} className="classic-view__column-segment">
                         &nbsp;
                     </Col>
@@ -137,7 +128,7 @@ export default function ClassicView({ module, setText, audioHub, audioUrl }: Cla
         }
 
         return (
-            <Row>
+            <Row key={index}>
                 <Col sm={12} md={6} className="classic-view__column-segment">
                     {sectionParts}
                 </Col>

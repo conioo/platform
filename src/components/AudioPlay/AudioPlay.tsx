@@ -4,38 +4,25 @@ import { useEasySpeechType } from "../../hooks/EasySpeech";
 import AudioInfo from "../../models/AudioInfo";
 import './AudioPlay.scss';
 import Button from 'react-bootstrap/esm/Button';
-import { useImmer } from 'use-immer';
+import { useSelector } from 'react-redux';
+import { selectAllOptions } from '../../redux/slices/moduleOptions';
+import { selectIsEasySpeech } from '../../redux/slices/language';
 
 interface AudioPlayProps {
     text: string;
     audioUrl?: string | undefined;
-    managementAudio: useEasySpeechType | undefined;
+    managementAudio: useEasySpeechType;
+    id: number;
+    isFullAudio?: boolean;
 }
 
-export default function AudioPlay({ text, managementAudio, audioUrl }: AudioPlayProps) {
-    //const [audioElementRef, setAudioElementRef] = useState<React.RefObject<HTMLAudioElement> | undefined>(useRef<HTMLAudioElement>(null));
-    const [audioInfo, setAudioInfo] = useState<AudioInfo>(new AudioInfo(React.createRef(), !audioUrl ? undefined : React.createRef()));
-    //
-    // if (audioUrl) {
-    //     setAudioElementRef(useRef<HTMLAudioElement>(null));
-    // }
+export default function AudioPlay({ text, managementAudio, audioUrl, id, isFullAudio }: AudioPlayProps) {
 
-    useEffect(() => {
+    const [audioInfo, setAudioInfo] = useState<AudioInfo>(new AudioInfo(id, React.createRef(), !audioUrl ? undefined : React.createRef()));
 
-        if (audioUrl) {
-            audioInfo.audioElement = React.createRef();
-            setAudioInfo(audioInfo);
-
-            // setAudioInfo((prevState) => ({
-            //     ...prevState,
-            //     audioElement: React.createRef()
-            // }));
-
-            // setAudioInfo((draft) => {
-            //     draft.audioElement = React.createRef();
-            // });
-        }
-    }, [audioUrl]);
+    //console.log(audioUrl);
+    let { playBackSpeed } = useSelector(selectAllOptions);
+    //const isEasySpeech = useSelector(selectIsEasySpeech);
 
     useEffect(() => {
         if (managementAudio) {
@@ -43,28 +30,67 @@ export default function AudioPlay({ text, managementAudio, audioUrl }: AudioPlay
         }
     }, []);
 
-    if (managementAudio === undefined) {//zmienic wyzej
-        return <div></div>
-    }
+    useEffect(() => {
+        if (audioInfo.audioElement?.current) {
+            audioInfo.audioElement.current.playbackRate = playBackSpeed;
+        }
+
+    }, [playBackSpeed, audioInfo.audioElement?.current]);
+    //let { playBackSpeed, displayMode, voiceName } = useSelector(selectAllOptions);
+
+
+    useEffect(() => {
+
+        if (audioUrl && !audioInfo.audioElement) {
+            //immer not work
+            // audioInfo.audioElement = React.createRef();
+            // setAudioInfo(audioInfo);
+
+            let newAudioElementRef = React.createRef<HTMLAudioElement>();
+
+            var newAudioInfoState: AudioInfo = {
+                ...audioInfo,
+                audioElement: newAudioElementRef
+            };
+
+            setAudioInfo(newAudioInfoState);
+
+            if (managementAudio) {
+                managementAudio.updateAudioInfo(newAudioInfoState);
+            }
+        }
+    }, [audioUrl]);
+
+    //do poprawy głos easy znika zawsze
+    // if (!isEasySpeech || !audioUrl) {
+    //     return <div></div>
+    // }
 
     // style={{ display: 'none' }}
     return (
         <>
             {
                 audioInfo.audioElement &&
-                <audio ref={audioInfo.audioElement} controls style={{ display: 'none' }}>
+                <audio ref={audioInfo.audioElement} controls style={{ display: 'none' }} onEnded={managementAudio.onEnd} onPlay={managementAudio.onStart}>
                     <source
                         src={audioUrl}
                         type="audio/mpeg"
                     />
                 </audio>
             }
-            <Button className='audio-play' variant='outline-dark' onClick={() => onPlayHandle(text, audioInfo, managementAudio)}><i className="bi bi-play-fill" ref={audioInfo.audioButton}></i></Button>
+            <Button className='audio-play' variant='outline-dark' onClick={() => onPlayHandle(text, audioInfo, managementAudio, isFullAudio)}><i className="bi bi-play-fill" ref={audioInfo.audioButton}></i></Button>
         </>
     )
 }
 
-function onPlayHandle(text: string, audioInfo: AudioInfo, managementAudio: useEasySpeechType) {
+function onPlayHandle(text: string, audioInfo: AudioInfo, managementAudio: useEasySpeechType, isFullAudio?: boolean) {
+
+    if (isFullAudio) {
+        //console.log("gramyyyyyyy");
+        //console.log(isFullAudio);
+        managementAudio.playAllAudio();//zatrzymac?
+        return;
+    }
 
     var hasBetterAudio = audioInfo.audioElement ? true : false;
 

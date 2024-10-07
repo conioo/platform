@@ -8,6 +8,9 @@ export default class Module {
     language: Language;
     targetLanguage: TargetLanguage;
     voiceName: string;
+
+    synthVoiceCode: string;
+    synthVoiceName: string;
     
     constructor(sections: Array<Section> = new Array<Section>(), name: string = "", voiceName: string = "", language = Language.English, targetLanguage = TargetLanguage.Polish) {
         this.sections = sections;
@@ -15,5 +18,8 @@ export default class Module {
         this.voiceName = voiceName;
         this.language = language;
         this.targetLanguage = targetLanguage;
+
+        this.synthVoiceCode = "en-GB";
+        this.synthVoiceName = "en-GB-Standard-B";
     }
 }

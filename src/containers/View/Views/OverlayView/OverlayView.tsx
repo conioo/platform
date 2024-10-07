@@ -12,11 +12,13 @@ import "./OverlayView.scss";
 
 interface OverlayViewProps {
     module: Module;
-    audioHub?: useEasySpeechType;
+    audioHub: useEasySpeechType;
     setText: (text: string) => void;
+    audioUrl?: Array<string | undefined>;
+
 }
 
-export default function OverlayView({ module, setText, audioHub }: OverlayViewProps) {
+export default function OverlayView({ module, setText, audioHub, audioUrl }: OverlayViewProps) {
     console.log("OverlayView");
 
     const isHiddenOptions = useAppSelector((state) => state.moduleOptions.isHidden);
@@ -66,7 +68,7 @@ export default function OverlayView({ module, setText, audioHub }: OverlayViewPr
             return (
                 <>
                     <section className='overlay-view__audioplay-container' key={`a${sectionIndex}`}>
-                        {segments.length > 0 && <AudioPlay text={fullSentence} managementAudio={audioHub} key={`a${sectionIndex}`}></AudioPlay>}
+                        {segments.length > 0 && <AudioPlay id={sectionIndex} text={fullSentence} managementAudio={audioHub} key={`a${sectionIndex}`} audioUrl={audioUrl ? audioUrl[sectionIndex] : undefined}></AudioPlay>}
                     </section>
 
                     <section className="overlay-view__segments" key={`o${sectionIndex}`}>
@@ -80,7 +82,7 @@ export default function OverlayView({ module, setText, audioHub }: OverlayViewPr
 
         return sections;
 
-    }, [module]);
+    }, [module, audioUrl]);
 
     return (
         <section className="overlay-view">

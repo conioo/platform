@@ -13,14 +13,16 @@ import TargetLanguage, { getTargetLanguageName } from '../../../../types/TargetL
 import { FormikValuesType } from '../ModuleFormik/ModuleFormik';
 import './Content.scss';
 import { useMemo, useState } from 'react';
+import { Updater } from 'use-immer';
 
 interface ContentProps {
     goNext: () => void;
+    setChangedStatus: Updater<Array<[boolean, number]>>;
 }
 
-export default function Content({ goNext }: ContentProps) {
+export default function Content({ goNext, setChangedStatus }: ContentProps) {
 
-    const { values, setFieldValue } = useFormikContext<FormikValuesType>();
+    const { values, setFieldValue, initialValues } = useFormikContext<FormikValuesType>();
     const [changed, setChanged] = useState(false);
 
     const language = useSelector(selectLanguage);
@@ -62,6 +64,12 @@ export default function Content({ goNext }: ContentProps) {
     </>);
 
     async function goNextWithGenerating() {
+
+        if (values.content.length === 0) {
+            alert("pole nie może być puste");
+            return;
+        }
+
         await generateModuleFromContent();
         goNext();
     }
@@ -119,18 +127,21 @@ export default function Content({ goNext }: ContentProps) {
         let newSections = content.split('\n');
 
         //remove empty sections and trim white spaces
+        //calculate new sections
         newSections = newSections
             .map(str => str.trim())
             .filter(str => str !== "");
 
+        let newChangedStatus = new Array<[boolean, number]>(newSections.length);
+
         //calculate old sections
         let oldSentences = new Map<string, number>();
 
-        for (let i = 0; i < values.module.sections.length; ++i) {
+        for (let i = 0; i < initialValues.module.sections.length; ++i) {
             let sentence = "";
 
-            for (let k = 0; k < values.module.sections[i].segments.length; ++k) {
-                sentence += values.module.sections[i].segments[k].sentence + " ";
+            for (let k = 0; k < initialValues.module.sections[i].segments.length; ++k) {
+                sentence += initialValues.module.sections[i].segments[k].sentence + " ";
             }
 
             sentence = sentence.trim();
@@ -144,24 +155,31 @@ export default function Content({ goNext }: ContentProps) {
 
         newModule.language = values.module.language;
         newModule.targetLanguage = values.module.targetLanguage;
-        newModule.name = values.module.name;
-        newModule.voiceName = values.module.voiceName;
+        newModule.name = initialValues.module.name;
+        newModule.voiceName = initialValues.module.voiceName;
         newModule.sections = new Array<Section>(newSections.length);
 
         let sentencesToTranslation = new Array<string>();
         let indexSentencesToTranslation = new Array<number>();
 
+        //console.log(oldSentences);
+
         for (let i = 0; i < newSections.length; ++i) {
             let index = oldSentences.get(newSections[i]);
+            //console.log(newSections[i]);
 
-            if (index === undefined || changed) {
+            if (index === undefined) {
                 //new sentence
                 sentencesToTranslation.push(newSections[i]);
                 indexSentencesToTranslation.push(i);
+
+                newChangedStatus[i] = [true, -1];
             }
             else {
                 //old sentence
-                newModule.sections[i] = values.module.sections[index];
+                newModule.sections[i] = { ...initialValues.module.sections[index] };
+
+                newChangedStatus[i] = [false, index];
             }
         }
 
@@ -175,6 +193,8 @@ export default function Content({ goNext }: ContentProps) {
                 newModule.sections[indexSentencesToTranslation[i]] = new Section([new Segment(sentencesToTranslation[i], translations[i])]);
             }
         }
+
+        setChangedStatus(newChangedStatus);
 
         setFieldValue("module", newModule);
     }

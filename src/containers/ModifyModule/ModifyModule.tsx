@@ -123,11 +123,12 @@ export default function ModifyModule() {
 
     async function updateModule(values: FormikValuesType, formikHelpers: FormikHelpers<FormikValuesType>) {
         console.log("savings");
+        console.log(values);
 
         try {
             await updateModuleInGoogleDrive(loaderData.moduleId, values.module, module.name);
             console.log("updated all correctly");
-            navigate(-1);
+            navigate(-1);//do nowego
         } catch (error: any) {
             console.error("Error occured:", error);
         }

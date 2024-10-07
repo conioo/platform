@@ -11,13 +11,14 @@ interface OptionsModuleFormikProps {
     closeModal: () => void;
     defaultVoiceName: string;
     show: boolean;
+    betterVoiceName?: string;
 }
 
-export default function OptionsModuleFormik({ show, closeModal, defaultVoiceName }: OptionsModuleFormikProps) {
+export default function OptionsModuleFormik({ show, closeModal, defaultVoiceName, betterVoiceName }: OptionsModuleFormikProps) {
     const store = useStore();
 
     let allOptions = useSelector(selectAllOptions);
-    console.log(allOptions);
+    //console.log(allOptions);
 
     const [cookie, setCookie] = useCookies(['view-options']);
 
@@ -43,7 +44,7 @@ export default function OptionsModuleFormik({ show, closeModal, defaultVoiceName
             validateOnBlur={false}
         >
             <Form className="options-module-formik">
-                <OptionsModuleForm show={show} closeModal={closeModal} defaultVoiceName={defaultVoiceName}></OptionsModuleForm>
+                <OptionsModuleForm show={show} closeModal={closeModal} defaultVoiceName={defaultVoiceName} betterVoiceName={betterVoiceName}></OptionsModuleForm>
             </Form>
         </Formik>
     );

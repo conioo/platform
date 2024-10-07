@@ -25,9 +25,13 @@ const sectionScheme = Yup.object().shape({
     segments: Yup.array()
         .of(segmentScheme)
         .required(),
-    audioId: Yup.string()
-        .nullable()//.notRequired()l;
+    synths: Yup.array()
+        .of(Yup.string().required())
         .required()
+
+    // audioId: Yup.string()
+    //     .nullable()//.notRequired()l;
+    //     .required()
 });
 
 const moduleScheme = Yup.object({
@@ -45,7 +49,11 @@ const moduleScheme = Yup.object({
         .required('Required'),
     sections: Yup.array()
         .of(sectionScheme)
-        .required('Required')
+        .required('Required'),
+    synthVoiceCode: Yup.string()
+        .required('Required'),
+    synthVoiceName: Yup.string()
+        .required('Required'),
 });
 
 const formikValuesScheme = Yup.object({
@@ -79,3 +87,10 @@ export default function ModuleFormik({ module = new Module(), initialContent = "
         </Formik>
     );
 }
+
+//tworzenie
+//wybór głosów(zapisać wybrany do pliku) osobny etap
+//wiele lepszych głosów możliwych(opcjonalnie na przyszłość)
+//modyfikowanie(dodać do starych)
+//oznajmiac stan sekcji(dodane(zmienione), stare) -> podświetlanie
+//tylko dla zmienionych zmienić głos lub gdy nie ma

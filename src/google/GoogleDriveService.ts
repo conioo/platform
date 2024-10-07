@@ -204,6 +204,7 @@ export async function getListOfFiles(folderId: string): Promise<{ files: Array<F
 
         let response = await fetch(url, requestOptions);
 
+        //console.log(response);
         let jsonResponse = await response.json();
         // console.log(jsonResponse);
 

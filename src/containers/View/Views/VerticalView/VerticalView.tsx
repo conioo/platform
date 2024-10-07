@@ -14,11 +14,12 @@ import './VerticalView.scss';
 
 interface VerticalViewProps {
     module: Module;
-    audioHub?: useEasySpeechType;
+    audioHub: useEasySpeechType;
     setText: (text: string) => void;
+    audioUrl?: Array<string | undefined>;
 }
 
-export default function VerticalView({ module, setText, audioHub }: VerticalViewProps) {
+export default function VerticalView({ module, setText, audioHub, audioUrl }: VerticalViewProps) {
     console.log("VerticalView");
     const isHiddenOptions = useAppSelector((state) => state.moduleOptions.isHidden);
     const [isHidden, updateIsHidden] = useImmer<Array<Array<boolean>>>(() => {
@@ -102,7 +103,7 @@ export default function VerticalView({ module, setText, audioHub }: VerticalView
             return (
                 <section className="vertical-view__row">
                     <section key={sectionIndex} className='vertical-view__audioplay'>
-                        {segments.length > 0 && <AudioPlay text={fullSentence} managementAudio={audioHub}></AudioPlay>}
+                        {segments.length > 0 && <AudioPlay id={sectionIndex} text={fullSentence} managementAudio={audioHub} audioUrl={audioUrl ? audioUrl[sectionIndex] : undefined}></AudioPlay>}
                     </section>
 
                     {segments}
@@ -113,7 +114,7 @@ export default function VerticalView({ module, setText, audioHub }: VerticalView
         setText(fullText);
 
         return sections;
-    }, [module, widthSegments, isHidden]);
+    }, [module, widthSegments, isHidden, audioUrl]);
 
     return (
         <section className="vertical-view view-segments">

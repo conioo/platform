@@ -1,5 +1,6 @@
 import Module from "../models/Module";
 import Tokens from "../models/Tokens";
+import Voice from "../types/TTSVoice";
 // import { copyModule, getFilesOfFolder } from "./GoogleDriveService";
 
 export async function removeFolder(folderId: string) {
@@ -17,6 +18,20 @@ export async function changeFolderName(folderId: string, newName: string) {
         }
     });
 }
+
+export async function getTTSVoices(languageCode: string): Promise<Array<Voice>> {
+
+    let response = await (gapi.client as any).texttospeech.voices.list({
+        "languageCode": languageCode
+    });
+
+    if (response.status === 200) {
+        return response.result.voices as Array<Voice>;
+    }
+
+    throw new Error("Error Response", response);
+}
+
 
 export async function moveFolder(folderId: string, newParentFolderId: string) {
 
@@ -64,6 +79,38 @@ export async function getFolderName(folderId: string): Promise<string> {
     }
 
     return response.result.name;
+}
+
+export async function synthesizeText(text: string, languageCode: string, languageName: string): Promise<string> {
+    console.log("synthesize: ", text);
+
+    if (!languageCode || !languageCode) {
+        console.log("error: ", languageCode, languageName);
+    }
+    // if (!languageName.includes("standard")) {
+    //     prompt("wybrałeś głos niestandardowy. potwierdzasz wybór?");
+    // }
+
+    var response = await (gapi.client as any).texttospeech.text.synthesize({
+        "resource": {
+            "voice": {
+                "name": languageName,
+                "languageCode": languageCode,
+            },
+            "input": {
+                "text": text
+            },
+            "audioConfig": {
+                "audioEncoding": "MP3"
+            }
+        }
+    });
+
+    if (response.status === 200) {
+        return response.result.audioContent as string;
+    }
+
+    throw new Error("Error Response", response);
 }
 
 async function createFolder(folderName: string, parentFolderId: string): Promise<string> {
@@ -371,6 +418,9 @@ export async function removeModule(moduleId: string) {
 
 export async function saveModuleToGoogleDrive(moduleContent: Module, parentFolderId: string) {
     try {
+        console.log(moduleContent);
+        console.log(parentFolderId);
+
         let moduleName = moduleContent.name;
 
         const jsonString = JSON.stringify(moduleContent);
@@ -384,6 +434,8 @@ export async function saveModuleToGoogleDrive(moduleContent: Module, parentFolde
             },
             fields: 'id',
         });
+
+        console.log(folderResponse);
 
         const newFolderId = folderResponse.result.id;
 
